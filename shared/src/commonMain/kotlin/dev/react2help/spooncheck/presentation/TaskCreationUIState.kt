@@ -19,7 +19,8 @@ data class TaskCreationUIState(
     val Description: String = "",
     val priority: Priority = Priority.low,
     val DueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-    val Spoons: Int = 0
+    val Spoons: Int = 0,
+    val errorMessage: String = ""
 )
 
 sealed interface TaskCreationUIEvent { // what the user did: events that fire when the user does
