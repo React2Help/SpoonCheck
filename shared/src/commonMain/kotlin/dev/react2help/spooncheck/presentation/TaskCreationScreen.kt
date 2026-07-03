@@ -41,6 +41,9 @@ import androidx.compose.ui.tooling.preview.Preview
                     state = rememberTextFieldState(),
                     placeholder = {
                         Text("Title")
+                    },
+                    label = {
+                        Text("Hello World!")
                     }
                 )
                 TextField(
