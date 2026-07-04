@@ -35,12 +35,86 @@ import spooncheck.shared.generated.resources.calendar_month_24dp_E3E3E3_FILL0_wg
 @Composable
     fun TaskListScreen(viewModel: TaskListViewModel){
     }
+
+@Composable
+fun TaskCard(
+    task: Task,
+    tonDelete: () -> Unit,
+    onComplete: () -> Unit,
+    modifier: Modifier = Modifier
+){
+    Card(
+        modifier = Modifier
+            .size(width = 300.dp, height = 80.dp),
+        border = BorderStroke(1.dp, Color.Black)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+            Column(
+                Modifier.weight(1f)
+                    .padding(5.dp)
+            ) { // LHS
+                Text(
+                    task.title,
+                    fontWeight = FontWeight.W900
+                )
+                Text(task.description)
+            }
+            Column( // RHS
+                Modifier.background(Color.LightGray)
+                    .fillMaxHeight()
+                    .padding(5.dp)
+                    .weight(1f),
+                horizontalAlignment = Alignment.End
+            ) {
+                Row {
+                    Icon(
+                        painter = painterResource(Res.drawable.spoon),
+                        contentDescription = "Spoon icon",
+                        Modifier.size(18.dp, 18.dp)
+                    )
+                    Text(text = "${task.spoons}")
+                }
+                Row {
+                    Icon(
+
+                        contentDescription = "low priority symbol",
+                        painter = painterResource(Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                        modifier = Modifier.size(18.dp, 18.dp)
+                    )
+                    Text(task.priority.toString())
+                }
+                Row {
+                    Icon(
+                        modifier = Modifier.size(18.dp, 18.dp),
+                        contentDescription = "Clock Symbol",
+                        painter = painterResource(Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                    )
+                    Text(task.due_date.toString())
+                }
+                Row {
+                    Icon(
+                        modifier = Modifier.size(18.dp, 18.dp),
+                        contentDescription = "Calendar Symbol",
+                        painter = painterResource(Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                    )
+                    Text(task.due_date.toString())
+                }
+            }
+        }
+    }
+}
+
 @Preview
 @Composable
 fun TaskCard(){
     Card(
         modifier = Modifier
-            .size(width = 240.dp, height = 100.dp),
+            .size(width = 300.dp, height = 80.dp),
         border = BorderStroke(1.dp, Color.Black)
     ) {
         Row(
@@ -50,66 +124,61 @@ fun TaskCard(){
             horizontalArrangement = Arrangement.SpaceBetween,
 
         ) {
-            Column {
+            Column(
+                Modifier.weight(1f)
+                    .padding(5.dp)
+            ) { // LHS
                 Text(
                     "Title",
-                    modifier = Modifier
-                        .padding(8.dp),
                     fontWeight = FontWeight.W900
                 )
                 Text(
-                    "Description",
-                    modifier = Modifier
-                        .padding(8.dp)
+                    "Description with even more things to do. More text that lowkey means nothing and whatever you know? ",
                 )
             }
-            RHSTaskCard()
+            Column( // RHS
+                Modifier.background(Color.LightGray)
+                    .fillMaxHeight()
+                    .padding(5.dp)
+                    .weight(1f),
+                horizontalAlignment = Alignment.End
+            ) {
+                Row {
+                    Icon(
+                        painter = painterResource(Res.drawable.spoon),
+                        contentDescription = "Spoon icon",
+                        Modifier.size(18.dp, 18.dp)
+                    )
+                    Text("5")
+                }
+                Row {
+                    Icon(
+
+                        contentDescription = "low priority symbol",
+                        painter = painterResource(Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                        modifier = Modifier.size(18.dp, 18.dp)
+                    )
+                    Text("High")
+                }
+                Row {
+                    Icon(
+                        modifier = Modifier.size(18.dp, 18.dp),
+                        contentDescription = "Clock Symbol",
+                        painter = painterResource(Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                    )
+                    Text("12:30PM")
+                }
+                Row {
+                    Icon(
+                        modifier = Modifier.size(18.dp, 18.dp),
+                        contentDescription = "Calendar Symbol",
+                        painter = painterResource(Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                    )
+                    Text("06/07/2026")
+                }
+            }
         }
 
-    }
-
-}
-@Preview
-@Composable
-fun RHSTaskCard(){
-    Column(
-        Modifier.background(Color.LightGray)
-            .fillMaxHeight()
-            .padding(5.dp)
-    ) {
-        Row {
-            Icon(
-                painter = painterResource(Res.drawable.spoon),
-                contentDescription = "Spoon icon",
-                Modifier.size(18.dp, 18.dp)
-            )
-            Text("5")
-        }
-        Row {
-            Icon(
-
-                contentDescription = "low priority symbol",
-                painter = painterResource(Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
-                modifier = Modifier.size(18.dp, 18.dp)
-            )
-            Text("High")
-        }
-        Row {
-            Icon(
-                modifier = Modifier.size(18.dp, 18.dp),
-                contentDescription = "Clock Symbol",
-                painter = painterResource(Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
-            )
-            Text("12:30PM")
-        }
-        Row {
-            Icon(
-                modifier = Modifier.size(18.dp, 18.dp),
-                contentDescription = "Calendar Symbol",
-                painter = painterResource(Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
-            )
-            Text("06/07/2026")
-        }
     }
 
 }
