@@ -1,6 +1,7 @@
 package dev.react2help.spooncheck.presentation
 
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
@@ -39,7 +40,8 @@ data class Task(
     val description: String,
     val spoons: Int,
     val priority: Priority,
-    val due_date: LocalDate
+    val due_date: LocalDate,
+    val due_time: LocalTime
 )
 
 enum class Priority {
