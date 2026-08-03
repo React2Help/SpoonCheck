@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.input.OutputTransformation
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -59,10 +63,12 @@ fun TaskCreationScreen() {
             Box(
 
             ){
+
                 Column(
                     modifier = Modifier
+                        .fillMaxWidth()
                         .padding(paddingValues)
-                        .fillMaxSize()
+
                 ){
                     TextField(
                         state = rememberTextFieldState(),
@@ -71,15 +77,20 @@ fun TaskCreationScreen() {
                         },
                         label = {
                             Text("Hello World!")
-                        }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                     TextField(
                         state = rememberTextFieldState(),
                         placeholder = {
                             Text("Description")
-                        }
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
                     )
                     DueDateAndNotifications()
+                    SpoonSelectionCard()
                 }
             }
         }
@@ -107,6 +118,8 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
 fun DueDateAndNotifications(modifier: Modifier = Modifier){
     var notifySwitchIsChecked by remember {mutableStateOf(true)}
     var recurringSwitchChecked by remember {mutableStateOf(true)}
+    var timeFieldState =rememberTextFieldState("")
+    var dateFieldState = rememberTextFieldState("")
     Card(
 
     ){
@@ -153,18 +166,45 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier){
             }
             Row {
                 OutlinedTextField(
-                    state = rememberTextFieldState(),
+                    state = timeFieldState,
                     label = { Text("Select Due Time")},
-                    trailingIcon = {Icon(painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24), contentDescription = "Cancel Icon", modifier = modifier.size(18.dp))},
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                            contentDescription = "Cancel Icon",
+
+                            modifier = modifier
+                                .size(18.dp)
+                                .clickable{
+                                    timeFieldState.clearText()
+                                }
+                        )},
+
                     placeholder = {Text("HH:MM:SS")},
+                    outputTransformation = OutputTransformation{
+                        if(length > 2) insert(2, ":")
+                        if(length > 5) insert(5, ":")
+                    },
                     modifier = modifier
                         .weight(1f)
                 )
                 OutlinedTextField(
-                    state = rememberTextFieldState(),
+                    state = dateFieldState,
                     label = {Text("Select Due Date")},
-                    trailingIcon = {Icon(painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24), contentDescription = "Spoon icon", modifier = modifier.size(18.dp))},
+                    trailingIcon = {
+                        Icon(
+                            painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                            contentDescription = "Spoon icon",
+                            modifier = modifier.size(18.dp)
+                                .clickable{
+                                dateFieldState.clearText()
+                            }
+                        )},
                     placeholder = {Text("mm/dd/yy")},
+                    outputTransformation = OutputTransformation{
+                        if(length > 2) insert(2, "/")
+                        if(length > 5) insert(5, "/")
+                    },
                     modifier = modifier
                         .weight(1f)
                 )
@@ -172,6 +212,9 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier){
         }
     }
 }
+
+
+
 @Preview
 @Composable
 fun SpoonSelectionCard(modifier: Modifier = Modifier){
@@ -184,18 +227,28 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier){
     val maxSpoons = 5
     var selectedSpoons by remember {mutableIntStateOf(2)}
     Card(
-
+        modifier = modifier
+            .fillMaxWidth()
     ){
-        Column { 
+        Column(
+            modifier = modifier
+                .padding(12.dp)
+                .fillMaxWidth()
+        ) {
             Text("Spoons Required")
-            Row{
+            Row( // how to center this in the card:
+                                                    // order of operations matters with modifiers!!!
+                modifier = modifier.fillMaxWidth(), // give the element the max available width
+                horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
+                verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
+            ){
                 for (i in 1..maxSpoons){
                     if(i <= selectedSpoons){
                         Icon(
                             painter = painterResource(Res.drawable.spoon_filled),
                             contentDescription = "Unfilled Spoon Icon",
                             modifier = modifier
-                                .size(24.dp)
+                                .size(64.dp)
                                 .clickable{
                                     selectedSpoons = i
                                 }
@@ -206,7 +259,7 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier){
                             painter = painterResource(Res.drawable.spoon_unfilled),
                             contentDescription = "Filled Spoon Icon",
                             modifier = modifier
-                                .size(24.dp)
+                                .size(64.dp)
                                 .clickable {
                                     selectedSpoons = i
                                 }
@@ -216,6 +269,26 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier){
                 }
             }
 
+        }
+    }
+}
+
+
+@Composable
+fun PrioritySelectButton(modifier: Modifier = Modifier){
+    var selectedIndex by remember {mutableIntStateOf(0)}
+    val options = listOf("low", "medium", "high", "critical")
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(
+                    index = index,
+                    count = options.size
+                ),
+                onClick = {selectedIndex = index},
+                selected = index == selectedIndex,
+                label = { Text(label) }
+            )
         }
     }
 }
