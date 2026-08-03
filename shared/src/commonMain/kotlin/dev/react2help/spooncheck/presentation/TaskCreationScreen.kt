@@ -1,9 +1,13 @@
 package dev.react2help.spooncheck.presentation
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.rememberTextFieldState
@@ -19,6 +23,7 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -32,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
+import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.spoon
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
@@ -101,38 +107,66 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
 fun DueDateAndNotifications(modifier: Modifier = Modifier){
     var notifySwitchIsChecked by remember {mutableStateOf(true)}
     var recurringSwitchChecked by remember {mutableStateOf(true)}
-    Card{
-        Column {
-            Row {
-                Text(
-                    "Notify Me"
-                )
-                Switch(
-                    checked = notifySwitchIsChecked,
-                    onCheckedChange = {
-                        notifySwitchIsChecked = it
-                    }
-                )
-                Text(
-                    "Recurring"
-                )
-                Switch(
-                    checked = recurringSwitchChecked,
-                    onCheckedChange = {
-                        recurringSwitchChecked = it
-                    }
-                )
+    Card(
+
+    ){
+        Column(
+            modifier = modifier
+                .padding(10.dp)
+        ) {
+            Row(
+
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ){
+                    Text(
+                        "Notify Me"
+                    )
+
+                    Switch(
+                        checked = notifySwitchIsChecked,
+                        onCheckedChange = {
+                            notifySwitchIsChecked = it
+                        }
+                    )
+                }
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ){
+                    Text(
+                        "Recurring"
+                    )
+
+                    Switch(
+                        checked = recurringSwitchChecked,
+                        onCheckedChange = {
+                            recurringSwitchChecked = it
+                        }
+                    )
+                }
             }
             Row {
                 OutlinedTextField(
                     state = rememberTextFieldState(),
                     label = { Text("Select Due Time")},
-                    placeholder = {Text("HH:MM:SS")}
+                    trailingIcon = {Icon(painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24), contentDescription = "Cancel Icon", modifier = modifier.size(18.dp))},
+                    placeholder = {Text("HH:MM:SS")},
+                    modifier = modifier
+                        .weight(1f)
                 )
                 OutlinedTextField(
                     state = rememberTextFieldState(),
                     label = {Text("Select Due Date")},
-                    placeholder = {Text("mm/dd/yy")}
+                    trailingIcon = {Icon(painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24), contentDescription = "Spoon icon", modifier = modifier.size(18.dp))},
+                    placeholder = {Text("mm/dd/yy")},
+                    modifier = modifier
+                        .weight(1f)
                 )
             }
         }
@@ -141,8 +175,14 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier){
 @Preview
 @Composable
 fun SpoonSelectionCard(modifier: Modifier = Modifier){
+    /*
+    Potential Issues
+     - THe clickable surface is too small and cumbersome to use effectively. COnsider replacing with
+      a Surface.
+     */
+
     val maxSpoons = 5
-    var selectedSpoons by remember {mutableIntStateOf(3)}
+    var selectedSpoons by remember {mutableIntStateOf(2)}
     Card(
 
     ){
@@ -150,11 +190,29 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier){
             Text("Spoons Required")
             Row{
                 for (i in 1..maxSpoons){
-                    if (i < selectedSpoons){
-                        Icon(painter = painterResource(Res.drawable.spoon_filled), contentDescription = "Spoon icon", modifier = Modifier.size(24.dp))
-                    }else {
-                        Icon(painter = painterResource(Res.drawable.spoon_unfilled), contentDescription = "Spoon Icon", modifier = Modifier.size(24.dp))
+                    if(i <= selectedSpoons){
+                        Icon(
+                            painter = painterResource(Res.drawable.spoon_filled),
+                            contentDescription = "Unfilled Spoon Icon",
+                            modifier = modifier
+                                .size(24.dp)
+                                .clickable{
+                                    selectedSpoons = i
+                                }
+                        )
                     }
+                    else{
+                        Icon(
+                            painter = painterResource(Res.drawable.spoon_unfilled),
+                            contentDescription = "Filled Spoon Icon",
+                            modifier = modifier
+                                .size(24.dp)
+                                .clickable {
+                                    selectedSpoons = i
+                                }
+                        )
+                    }
+
                 }
             }
 
