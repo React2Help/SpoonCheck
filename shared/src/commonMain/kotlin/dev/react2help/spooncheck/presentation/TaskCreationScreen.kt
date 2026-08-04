@@ -6,19 +6,23 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
+import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -28,7 +32,6 @@ import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldLabelPosition
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -38,16 +41,20 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.keyboard_arrow_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.pine_tree_background
-import spooncheck.shared.generated.resources.spoon
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
+
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
@@ -61,7 +68,35 @@ fun TaskCreationScreen() {
                     subtitle = {Text("")},
                     titleHorizontalAlignment = Alignment.CenterHorizontally
                 )
+            },
+            bottomBar = {
+                BottomAppBar(
+                    actions = {
+                        IconButton(onClick = {}){
+                            Icon(
+                                painter = painterResource(Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Delete Icon",
+                                        modifier = Modifier
+                                        .size(32.dp)
+                            )
+                        }
+                    },
+                    floatingActionButton = {
+                        FloatingActionButton(
+                            onClick = {},
+                        ){
+                            Icon(
+                                painter = painterResource(Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Check Button",
+                                modifier = Modifier
+                                    .size(16.dp)
+                            )
+                        }
+                    }
+                )
             }
+
+
         ) { paddingValues ->
             Box(
 
@@ -69,12 +104,14 @@ fun TaskCreationScreen() {
                 Image(
                     painter = painterResource(Res.drawable.pine_tree_background),
                     contentDescription = "Background Image of a grove of pine trees.",
+                    contentScale = ContentScale.Crop,
                     modifier = Modifier
-                        .fillMaxSize()
+                        .fillMaxHeight()
                 )
                 Column(
+                    verticalArrangement = Arrangement.SpaceAround,
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .padding(paddingValues)
                 ){
                     TextField(
@@ -100,6 +137,7 @@ fun TaskCreationScreen() {
                     )
                     DueDateAndNotifications()
                     SpoonSelectionCard()
+                    CategoryAndPriorityCard()
                 }
             }
         }
@@ -285,6 +323,74 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier){
 }
 
 
+
+@Preview
+@Composable
+fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
+    val menuItems = listOf<String>("Hygiene", "Household", "Work", "Recreation", "Social", "Pets")
+    var selectedOption by remember {mutableIntStateOf(0)}
+    var expanded by remember { mutableStateOf(false) }
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .alpha(0.85f)
+    ){
+
+        Column(
+            verticalArrangement = Arrangement.SpaceAround
+        ){
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                Text("Category")
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(menuItems.get(selectedOption))
+                    Box(
+                        modifier = Modifier
+                            .padding(16.dp)
+                    ) {
+                        IconButton(
+                            onClick = { expanded = !expanded }
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.keyboard_arrow_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Category Drop Down Menu Icon"
+                            )
+                        }
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            menuItems.forEachIndexed { index, option ->
+                                DropdownMenuItem(
+                                    text = {
+                                        Text(option)
+                                    },
+                                    onClick = {
+                                        selectedOption = index
+                                        expanded = false
+                                    }
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .padding(16.dp)
+            ) {
+                Text("Priority Level")
+                PrioritySelectButton()
+            }
+        }
+
+    }
+}
 @Composable
 fun PrioritySelectButton(modifier: Modifier = Modifier){
     var selectedIndex by remember {mutableIntStateOf(0)}
