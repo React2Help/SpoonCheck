@@ -59,17 +59,17 @@ import spooncheck.shared.generated.resources.spoon_unfilled
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
-fun TaskCreationScreen() {
+fun TaskCreationScreen() { // function that houses all UI on this screen.
     MaterialTheme{
         Scaffold(
-            topBar = {
+            topBar = { // define the Header
                 TopAppBar(
                     title = { Text("Create Task", fontWeight = FontWeight.Bold) },
                     subtitle = {Text("")},
                     titleHorizontalAlignment = Alignment.CenterHorizontally
                 )
             },
-            bottomBar = {
+            bottomBar = { // define the two buttons on the bottom of the screen
                 BottomAppBar(
                     actions = {
                         IconButton(onClick = {}){
@@ -81,7 +81,7 @@ fun TaskCreationScreen() {
                             )
                         }
                     },
-                    floatingActionButton = {
+                    floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
                             onClick = {},
                         ){
@@ -98,18 +98,20 @@ fun TaskCreationScreen() {
 
 
         ) { paddingValues ->
-            Box(
+            Box( // use a box so the fields are stacked on top of the image
 
             ){
                 Image(
                     painter = painterResource(Res.drawable.pine_tree_background),
                     contentDescription = "Background Image of a grove of pine trees.",
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
+                    // the parts that overflow off the screen are clipped
                     modifier = Modifier
                         .fillMaxHeight()
                 )
-                Column(
-                    verticalArrangement = Arrangement.SpaceAround,
+                Column( // arrange all the fields in a column
+                    verticalArrangement = Arrangement.SpaceAround, // control how the elements are
+                    // placed on the Vertical axis.
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(paddingValues)
@@ -118,9 +120,6 @@ fun TaskCreationScreen() {
                         state = rememberTextFieldState(),
                         placeholder = {
                             Text("Title")
-                        },
-                        label = {
-                            Text("Hello World!")
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -171,18 +170,29 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier){
 modifier = Modifier
     .alpha(0.85f)
     ){
-        Column(
+        /*
+            * the elements within this card can be grouped into two groups: The switches and the
+            * input fields.These groups are stacked in a column.
+         */
+        Column( // column to stack the two groups
             modifier = modifier
                 .padding(10.dp)
         ) {
-            Row(
-
+            /*
+                * The switches can be thought of as a row of rows:
+                * Row(Row(Text Switch) Row(Text Switch))
+             */
+            Row( // Wrapping Row
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
+                    // place children next to each other inline
                     verticalAlignment = Alignment.CenterVertically,
+                    //, with a little space between each
+                    // other
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
+
                 ){
                     Text(
                         "Notify Me"
@@ -190,7 +200,7 @@ modifier = Modifier
 
                     Switch(
                         checked = notifySwitchIsChecked,
-                        onCheckedChange = {
+                        onCheckedChange = { // lambda AKA anonymous function
                             notifySwitchIsChecked = it
                         }
                     )
@@ -206,34 +216,42 @@ modifier = Modifier
 
                     Switch(
                         checked = recurringSwitchChecked,
-                        onCheckedChange = {
+                        onCheckedChange = { // lambda AKA anonymous function
                             recurringSwitchChecked = it
                         }
                     )
                 }
             }
-            Row {
+            Row { // row of text fields
+                /*
+                    * outputTransformation is used to automatically insert colons and forward
+                    * slashes while the user types
+                 */
                 OutlinedTextField(
                     state = timeFieldState,
                     label = { Text("Select Due Time")},
                     trailingIcon = {
                         Icon(
-                            painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                            painter = painterResource(
+                                Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            ),
                             contentDescription = "Cancel Icon",
 
                             modifier = modifier
-                                .size(18.dp)
-                                .clickable{
+                                .size(18.dp) // scale the icon up so it is easily clickable
+                                .clickable{// lambda AKA anonymous function
                                     timeFieldState.clearText()
                                 }
                         )},
 
                     placeholder = {Text("HH:MM:SS")},
-                    outputTransformation = OutputTransformation{
+                    outputTransformation = OutputTransformation{// lambda AKA anonymous function
                         if(length > 2) insert(2, ":")
                         if(length > 5) insert(5, ":")
                     },
                     modifier = modifier
+                        // weight() is used so each TextField attempts to occupy
+                        // equal space
                         .weight(1f)
                 )
                 OutlinedTextField(
@@ -244,16 +262,18 @@ modifier = Modifier
                             painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
                             contentDescription = "Spoon icon",
                             modifier = modifier.size(18.dp)
-                                .clickable{
+                                .clickable{// lambda AKA anonymous function
                                 dateFieldState.clearText()
                             }
                         )},
                     placeholder = {Text("mm/dd/yy")},
-                    outputTransformation = OutputTransformation{
+                    outputTransformation = OutputTransformation{// lambda AKA anonymous function
                         if(length > 2) insert(2, "/")
                         if(length > 5) insert(5, "/")
                     },
                     modifier = modifier
+                        // weight() is used so each TextField attempts to occupy
+                        // equal space
                         .weight(1f)
                 )
             }
@@ -268,8 +288,9 @@ modifier = Modifier
 fun SpoonSelectionCard(modifier: Modifier = Modifier){
     /*
     Potential Issues
-     - THe clickable surface is too small and cumbersome to use effectively. COnsider replacing with
+     - THe clickable surface is too small and cumbersome to use effectively. CInsider replacing with
       a Surface.
+      - The spoon icons need to be replaced to match the Figma
      */
 
     val maxSpoons = 5
@@ -291,7 +312,8 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier){
                 horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
                 verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
             ){
-                for (i in 1..maxSpoons){
+                for (i in 1..maxSpoons){ // a for loop creates icons programmatically instead
+                    // of specifying 5 Icons
                     if(i <= selectedSpoons){
                         Icon(
                             painter = painterResource(Res.drawable.spoon_filled),
@@ -345,10 +367,11 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
             ) {
                 Text("Category")
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically, // make elements inline with
+                    // each other
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(menuItems.get(selectedOption))
+                    Text(menuItems.get(selectedOption)) // show which option was selected
                     Box(
                         modifier = Modifier
                             .padding(16.dp)
@@ -402,7 +425,9 @@ fun PrioritySelectButton(modifier: Modifier = Modifier){
                     index = index,
                     count = options.size
                 ),
-                onClick = {selectedIndex = index},
+                onClick = {selectedIndex = index}, // this callback function should change the value
+                // in the view model instead, but for now I'm leaving that until it's time to
+                // refactor
                 selected = index == selectedIndex,
                 label = { Text(label) }
             )
