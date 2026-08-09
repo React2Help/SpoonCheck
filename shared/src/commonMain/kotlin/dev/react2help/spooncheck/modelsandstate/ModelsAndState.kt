@@ -1,6 +1,7 @@
-package dev.react2help.spooncheck.presentation
+package dev.react2help.spooncheck.modelsandstate
 
 import kotlin.time.Clock
+import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -33,11 +34,46 @@ data class TaskCreationUIState(
     // fields for the data in the form
     val Title: String = "",
     val Description: String = "",
-    val priority: Priority = Priority.low,
+    val priority: Priority = Priority.medium,
     val DueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val Spoons: Int = 0,
+    val NotificationsOn: Boolean = false,
+    val IsRecurring: Boolean = false,
+    val Category: String = "Hygiene",
+    val StartDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val errorMessage: String = ""
 )
+
+sealed interface TaskCreationActions { // defining types for our actions, so the callback functions
+    // must satisfy this contract
+    data object OnDelete : TaskCreationActions // since these actions don't need arguments, they are
+    // specified as objects
+    data object OnSave : TaskCreationActions
+    data class OnTitleChanged( // these actions need arguments, so they are specified as classes
+        val Title: String
+    ) : TaskCreationActions
+    data class OnDescriptionChanged(
+        val Description: String
+    ) : TaskCreationActions
+    data class OnNotificationsChanged(
+        val ShouldNotify: Boolean
+    ) : TaskCreationActions
+    data class OnStartDateChanged(
+        val StartDate: Instant
+    ) : TaskCreationActions
+    data class OnDueDateChanged(
+        val DueDate: LocalDate
+    ) : TaskCreationActions
+    data class OnSpoonSelectedChanged(
+        val IndexOfSelectedSpoon: Int
+    ) : TaskCreationActions
+    data class OnCategoryChanged(
+        val Category: String
+    ) : TaskCreationActions
+    data class OnPriorityChanged(
+        val Priority: Priority
+    ) : TaskCreationActions
+}
 
 data class Task(
     val title: String,

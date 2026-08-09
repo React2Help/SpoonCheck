@@ -1,4 +1,4 @@
-package dev.react2help.spooncheck.presentation
+package dev.react2help.spooncheck.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -45,6 +45,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
+import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -56,10 +58,11 @@ import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
 
 
+
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
 @Composable
-fun TaskCreationScreen() { // function that houses all UI on this screen.
+fun TaskCreationScreen(OnAction: (TaskCreationActions) -> Unit, state: TaskCreationUIState) { // function that houses all UI on this screen.
     MaterialTheme{
         Scaffold(
             topBar = { // define the Header
@@ -72,18 +75,22 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
             bottomBar = { // define the two buttons on the bottom of the screen
                 BottomAppBar(
                     actions = {
-                        IconButton(onClick = {}){
+                        IconButton(onClick = {
+                            OnAction(TaskCreationActions.OnDelete)// todo define this callback function here
+                        }){
                             Icon(
                                 painter = painterResource(Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
                                 contentDescription = "Delete Icon",
-                                        modifier = Modifier
-                                        .size(32.dp)
+                                modifier = Modifier
+                                    .size(32.dp)
                             )
                         }
                     },
                     floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
-                            onClick = {},
+                            onClick = {
+                                OnAction(TaskCreationActions.OnSave)
+                            }, // add a callback function here
                         ){
                             Icon(
                                 painter = painterResource(Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
@@ -111,6 +118,93 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
                 )
                 Column( // arrange all the fields in a column
                     verticalArrangement = Arrangement.SpaceAround, // control how the elements are
+                    // placed on the Vertical axis.
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ){
+                    TextField(
+                        state = rememberTextFieldState(),
+                        placeholder = {
+                            Text("Title")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(0.85f)
+                    )
+                    TextField(
+                        state = rememberTextFieldState(),
+                        placeholder = {
+                            Text("Description")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .alpha(0.85f)
+                    )
+                    DueDateAndNotifications()
+                    SpoonSelectionCard()
+                    CategoryAndPriorityCard()
+                }
+            }
+        }
+    }
+
+}
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Preview
+@Composable
+fun TaskCreationScreen() { // function that houses all UI on this screen.
+    MaterialTheme{
+        Scaffold(
+            topBar = { // define the Header
+                TopAppBar(
+                    title = { Text("Create Task", fontWeight = FontWeight.Bold) },
+                    subtitle = {Text("")},
+                    titleHorizontalAlignment = Alignment.CenterHorizontally
+                )
+            },
+            bottomBar = { // define the two buttons on the bottom of the screen
+                BottomAppBar(
+                    actions = {
+                        IconButton(onClick = {}){ // todo add a callback function here
+                            Icon(
+                                painter = painterResource(Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Delete Icon",
+                                        modifier = Modifier
+                                        .size(32.dp)
+                            )
+                        }
+                    },
+                    floatingActionButton = { // RHS button with the special styling
+                        FloatingActionButton(
+                            onClick = {}, // add a callback function here
+                        ){
+                            Icon(
+                                painter = painterResource(Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Check Button",
+                                modifier = Modifier
+                                    .size(16.dp)
+                            )
+                        }
+                    }
+                )
+            }
+
+
+        ) { paddingValues ->
+            Box( // use a box so the fields are stacked on top of the image
+
+            ){
+                Image(
+                    painter = painterResource(Res.drawable.pine_tree_background),
+                    contentDescription = "Background Image of a grove of pine trees.",
+                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
+                    // the parts that overflow off the screen are clipped
+                    modifier = Modifier
+                        .fillMaxHeight()
+                )
+                Column( // arrange all the fields in a column
+                    verticalArrangement = Arrangement.SpaceBetween, // control how the elements are
                     // placed on the Vertical axis.
                     modifier = Modifier
                         .fillMaxSize()
