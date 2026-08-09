@@ -36,7 +36,6 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,7 +47,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
-import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -126,24 +124,18 @@ fun TaskCreationScreen(OnAction: (TaskCreationActions) -> Unit, state: TaskCreat
                         .padding(paddingValues)
                 ){
                     TextField(
-                        value = state.Title,
+                        state = rememberTextFieldState(),
                         placeholder = {
                             Text("Title")
-                        },
-                        onValueChange = {
-                            OnAction(TaskCreationActions.OnTitleChanged(it))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
                             .alpha(0.85f)
                     )
                     TextField(
-                        value = state.Title,
+                        state = rememberTextFieldState(),
                         placeholder = {
                             Text("Description")
-                        },
-                        onValueChange = {
-                            OnAction(TaskCreationActions.OnTitleChanged(it))
                         },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -201,6 +193,7 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
 
         ) { paddingValues ->
             Box( // use a box so the fields are stacked on top of the image
+
             ){
                 Image(
                     painter = painterResource(Res.drawable.pine_tree_background),
@@ -245,133 +238,21 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
 
 }
 
-
-
-
 @Composable
-fun DueDateAndNotifications(OnAction: (TaskCreationActions) -> Unit, notifySwitchIsChecked: Boolean, recurringSwitchIsChecked: Boolean, DateTime: LocalDateTime, modifier: Modifier = Modifier){
-
-    Card(
-        modifier = Modifier
-            .alpha(0.85f)
-    ){
-        /*
-            * the elements within this card can be grouped into two groups: The switches and the
-            * input fields.These groups are stacked in a column.
-         */
-        Column( // column to stack the two groups
-            modifier = modifier
-                .padding(10.dp)
-        ) {
-            /*
-                * The switches can be thought of as a row of rows:
-                * Row(Row(Text Switch) Row(Text Switch))
-             */
-            Row( // Wrapping Row
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(
-                    // place children next to each other inline
-                    verticalAlignment = Alignment.CenterVertically,
-                    //, with a little space between each
-                    // other
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-
-                ){
-                    Text(
-                        "Notify Me"
-                    )
-
-                    Switch(
-                        checked = notifySwitchIsChecked,
-                        onCheckedChange = { // lambda AKA anonymous function
-                           OnAction(TaskCreationActions.OnNotificationsChanged(it))
-                        }
-                    )
-                }
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ){
-                    Text(
-                        "Recurring"
-                    )
-
-                    Switch(
-                        checked = recurringSwitchIsChecked,
-                        onCheckedChange = { // lambda AKA anonymous function
-                            OnAction(TaskCreationActions.OnRecurrsChanged(it))
-                        }
-                    )
-                }
-            }
-            Row { // row of text fields
-                /*
-                    * outputTransformation is used to automatically insert colons and forward
-                    * slashes while the user types
-                 */
-                /*
-                OutlinedTextField(
-                    state = rememberTextFieldState(),
-                    label = { Text("Select Due Time")},
-                    trailingIcon = {
-                        Icon(
-                            painter = painterResource(
-                                Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                            ),
-                            contentDescription = "Cancel Icon",
-
-                            modifier = modifier
-                                .size(18.dp) // scale the icon up so it is easily clickable
-                                .clickable{// lambda AKA anonymous function
-                                    timeFieldState.clearText()
-                                }
-                        )},
-
-                    placeholder = {Text("HH:MM:SS")},
-                    outputTransformation = OutputTransformation{// lambda AKA anonymous function
-                        if(length > 2) insert(2, ":")
-                        if(length > 5) insert(5, ":")
-                    },
-                    onValueChange = {
-                        OnAction()
-                    },
-                    modifier = modifier
-                        // weight() is used so each TextField attempts to occupy
-                        // equal space
-                        .weight(1f)
-                )
-                OutlinedTextField(
-                    state = dateFieldState,
-                    label = {Text("Select Due Date")},
-                    trailingIcon = {
-                        Icon(
-                            painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
-                            contentDescription = "Spoon icon",
-                            modifier = modifier.size(18.dp)
-                                .clickable{// lambda AKA anonymous function
-                                    dateFieldState.clearText()
-                                }
-                        )},
-                    placeholder = {Text("mm/dd/yy")},
-                    outputTransformation = OutputTransformation{// lambda AKA anonymous function
-                        if(length > 2) insert(2, "/")
-                        if(length > 5) insert(5, "/")
-                    },
-                    modifier = modifier
-                        // weight() is used so each TextField attempts to occupy
-                        // equal space
-                        .weight(1f)
-                )
-
-                 */
-            }
+fun PrioritySelectButton(modifier: Modifier = Modifier) {
+    var selectedIndex by remember { mutableIntStateOf(0) }
+    val options = listOf("low", "medium", "high", "critical")
+    SingleChoiceSegmentedButtonRow {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                onClick = { selectedIndex = index },
+                selected = index == selectedIndex,
+                label = { Text(label) }
+            )
         }
     }
 }
-
 @Preview
 @Composable
 fun DueDateAndNotifications(modifier: Modifier = Modifier){
@@ -495,64 +376,7 @@ modifier = Modifier
 }
 
 
-@Composable
-fun SpoonSelectionCard(OnAction: (TaskCreationActions) -> Unit, SelectedSpoon: Int,modifier: Modifier = Modifier){
-    /*
-    Potential Issues
-     - THe clickable surface is too small and cumbersome to use effectively. CInsider replacing with
-      a Surface.
-      - The spoon icons need to be replaced to match the Figma
-     */
 
-    val MaxSpoons = 5
-    Card(
-        modifier = modifier
-            .fillMaxWidth()
-            .alpha(0.85f)
-    ){
-        Column(
-            modifier = modifier
-                .padding(12.dp)
-                .fillMaxWidth()
-        ) {
-            Text("Spoons Required")
-            Row( // how to center this in the card:
-                // order of operations matters with modifiers!!!
-                modifier = modifier.fillMaxWidth(), // give the element the max available width
-                horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
-                verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
-            ){
-                for (i in 1..MaxSpoons){ // a for loop creates icons programmatically instead
-                    // of specifying 5 Icons
-                    if(i <= SelectedSpoon){
-                        Icon(
-                            painter = painterResource(Res.drawable.spoon_filled),
-                            contentDescription = "Unfilled Spoon Icon",
-                            modifier = modifier
-                                .size(64.dp)
-                                .clickable{
-                                    OnAction(TaskCreationActions.OnSpoonSelectedChanged(i))
-                                }
-                        )
-                    }
-                    else{
-                        Icon(
-                            painter = painterResource(Res.drawable.spoon_unfilled),
-                            contentDescription = "Filled Spoon Icon",
-                            modifier = modifier
-                                .size(64.dp)
-                                .clickable {
-                                    OnAction(TaskCreationActions.OnSpoonSelectedChanged(i))
-                                }
-                        )
-                    }
-
-                }
-            }
-
-        }
-    }
-}
 @Preview
 @Composable
 fun SpoonSelectionCard(modifier: Modifier = Modifier){
