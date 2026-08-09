@@ -1,4 +1,4 @@
-package dev.react2help.spooncheck.presentation
+package dev.react2help.spooncheck.modelsandstate
 
 sealed interface TaskListUIEvent { // what the user did
     data object LoadTasks : TaskListUIEvent

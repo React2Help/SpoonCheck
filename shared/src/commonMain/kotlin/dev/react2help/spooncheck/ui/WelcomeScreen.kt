@@ -1,4 +1,4 @@
-package dev.react2help.spooncheck.presentation
+package dev.react2help.spooncheck.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
