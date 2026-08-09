@@ -1,4 +1,4 @@
-package dev.react2help.spooncheck.presentation
+package dev.react2help.spooncheck.viewmodels
 
 import androidx.lifecycle.ViewModel
 
