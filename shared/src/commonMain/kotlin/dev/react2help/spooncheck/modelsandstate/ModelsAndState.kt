@@ -1,12 +1,11 @@
 package dev.react2help.spooncheck.modelsandstate
 
 import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 import kotlin.time.Clock
-import kotlin.time.Instant
 
 data class DashboardUIState(
     val total_spoons: Int,
@@ -39,7 +38,9 @@ data class TaskCreationUIState(
     val NotificationsOn: Boolean = false,
     val IsRecurring: Boolean = false,
     val Category: String = "Hygiene",
-    val StartDate: LocalDate,
+    // should startdate be nullable?
+    val StartDate: LocalTime =
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
     val errorMessage: String = ""
 )
 sealed interface TaskCreationActions{ // defining types for our actions, so the callback functions
@@ -56,14 +57,14 @@ sealed interface TaskCreationActions{ // defining types for our actions, so the 
     data class OnNotificationsChanged(
         val ShouldNotify: Boolean
     ): TaskCreationActions
-    data class OnStartDateChanged(
-        val StartDate: Instant
+    data class OnDueTimeChanged(
+        val DueTime: LocalTime
     ): TaskCreationActions
     data class OnDueDateChanged(
         val DueDate: LocalDate
     ): TaskCreationActions
     data class OnSpoonSelectedChanged(
-        val IndexOfSelectedSpoon: Int
+        val Spoons: Int
     ): TaskCreationActions
     data class OnCategoryChanged(
         val Category:String
@@ -71,10 +72,12 @@ sealed interface TaskCreationActions{ // defining types for our actions, so the 
     data class OnPriorityChanged(
         val Priority: Priority
     ): TaskCreationActions
-
+    data class OnRecurrsChanged(
+        val Recurs: Boolean
+    ): TaskCreationActions
 }
 
-data class Task(
+data class Task( // todo add other fields
     val title: String,
     val description: String,
     val spoons: Int,
