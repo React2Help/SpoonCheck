@@ -1,11 +1,11 @@
 package dev.react2help.spooncheck.modelsandstate
 
-import kotlin.time.Clock
-import kotlin.time.Instant
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
+import kotlin.time.Clock
 
 data class DashboardUIState(
     val total_spoons: Int,
@@ -13,16 +13,13 @@ data class DashboardUIState(
     val user_name: String,
     val num_checkins: Int,
     val num_restdays: Int,
-    val num_notifications:
-        Int // meant for the badge on the top right Profile icon on the Dashboard screen
+    val num_notifications: Int // meant for the badge on the top right Profile icon on the Dashboard screen
 )
-
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
     val tasks: List<Task> = emptyList(),
     val errorMessage: String? = null
 )
-
 data class TaskCreationUIState(
     val isLoading: Boolean = false, // tracks if this UI is loading or not
     val isListening: Boolean = false, // boolean for tracking UI state for if the microphone is
@@ -30,6 +27,7 @@ data class TaskCreationUIState(
     // event which then mutates this variable to true. Other UI elements change their behavior based
     // on this variable to signal the microphone is listening.
     // ---
+
 
     // fields for the data in the form
     val Title: String = "",
@@ -40,42 +38,46 @@ data class TaskCreationUIState(
     val NotificationsOn: Boolean = false,
     val IsRecurring: Boolean = false,
     val Category: String = "Hygiene",
-    val StartDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+    // should startdate be nullable?
+    val StartDate: LocalTime =
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
     val errorMessage: String = ""
 )
-
-sealed interface TaskCreationActions { // defining types for our actions, so the callback functions
+sealed interface TaskCreationActions{ // defining types for our actions, so the callback functions
     // must satisfy this contract
-    data object OnDelete : TaskCreationActions // since these actions don't need arguments, they are
+    data object OnDelete: TaskCreationActions // since these actions don't need arguments, they are
     // specified as objects
-    data object OnSave : TaskCreationActions
+    data object OnSave: TaskCreationActions
     data class OnTitleChanged( // these actions need arguments, so they are specified as classes
         val Title: String
-    ) : TaskCreationActions
+    ): TaskCreationActions
     data class OnDescriptionChanged(
-        val Description: String
-    ) : TaskCreationActions
+        val Description : String
+    ): TaskCreationActions
     data class OnNotificationsChanged(
         val ShouldNotify: Boolean
-    ) : TaskCreationActions
-    data class OnStartDateChanged(
-        val StartDate: Instant
-    ) : TaskCreationActions
+    ): TaskCreationActions
+    data class OnDueTimeChanged(
+        val DueTime: LocalTime
+    ): TaskCreationActions
     data class OnDueDateChanged(
         val DueDate: LocalDate
-    ) : TaskCreationActions
+    ): TaskCreationActions
     data class OnSpoonSelectedChanged(
-        val IndexOfSelectedSpoon: Int
-    ) : TaskCreationActions
+        val Spoons: Int
+    ): TaskCreationActions
     data class OnCategoryChanged(
-        val Category: String
-    ) : TaskCreationActions
+        val Category:String
+    ): TaskCreationActions
     data class OnPriorityChanged(
         val Priority: Priority
-    ) : TaskCreationActions
+    ): TaskCreationActions
+    data class OnRecurrsChanged(
+        val Recurs: Boolean
+    ): TaskCreationActions
 }
 
-data class Task(
+data class Task( // todo add other fields
     val title: String,
     val description: String,
     val spoons: Int,
