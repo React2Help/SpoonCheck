@@ -39,7 +39,13 @@ import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.spoon
 
-@Preview @Composable fun DashboardScreen(modifier: Modifier = Modifier) {}
+// TODO SOMEONE TAKE THIS OVER
+@Preview
+@Composable
+fun DashboardScreen(
+    modifier: Modifier = Modifier
+) {
+}
 
 @Preview
 @Composable
