@@ -13,11 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.IconButtonShapes
+import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
@@ -49,13 +54,31 @@ import spooncheck.shared.generated.resources.spoon
 import spooncheck.shared.generated.resources.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.logo
 
 
 @Composable
 fun TaskListScreen(viewModel: TaskListViewModel){
+    var selected by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
-
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Task List")
+                },
+                actions = {
+                    InputChip(
+                        selected = selected,
+                        onClick = {
+                            selected =
+                                !selected // todo replace this with call to onAction with SpoonChip
+                            // Pressed Action passed in
+                        },
+                        shape = CircleShape,
+                        label = { Text("5 spoons") } // todo extract number to viewModel
+                    )
+                }
+            )
         },
         bottomBar = {
 
@@ -65,6 +88,88 @@ fun TaskListScreen(viewModel: TaskListViewModel){
 
         }
     ) { paddingValues ->  }
+
+}
+@Preview
+@Composable
+fun TaskListScreen(){
+    var selected by remember { mutableStateOf(false) }
+    Scaffold(
+        topBar = {
+            CenterAlignedTopAppBar(
+                title = {
+                    Text("Task List")
+                },
+                actions = {
+                    InputChip(
+                        selected = selected,
+                        onClick = {
+                            selected =
+                                !selected // todo replace this with call to onAction with SpoonChip
+                            // Pressed Action passed in
+                        },
+                        shape = CircleShape,
+                        label = { Text("5 spoons") } // todo extract number to viewModel
+                    )
+                    IconButton(
+                        onClick = {}
+                    ){
+                        Icon(
+                            painter = painterResource(Res.drawable.logo),
+                            contentDescription = "Logo"
+                        )
+                    }
+                }
+            )
+
+
+        },
+        bottomBar = {
+            NavigationBar {
+                NavigationBarItem(
+                    selected = false,
+                    onClick = { println() },
+                    icon = {},
+                    label = { Text("Dashboard") }
+                )
+                NavigationBarItem(
+                    selected = false,
+                    onClick = {},
+                    icon = {},
+                    label = { Text("Tasks") }
+                )
+                NavigationBarItem(
+                    selected = true,
+                    onClick = {},
+                    icon = {},
+                    label = { Text("Patterns") }
+                )
+            }
+        },
+        floatingActionButtonPosition = FabPosition.Center,
+        floatingActionButton = {
+            IconButton(
+                onClick = {
+
+                },
+                shapes = IconButtonDefaults.shapes()
+            ) {
+                Icon(
+                    painter = painterResource(Res.drawable.logo),
+                    contentDescription = "Logo"
+                )
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .padding(paddingValues)
+        ){
+            Card {
+                Text("Hello World")
+            }
+        }
+    }
 
 }
 

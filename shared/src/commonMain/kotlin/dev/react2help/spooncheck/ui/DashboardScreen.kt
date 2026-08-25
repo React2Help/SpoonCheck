@@ -38,52 +38,81 @@ import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.spoon
+// TODO SOMEONE TAKE THIS OVER
+@Preview
+@Composable
+fun DashboardScreen(
+    modifier: Modifier = Modifier
+){
 
-@Preview @Composable fun DashboardScreen(modifier: Modifier = Modifier) {}
+
+}
 
 @Preview
 @Composable
-fun SpoonBudgetCard(modifier: Modifier = Modifier) {
+fun SpoonBudgetCard(modifier: Modifier = Modifier){
     // passing in a modifier as the last optional argument is apparently standard practice
     Card(
-        modifier =
-            modifier
-                .sizeIn(maxWidth = 359.dp, maxHeight = 122.dp)
-                .dropShadow(
-                    shape = RectangleShape,
-                    Shadow(radius = 4.dp, offset = DpOffset(0.dp, 4.dp))
-                ),
-        colors = CardDefaults.cardColors(containerColor = Color(0XFFF1FAFA))
-    ) {
-        Column(modifier = Modifier.padding(10.dp).fillMaxSize()) {
-            Row(
+        modifier = modifier
+            .sizeIn(
+                maxWidth = 359.dp,
+                maxHeight = 122.dp
+            )
+            .dropShadow(shape = RectangleShape, Shadow(radius = 4.dp, offset = DpOffset(0.dp, 4.dp))),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0XFFF1FAFA)
+        )
+    ){
+        Column(
+            modifier = Modifier
+                .padding(10.dp)
+                .fillMaxSize()
+        ){
+            Row (
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Today's Spoon Budget", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.size(10.dp))
+                modifier = Modifier
+                    .fillMaxWidth()
+
+            ){
+                Text(
+                    "Today's Spoon Budget",
+                    style = MaterialTheme.typography.titleMedium
+                )
+                Spacer(modifier = Modifier
+                    .size(10.dp)
+                )
                 Card(
                     shape = CircleShape,
-                    colors =
-                        CardDefaults.cardColors(
-                            containerColor = Color.White,
-                            contentColor = Color(0xFF6B4BB3)
-                        ),
-                    modifier =
-                        Modifier.size(89.dp, 32.dp).dropShadow(shape = CircleShape, Shadow(3.dp))
-                ) {
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color.White,
+                        contentColor = Color(0xFF6B4BB3)
+                    ),
+                    modifier = Modifier
+                        .size(89.dp, 32.dp)
+                        .dropShadow(
+                            shape = CircleShape,
+                            Shadow(3.dp)
+                        )
+                ){
                     Row(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.CenterVertically
-                    ) {
+                    ){
                         Icon(
                             painter = painterResource(Res.drawable.spoon),
                             contentDescription = "An icon of a spoon",
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier
+                                .size(16.dp)
                         )
-                        Text("5/10", fontWeight = FontWeight.Bold)
+                        Text(
+                            "5/10",
+                            fontWeight = FontWeight.Bold
+                        )
+
                     }
+
                 }
             }
             Text(
@@ -91,24 +120,36 @@ fun SpoonBudgetCard(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.labelMedium,
                 color = Color(0xFF5F6B7A)
             )
-            Spacer(modifier = Modifier.size(33.dp))
+            Spacer(
+                modifier = Modifier.size(33.dp)
+            )
             SpoonsUsedIndicator()
         }
-    }
-}
 
+        }
+}
 @Preview
 @Composable
-fun SpoonsUsedIndicator(modifier: Modifier = Modifier) {
-    Column {
+fun SpoonsUsedIndicator(modifier: Modifier = Modifier){
+    Column{
         LinearDeterminateIndicator()
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            Text("5 left", color = Color(0xFF5F6B7A))
-            Text("5 used", color = Color(0xFF5F6B7A))
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                ,
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ){
+            Text(
+                "5 left",
+             color = Color(0xFF5F6B7A)
+            )
+            Text(
+                "5 used",
+                color = Color(0xFF5F6B7A)
+            )
         }
     }
 }
-
 @Preview
 @Composable
 fun LinearDeterminateIndicator() {
@@ -131,3 +172,4 @@ fun LinearDeterminateIndicator() {
         )
     }
 }
+
