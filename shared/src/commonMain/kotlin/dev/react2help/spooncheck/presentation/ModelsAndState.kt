@@ -13,13 +13,13 @@ data class DashboardUIState(
     val num_checkins: Int,
     val num_restdays: Int,
     val num_notifications:
-        Int // meant for the badge on the top right Profile icon on the Dashboard screen
+        Int, // meant for the badge on the top right Profile icon on the Dashboard screen
 )
 
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
     val tasks: List<Task> = emptyList(),
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )
 
 data class TaskCreationUIState(
@@ -29,14 +29,13 @@ data class TaskCreationUIState(
     // event which then mutates this variable to true. Other UI elements change their behavior based
     // on this variable to signal the microphone is listening.
     // ---
-
     // fields for the data in the form
     val Title: String = "",
     val Description: String = "",
-    val priority: Priority = Priority.low,
+    val priority: Priority = Priority.Low,
     val DueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val Spoons: Int = 0,
-    val errorMessage: String = ""
+    val errorMessage: String = "",
 )
 
 data class Task(
@@ -45,12 +44,12 @@ data class Task(
     val spoons: Int,
     val priority: Priority,
     val due_date: LocalDate,
-    val due_time: LocalTime
+    val due_time: LocalTime,
 )
 
 enum class Priority {
-    low,
-    medium,
-    high,
-    critical
+    Low,
+    Medium,
+    High,
+    Critical,
 }

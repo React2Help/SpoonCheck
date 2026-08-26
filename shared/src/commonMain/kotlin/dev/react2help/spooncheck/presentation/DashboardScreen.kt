@@ -49,50 +49,72 @@ fun SpoonBudgetCard(modifier: Modifier = Modifier) {
     Card(
         modifier =
             modifier
-                .sizeIn(maxWidth = 359.dp, maxHeight = 122.dp)
+                .sizeIn(
+                    maxWidth = 359.dp,
+                    maxHeight = 122.dp,
+                )
                 .dropShadow(
                     shape = RectangleShape,
                     Shadow(radius = 4.dp, offset = DpOffset(0.dp, 4.dp))
                 ),
-        colors = CardDefaults.cardColors(containerColor = Color(0XFFF1FAFA))
+        colors =
+            CardDefaults.cardColors(
+                containerColor = Color(0XFFF1FAFA),
+            ),
     ) {
-        Column(modifier = Modifier.padding(10.dp).fillMaxSize()) {
+        Column(
+            modifier = Modifier.padding(10.dp).fillMaxSize(),
+        ) {
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text("Today's Spoon Budget", style = MaterialTheme.typography.titleMedium)
-                Spacer(modifier = Modifier.size(10.dp))
+                Text(
+                    "Today's Spoon Budget",
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Spacer(
+                    modifier = Modifier.size(10.dp),
+                )
                 Card(
                     shape = CircleShape,
                     colors =
                         CardDefaults.cardColors(
                             containerColor = Color.White,
-                            contentColor = Color(0xFF6B4BB3)
+                            contentColor = Color(0xFF6B4BB3),
                         ),
                     modifier =
-                        Modifier.size(89.dp, 32.dp).dropShadow(shape = CircleShape, Shadow(3.dp))
+                        Modifier.size(89.dp, 32.dp)
+                            .dropShadow(
+                                shape = CircleShape,
+                                Shadow(3.dp),
+                            ),
                 ) {
                     Row(
                         modifier = Modifier.fillMaxSize(),
                         horizontalArrangement = Arrangement.SpaceEvenly,
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.spoon),
                             contentDescription = "An icon of a spoon",
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
-                        Text("5/10", fontWeight = FontWeight.Bold)
+                        Text(
+                            "5/10",
+                            fontWeight = FontWeight.Bold,
+                        )
                     }
                 }
             }
             Text(
                 "You have a moderate energy day",
                 style = MaterialTheme.typography.labelMedium,
-                color = Color(0xFF5F6B7A)
+                color = Color(0xFF5F6B7A),
             )
-            Spacer(modifier = Modifier.size(33.dp))
+            Spacer(
+                modifier = Modifier.size(33.dp),
+            )
             SpoonsUsedIndicator()
         }
     }
@@ -103,9 +125,18 @@ fun SpoonBudgetCard(modifier: Modifier = Modifier) {
 fun SpoonsUsedIndicator(modifier: Modifier = Modifier) {
     Column {
         LinearDeterminateIndicator()
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
-            Text("5 left", color = Color(0xFF5F6B7A))
-            Text("5 used", color = Color(0xFF5F6B7A))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+        ) {
+            Text(
+                "5 left",
+                color = Color(0xFF5F6B7A),
+            )
+            Text(
+                "5 used",
+                color = Color(0xFF5F6B7A),
+            )
         }
     }
 }
@@ -121,14 +152,14 @@ fun LinearDeterminateIndicator() {
     Column(
         verticalArrangement = Arrangement.spacedBy(12.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         LinearProgressIndicator(
             progress = { currentProgress },
             modifier = Modifier.fillMaxWidth().height(7.dp),
             trackColor = Color(0xFF167C84),
             color = Color(0xFFBDB4E8),
-            strokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap
+            strokeCap = ProgressIndicatorDefaults.CircularDeterminateStrokeCap,
         )
     }
 }

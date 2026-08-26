@@ -81,13 +81,13 @@ fun TaskCard(task: Task, modifier: Modifier = Modifier) {
                     .fillMaxWidth()
                     .padding(5.dp)
                     .weight(1.25f),
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ) {
                 Row {
                     Icon(
                         painter = painterResource(Res.drawable.spoon),
                         contentDescription = "Spoon icon",
-                        Modifier.size(18.dp, 18.dp)
+                        Modifier.size(18.dp, 18.dp),
                     )
                     Text("${task.spoons}")
                 }
@@ -153,13 +153,13 @@ fun TaskCard() {
                     .fillMaxWidth()
                     .padding(5.dp)
                     .weight(1.25f),
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.End,
             ) {
                 Row {
                     Icon(
                         painter = painterResource(Res.drawable.spoon),
                         contentDescription = "Spoon icon",
-                        Modifier.size(18.dp, 18.dp)
+                        Modifier.size(18.dp, 18.dp),
                     )
                     Text("5")
                 }
@@ -299,7 +299,7 @@ fun NewTaskButton() {
     ) {
         Icon(
             painter = painterResource(Res.drawable.spoon),
-            contentDescription = "Spoon Icon Button"
+            contentDescription = "Spoon Icon Button",
         )
     }
 }

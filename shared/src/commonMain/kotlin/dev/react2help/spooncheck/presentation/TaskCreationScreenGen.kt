@@ -47,7 +47,7 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
                 shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
                 onClick = { selectedIndex = index },
                 selected = index == selectedIndex,
-                label = { Text(label) }
+                label = { Text(label) },
             )
         }
     }

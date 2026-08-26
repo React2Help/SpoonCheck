@@ -1,46 +1,68 @@
 package dev.react2help.spooncheck
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-import spooncheck.shared.generated.resources.Res
-import spooncheck.shared.generated.resources.compose_multiplatform
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import dev.react2help.spooncheck.presentation.AuthRoute
+import dev.react2help.spooncheck.presentation.CreateAccountScreen
+import dev.react2help.spooncheck.presentation.DashboardScreen
+import dev.react2help.spooncheck.presentation.LoginScreen
+import dev.react2help.spooncheck.presentation.UserType
+import dev.react2help.spooncheck.presentation.WelcomeScreen
+import dev.react2help.spooncheck.theme.spoonCheckTypography
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier =
-                Modifier.background(MaterialTheme.colorScheme.primaryContainer)
-                    .safeContentPadding()
-                    .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
+    MaterialTheme(typography = spoonCheckTypography()) {
+        val navController = rememberNavController()
+        var selectedUserType by rememberSaveable { mutableStateOf(UserType.Patient) }
+
+        NavHost(
+            navController = navController,
+            startDestination = AuthRoute.WELCOME,
         ) {
-            Button(onClick = { showContent = !showContent }) { Text("Click me!") }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
+            composable(AuthRoute.WELCOME) {
+                WelcomeScreen(
+                    selectedUserType = selectedUserType,
+                    onUserTypeChange = { selectedUserType = it },
+                    onLoginClick = { navController.navigate(AuthRoute.LOGIN) },
+                    onCreateAccountClick = { navController.navigate(AuthRoute.CREATE_ACCOUNT) },
+                )
             }
+
+            composable(AuthRoute.LOGIN) {
+                LoginScreen(
+                    onSignIn = {
+                        navController.navigate(AuthRoute.MAIN) {
+                            popUpTo(AuthRoute.WELCOME) { inclusive = true }
+                        }
+                    },
+                    onNavigateToCreateAccount = {
+                        navController.navigate(AuthRoute.CREATE_ACCOUNT)
+                    },
+                )
+            }
+
+            composable(AuthRoute.CREATE_ACCOUNT) {
+                CreateAccountScreen(
+                    userType = selectedUserType,
+                    onSubmit = {
+                        navController.navigate(AuthRoute.MAIN) {
+                            popUpTo(AuthRoute.WELCOME) { inclusive = true }
+                        }
+                    },
+                )
+            }
+
+            composable(AuthRoute.MAIN) { DashboardScreen() }
         }
     }
 }

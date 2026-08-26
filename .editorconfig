@@ -1,0 +1,9 @@
+root = true
+
+[*.{kt,kts}]
+charset = utf-8
+indent_size = 4
+tab_width = 4
+insert_final_newline = true
+continuation_indent_size = 4
+ktlint_function_naming_ignore_when_annotated_with = Composable

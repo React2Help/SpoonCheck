@@ -4,5 +4,6 @@ enum class Destination {
     DASHBOARD,
     TASKLIST,
     PATTERNS,
-    TASKCREATION
+    TASKCREATION,
 }
+

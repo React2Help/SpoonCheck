@@ -1,3 +1,13 @@
 {
-    "java.configuration.updateBuildConfiguration": "interactive"
+  "[kotlin]": {
+    "editor.defaultFormatter": "shape-app.ktfmtter",
+    "editor.formatOnSave": true
+  },
+  "[kotlinscript]": {
+    "editor.defaultFormatter": "shape-app.ktfmtter",
+    "editor.formatOnSave": true
+  },
+  "ktfmtter.ktfmtVersion": "0.47",
+  "ktfmtter.style": "kotlinlang",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

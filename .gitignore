@@ -3,6 +3,7 @@
 .gradle
 **/build/
 xcuserdata
+.cursorrules
 !src/**/build/
 local.properties
 .idea
