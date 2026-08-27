@@ -201,7 +201,6 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
 
         ) { paddingValues ->
             Box( // use a box so the fields are stacked on top of the image
-
             ){
                 Image(
                     painter = painterResource(Res.drawable.pine_tree_background),
