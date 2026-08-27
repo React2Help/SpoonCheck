@@ -82,10 +82,15 @@ data class Task( // todo add other fields
     val description: String,
     val spoons: Int,
     val priority: Priority,
+    val category: Category,
     val due_date: LocalDate,
     val due_time: LocalTime
 )
-
+enum class Category {
+    HYGIENE,
+    WORK,
+    SCHOOL
+}
 enum class Priority {
     low,
     medium,
