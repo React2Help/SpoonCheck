@@ -1,23 +1,27 @@
 package dev.react2help.spooncheck.presentation
 
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.todayIn
-import kotlin.time.Clock
+
 data class DashboardUIState(
     val total_spoons: Int,
     val consumed_spoons: Int,
     val user_name: String,
     val num_checkins: Int,
     val num_restdays: Int,
-    val num_notifications: Int // meant for the badge on the top right Profile icon on the Dashboard screen
+    val num_notifications:
+        Int // meant for the badge on the top right Profile icon on the Dashboard screen
 )
+
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
     val tasks: List<Task> = emptyList(),
     val errorMessage: String? = null
 )
+
 data class TaskCreationUIState(
     val isLoading: Boolean = false, // tracks if this UI is loading or not
     val isListening: Boolean = false, // boolean for tracking UI state for if the microphone is
@@ -25,7 +29,6 @@ data class TaskCreationUIState(
     // event which then mutates this variable to true. Other UI elements change their behavior based
     // on this variable to signal the microphone is listening.
     // ---
-
 
     // fields for the data in the form
     val Title: String = "",
@@ -35,6 +38,7 @@ data class TaskCreationUIState(
     val Spoons: Int = 0,
     val errorMessage: String = ""
 )
+
 data class Task(
     val title: String,
     val description: String,

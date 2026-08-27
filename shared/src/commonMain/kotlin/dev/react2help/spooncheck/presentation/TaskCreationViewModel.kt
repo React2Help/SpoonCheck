@@ -9,54 +9,35 @@ import kotlinx.datetime.LocalDate
 
 class TaskCreationViewModel : ViewModel() {
     private val _formState = MutableStateFlow(TaskCreationUIState())
-    val formState : StateFlow<TaskCreationUIState> = _formState.asStateFlow()
-    // again, all these functions should perform validation as needed but right now we just assume the new value is "valid" and slap it in
+    val formState: StateFlow<TaskCreationUIState> = _formState.asStateFlow()
+    // again, all these functions should perform validation as needed but right now we just assume
+    // the new value is "valid" and slap it in
     fun onTitleChange(newValue: String) {
-        _formState.update {
-            it.copy(
-                Title = newValue
-            )
-        }
+        _formState.update { it.copy(Title = newValue) }
     }
-    fun onDescriptionChange(newValue: String){
-        _formState.update {
-            it.copy(
-                Description = newValue
-            )
-        }
+
+    fun onDescriptionChange(newValue: String) {
+        _formState.update { it.copy(Description = newValue) }
     }
-    fun onPriorityChange(newValue: Priority){
-        _formState.update {
-            it.copy(
-                priority = newValue
-            )
-        }
+
+    fun onPriorityChange(newValue: Priority) {
+        _formState.update { it.copy(priority = newValue) }
     }
-    fun onSpoonsChange(newValue: Int){
-        _formState.update {
-            it.copy(
-                Spoons = newValue
-            )
-        }
+
+    fun onSpoonsChange(newValue: Int) {
+        _formState.update { it.copy(Spoons = newValue) }
     }
-    fun onDueDateChange(newValue: LocalDate){
-        _formState.update {
-            it.copy(
-                DueDate = newValue
-            )
-        }
+
+    fun onDueDateChange(newValue: LocalDate) {
+        _formState.update { it.copy(DueDate = newValue) }
     }
-    fun submitTask(){
+
+    fun submitTask() {
         val shouldError: Boolean = true
         // insert logic for if a task is a valid task. Show an error if it is not. probs end up
         // being title, due date, spoons at a minimum
-        if(shouldError){
-            _formState.update {
-                it.copy(
-                    errorMessage = "Invalid Task. Please create a valid task"
-                )
-            }
+        if (shouldError) {
+            _formState.update { it.copy(errorMessage = "Invalid Task. Please create a valid task") }
         }
     }
-
 }
