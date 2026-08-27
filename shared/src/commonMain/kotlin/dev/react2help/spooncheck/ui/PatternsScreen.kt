@@ -186,7 +186,23 @@ fun InsightsCard(content: String, modifier: Modifier = Modifier){
  */
 @Preview
 @Composable
-fun InsightsCard(modifier: Modifier = Modifier){
+fun InsightsCard(modifier: Modifier = Modifier){ // modify this as you iterate on the component
+    Card(
+        modifier = Modifier
+            .padding(20.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .padding(15.dp)
+        ){
+            // use filler text, random numbers, etc
+            Text("Insights")
+            Text("Hey There!\n\nNice work this week. You exceeded your goal! However, i believe getting started earlier would lead to many improvements. Additionally, I've noticed you have been forgetting to take the trash out on Tuesdys, see if you can make that a priority this week. Keep at it!")
+        }
+    }
+}
+@Composable
+fun InsightsCard(content: String, modifier: Modifier = Modifier){ // copy and paste the code, and wire in the UI state
     Card(
         modifier = Modifier
             .padding(20.dp)
@@ -196,7 +212,7 @@ fun InsightsCard(modifier: Modifier = Modifier){
                 .padding(15.dp)
         ){
             Text("Insights")
-            Text("Hey There!\n\nNice work this week. You exceeded your goal! However, i belive getting started earlier would lead to many improvements. Additionally, I've noticed you have been forgetting to take the trash out on Tuesdys, see if you can make that a priority this week. Keep at it!")
+            Text(content)
         }
     }
 }
