@@ -1,11 +1,11 @@
 package dev.react2help.spooncheck.modelsandstate
 
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
-import kotlin.time.Clock
 
 data class DashboardUIState(
     val total_spoons: Int,
@@ -13,13 +13,31 @@ data class DashboardUIState(
     val user_name: String,
     val num_checkins: Int,
     val num_restdays: Int,
-    val num_notifications: Int // meant for the badge on the top right Profile icon on the Dashboard screen
+    val num_notifications:
+        Int // meant for the badge on the top right Profile icon on the Dashboard screen
 )
+
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
     val tasks: List<Task> = emptyList(),
+    val listFilterOption: TaskListFilterOptions = TaskListFilterOptions.ALL_TASKS,
+    val spoons: Int,
+    // todo add a field for the Icon of the Account button. Pending learning how to do this.
     val errorMessage: String? = null
 )
+
+sealed interface TaskListActions {
+    data class OnFilterOptionChange(val filterOption: TaskListFilterOptions) : TaskListActions
+    // don't think I need to hoist the state for the list.
+    // Until we implement more complex functionality.
+}
+
+enum class TaskListFilterOptions {
+    ALL_TASKS,
+    Todo,
+    Done
+}
+
 data class TaskCreationUIState(
     val isLoading: Boolean = false, // tracks if this UI is loading or not
     val isListening: Boolean = false, // boolean for tracking UI state for if the microphone is
@@ -28,53 +46,46 @@ data class TaskCreationUIState(
     // on this variable to signal the microphone is listening.
     // ---
 
-
     // fields for the data in the form
-    val Title: String = "",
-    val Description: String = "",
+    val title: String = "",
+    val description: String = "",
     val priority: Priority = Priority.medium,
-    val DueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
-    val Spoons: Int = 0,
-    val NotificationsOn: Boolean = false,
-    val IsRecurring: Boolean = false,
-    val Category: String = "Hygiene",
+    val dueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
+    val spoons: Int = 0,
+    val notificationsOn: Boolean = false,
+    val isRecurring: Boolean = false,
+    val category: String = "Hygiene",
     // should startdate be nullable?
-    val StartDate: LocalTime =
+    val startDate: LocalTime =
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
     val errorMessage: String = ""
 )
-sealed interface TaskCreationActions{ // defining types for our actions, so the callback functions
+
+sealed interface TaskCreationActions { // defining types for our actions, so the callback functions
     // must satisfy this contract
-    data object OnDelete: TaskCreationActions // since these actions don't need arguments, they are
+    data object OnDelete : TaskCreationActions // since these actions don't need arguments, they are
     // specified as objects
-    data object OnSave: TaskCreationActions
+    data object OnSave : TaskCreationActions
+
     data class OnTitleChanged( // these actions need arguments, so they are specified as classes
-        val Title: String
-    ): TaskCreationActions
-    data class OnDescriptionChanged(
-        val Description : String
-    ): TaskCreationActions
-    data class OnNotificationsChanged(
-        val ShouldNotify: Boolean
-    ): TaskCreationActions
-    data class OnDueTimeChanged(
-        val DueTime: LocalTime
-    ): TaskCreationActions
-    data class OnDueDateChanged(
-        val DueDate: LocalDate
-    ): TaskCreationActions
-    data class OnSpoonSelectedChanged(
-        val Spoons: Int
-    ): TaskCreationActions
-    data class OnCategoryChanged(
-        val Category:String
-    ): TaskCreationActions
-    data class OnPriorityChanged(
-        val Priority: Priority
-    ): TaskCreationActions
-    data class OnRecurrsChanged(
-        val Recurs: Boolean
-    ): TaskCreationActions
+        val title: String
+    ) : TaskCreationActions
+
+    data class OnDescriptionChanged(val description: String) : TaskCreationActions
+
+    data class OnNotificationsChanged(val shouldNotify: Boolean) : TaskCreationActions
+
+    data class OnDueTimeChanged(val dueTime: LocalTime) : TaskCreationActions
+
+    data class OnDueDateChanged(val dueDate: LocalDate) : TaskCreationActions
+
+    data class OnSpoonSelectedChanged(val spoons: Int) : TaskCreationActions
+
+    data class OnCategoryChanged(val category: String) : TaskCreationActions
+
+    data class OnPriorityChanged(val priority: Priority) : TaskCreationActions
+
+    data class OnRecurrsChanged(val recurs: Boolean) : TaskCreationActions
 }
 
 data class Task( // todo add other fields
@@ -86,11 +97,13 @@ data class Task( // todo add other fields
     val due_date: LocalDate,
     val due_time: LocalTime
 )
+
 enum class Category {
     HYGIENE,
     WORK,
     SCHOOL
 }
+
 enum class Priority {
     low,
     medium,

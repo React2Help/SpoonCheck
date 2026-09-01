@@ -4,24 +4,24 @@ import androidx.lifecycle.ViewModel
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.repositories.TaskRepository
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
 
 class TaskCreationViewModel(
-    private val taskRepository: TaskRepository
+    @Suppress("UnusedPrivateProperty") private val taskRepository: TaskRepository
 ) : ViewModel() {
 
-    private val _uiState =
-        MutableStateFlow(TaskCreationUIState())
+    private val _uiState = MutableStateFlow(TaskCreationUIState())
     val uiState: StateFlow<TaskCreationUIState> = _uiState.asStateFlow()
-    // again, all these functions should perform validation as needed but right now we just assume the new value is "valid" and slap it in
+    // again, all these functions should perform validation as needed but right now we just assume
+    // the new value is "valid" and slap it in
 
-    fun OnAction(Action: TaskCreationActions){ //
+    fun onAction(action: TaskCreationActions) { //
         /*
         defining these callback functions with types means we can rest assured whatever
         parameters a particular Action requires will be there without any "does this parameter -
@@ -29,96 +29,61 @@ class TaskCreationViewModel(
         It all looks quite boilerplate, and it is, but that's what you get! At some point you
         just accept the boilerplate.
         */
-        when(Action){
+        when (action) {
             is TaskCreationActions.OnSave -> {
                 /*
-                    1. Validate
-                    2. persist // todo build out data layer
-                    3. report success or failure // todo
-                 */
-                if (_uiState.value.Title == ""){
+                   1. Validate
+                   2. persist // todo build out data layer
+                   3. report success or failure // todo
+                */
+                if (_uiState.value.title == "") {
                     _uiState.update { currentState ->
-                        currentState.copy(
-                            errorMessage = "Title Cannot Be Blank!"
-                        )
+                        currentState.copy(errorMessage = "Title Cannot Be Blank!")
                     }
                     return
-                }else if(_uiState.value.StartDate < Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time){
+                } else if (
+                    _uiState.value.startDate <
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+                ) {
                     _uiState.update { currentState ->
-                        currentState.copy(
-                            errorMessage = "Start Date Cannot Be Before Today!"
-                        )
+                        currentState.copy(errorMessage = "Start Date Cannot Be Before Today!")
                     }
                 }
                 // todo
                 return
             }
             is TaskCreationActions.OnDelete -> { // todo
-
             }
             is TaskCreationActions.OnTitleChanged -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        Title = Action.Title
-                    )
-                }
+                _uiState.update { currentState -> currentState.copy(title = action.title) }
             }
             is TaskCreationActions.OnDueDateChanged -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        DueDate = Action.DueDate
-                    )
-                }
+                _uiState.update { currentState -> currentState.copy(dueDate = action.dueDate) }
             }
             is TaskCreationActions.OnCategoryChanged -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        Category = Action.Category
-                    )
-                }
+                _uiState.update { currentState -> currentState.copy(category = action.category) }
             }
             is TaskCreationActions.OnDescriptionChanged -> {
                 _uiState.update { currentState ->
-                    currentState.copy(
-                        Description = Action.Description
-                    )
+                    currentState.copy(description = action.description)
                 }
             }
             is TaskCreationActions.OnNotificationsChanged -> {
                 _uiState.update { currentState ->
-                    currentState.copy(
-                        NotificationsOn = Action.ShouldNotify
-                    )
+                    currentState.copy(notificationsOn = action.shouldNotify)
                 }
             }
             is TaskCreationActions.OnPriorityChanged -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        priority = Action.Priority
-                    )
-                }
+                _uiState.update { currentState -> currentState.copy(priority = action.priority) }
             }
             is TaskCreationActions.OnSpoonSelectedChanged -> { // todo
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        Spoons = Action.Spoons
-                    )
-                }
+                _uiState.update { currentState -> currentState.copy(spoons = action.spoons) }
             }
             is TaskCreationActions.OnDueTimeChanged -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        StartDate = Action.DueTime
-                    )
-                }
+                _uiState.update { currentState -> currentState.copy(startDate = action.dueTime) }
             }
             is TaskCreationActions.OnRecurrsChanged -> {
-                _uiState.update { currentState ->
-                    currentState.copy(
-                        IsRecurring = Action.Recurs
-                    )
-
-                }
+                _uiState.update { currentState -> currentState.copy(isRecurring = action.recurs) }
             }
         }
     }

@@ -39,12 +39,11 @@ import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.spoon
 
-// TODO SOMEONE TAKE THIS OVER
+// TODO SOMEONE TAKE THIS OVER Placeholder until dashboard UI is implemented.
 @Preview
 @Composable
-fun DashboardScreen(
-    modifier: Modifier = Modifier
-) {
+private fun DashboardScreenPreview(modifier: Modifier = Modifier) {
+    SpoonBudgetCard(modifier = modifier)
 }
 
 @Preview
