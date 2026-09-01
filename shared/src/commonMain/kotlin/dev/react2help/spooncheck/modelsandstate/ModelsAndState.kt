@@ -18,8 +18,24 @@ data class DashboardUIState(
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
     val tasks: List<Task> = emptyList(),
+    val listFilterOption: TaskListFilterOptions = TaskListFilterOptions.`All Tasks`,
+    val spoons: Int,
+    // todo add a field for the Icon of the Account button. Pending learning how to do this.
     val errorMessage: String? = null
 )
+sealed interface TaskListActions {
+    data class onFilterOptionChange(
+        val filterOption: TaskListFilterOptions
+    ): TaskListActions
+    // don't think I need to hoist the state for the list.
+    // Until we implement more complex functionality.
+    
+}
+enum class TaskListFilterOptions {
+    `All Tasks`,
+    Todo,
+    Done
+}
 data class TaskCreationUIState(
     val isLoading: Boolean = false, // tracks if this UI is loading or not
     val isListening: Boolean = false, // boolean for tracking UI state for if the microphone is
