@@ -22,7 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 
 @Preview
 @Composable
-fun TaskCreationScreen() {
+fun TaskCreationScreenGen() {
     Scaffold(
         topBar = { TopAppBar(title = { Text("Create Task", fontWeight = FontWeight.Bold) }) }
     ) { paddingValues ->
