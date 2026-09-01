@@ -1,0 +1,74 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$DashboardUIState$val consumed_spoons: Int</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$DashboardUIState$val num_checkins: Int</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$DashboardUIState$val num_notifications: Int // meant for the badge on the top right Profile icon on the Dashboard screen</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$DashboardUIState$val num_restdays: Int</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$DashboardUIState$val total_spoons: Int</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$DashboardUIState$val user_name: String</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$Task$val due_date: LocalDate</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$Task$val due_time: LocalTime</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$TaskCreationUIState$val Description: String = ""</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$TaskCreationUIState$val DueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault())</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$TaskCreationUIState$val Spoons: Int = 0</ID>
+    <ID>ConstructorParameterNaming:ModelsAndState.kt$TaskCreationUIState$val Title: String = ""</ID>
+    <ID>EmptyClassBlock:TaskListViewModel.kt$TaskListViewModel${}</ID>
+    <ID>EmptyFunctionBlock:DashboardScreen.kt${}</ID>
+    <ID>EnumNaming:ModelsAndState.kt$Priority$critical</ID>
+    <ID>EnumNaming:ModelsAndState.kt$Priority$high</ID>
+    <ID>EnumNaming:ModelsAndState.kt$Priority$low</ID>
+    <ID>EnumNaming:ModelsAndState.kt$Priority$medium</ID>
+    <ID>FunctionNaming:Drawable0.commonMain.kt$@InternalResourceApi internal fun _collectCommonMainDrawable0Resources(map: MutableMap&lt;String, DrawableResource&gt;)</ID>
+    <ID>FunctionNaming:Font0.commonMain.kt$@InternalResourceApi internal fun _collectCommonMainFont0Resources(map: MutableMap&lt;String, FontResource&gt;)</ID>
+    <ID>LongMethod:TaskListScreen.kt$@Composable fun TaskCard(task: Task, modifier: Modifier = Modifier)</ID>
+    <ID>LongMethod:TaskListScreen.kt$@Preview @Composable fun TaskCard()</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0.5f</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0XFFF1FAFA</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0xFF167C84</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0xFF5F6B7A</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0xFF6B4BB3</ID>
+    <ID>MagicNumber:DashboardScreen.kt$0xFFBDB4E8</ID>
+    <ID>MagicNumber:SharedLogicAndroidHostTest.kt$SharedLogicAndroidHostTest$3</ID>
+    <ID>MagicNumber:TaskListScreen.kt$0xFF27567D</ID>
+    <ID>MagicNumber:TaskListScreen.kt$0xFF5D82A2</ID>
+    <ID>MagicNumber:TaskListScreen.kt$0xFFD0D7DB</ID>
+    <ID>MagicNumber:TaskListScreen.kt$1.25f</ID>
+    <ID>MagicNumber:TaskListScreen.kt$3f</ID>
+    <ID>MatchingDeclarationName:Platform.android.kt$AndroidPlatform : Platform</ID>
+    <ID>MatchingDeclarationName:Platform.ios.kt$IOSPlatform : Platform</ID>
+    <ID>MatchingDeclarationName:TaskCreationUIState.kt$TaskCreationUIEvent</ID>
+    <ID>MatchingDeclarationName:TaskListUIState.kt$TaskListUIEvent</ID>
+    <ID>MaxLineLength:Drawable0.commonMain.kt$map.put("add_circle_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24", Res.drawable.add_circle_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)</ID>
+    <ID>MaxLineLength:Drawable0.commonMain.kt$map.put("arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24", Res.drawable.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)</ID>
+    <ID>MaxLineLength:Drawable0.commonMain.kt$map.put("arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24", Res.drawable.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)</ID>
+    <ID>MaxLineLength:Drawable0.commonMain.kt$map.put("calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24", Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)</ID>
+    <ID>MaxLineLength:Drawable0.commonMain.kt$map.put("schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24", Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)</ID>
+    <ID>MaxLineLength:Res.kt$Res$public suspend</ID>
+    <ID>MaxLineLength:Res.kt$Res$public</ID>
+    <ID>ModifierMissing:TaskListScreen.kt$TaskListScreen</ID>
+    <ID>NewLineAtEndOfFile:MainActivity.kt$dev.react2help.spooncheck.MainActivity.kt</ID>
+    <ID>NewLineAtEndOfFile:Platform.android.kt$dev.react2help.spooncheck.Platform.android.kt</ID>
+    <ID>NewLineAtEndOfFile:SharedLogicAndroidHostTest.kt$dev.react2help.spooncheck.SharedLogicAndroidHostTest.kt</ID>
+    <ID>PreviewPublic:App.kt$App</ID>
+    <ID>PreviewPublic:DashboardScreen.kt$DashboardScreen</ID>
+    <ID>PreviewPublic:DashboardScreen.kt$LinearDeterminateIndicator</ID>
+    <ID>PreviewPublic:DashboardScreen.kt$SpoonBudgetCard</ID>
+    <ID>PreviewPublic:DashboardScreen.kt$SpoonsUsedIndicator</ID>
+    <ID>PreviewPublic:MainActivity.kt$AppAndroidPreview</ID>
+    <ID>PreviewPublic:TaskCreationScreen.kt$TaskCreationScreen</ID>
+    <ID>PreviewPublic:TaskListScreen.kt$DropdownSectionButton</ID>
+    <ID>PreviewPublic:TaskListScreen.kt$NewTaskButton</ID>
+    <ID>PreviewPublic:TaskListScreen.kt$TaskCard</ID>
+    <ID>PreviewPublic:TaskListScreen.kt$TaskStatusFilter</ID>
+    <ID>PreviewPublic:WelcomeScreen.kt$WelcomeScreen</ID>
+    <ID>UnusedParameter:DashboardScreen.kt$modifier: Modifier = Modifier</ID>
+    <ID>UnusedParameter:TaskCreationScreen.kt$modifier: Modifier = Modifier</ID>
+    <ID>UnusedParameter:TaskListScreen.kt$modifier: Modifier = Modifier</ID>
+    <ID>UnusedParameter:TaskListScreen.kt$viewModel: TaskListViewModel</ID>
+    <ID>UnusedPrivateProperty:DashboardScreen.kt$val scope = rememberCoroutineScope() // Create a coroutine scope</ID>
+    <ID>UnusedPrivateProperty:DashboardScreen.kt$var loading by remember { mutableStateOf(true) }</ID>
+    <ID>WildcardImport:App.kt$import androidx.compose.runtime.*</ID>
+  </CurrentIssues>
+</SmellBaseline>
