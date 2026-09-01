@@ -1,9 +1,8 @@
-package com.example.patterns.ui.theme
+package dev.react2help.spooncheck.theme
 
 import androidx.compose.ui.graphics.Color
 
-// Image-derived palette.
-// TODO: Fine-tune these values if you have original design tokens/exported colors.
+// Image-derived palette. Fine-tune when design tokens are finalized.
 
 val SageBackground = Color(0xFFD3D8D3)
 val CardWhite = Color(0xFFFFFFFF)
@@ -20,8 +19,7 @@ val MutedInk = Color(0xFF5D6665)
 val OutlineGray = Color(0xFF87918F)
 val DividerGray = Color(0xFFD8D8D8)
 
-// Dark-theme approximations.
-// TODO: Replace with dedicated dark-mode design tokens if your app has them.
+// Dark-theme approximations until dedicated dark-mode tokens exist.
 val DarkBackground = Color(0xFF111614)
 val DarkSurface = Color(0xFF191F1D)
 val DarkSurfaceVariant = Color(0xFF252A29)
