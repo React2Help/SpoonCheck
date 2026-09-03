@@ -1,10 +1,18 @@
+@file:Suppress(
+    "LongMethod",
+    "MagicNumber",
+    "ModifierMissing",
+    "ModifierNotUsedAtRoot",
+    "ModifierReused",
+    "PreviewPublic",
+)
+
 package dev.react2help.spooncheck.ui
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -61,6 +69,7 @@ import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.viewmodels.TaskListViewModel
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -73,24 +82,20 @@ import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-import spooncheck.shared.generated.resources.spoon
-import spooncheck.shared.generated.resources.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-import spooncheck.shared.generated.resources.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.logo
 import spooncheck.shared.generated.resources.ocean_view
-import kotlin.time.Clock
-
+import spooncheck.shared.generated.resources.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.spoon
+import spooncheck.shared.generated.resources.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 
 @Composable
-fun TaskListScreen(viewModel: TaskListViewModel){
+fun TaskListScreen(viewModel: TaskListViewModel) {
     var selected by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text("Task List")
-                },
+                title = { Text("Task List") },
                 actions = {
                     InputChip(
                         selected = selected,
@@ -105,28 +110,21 @@ fun TaskListScreen(viewModel: TaskListViewModel){
                 }
             )
         },
-        bottomBar = {
-
-        },
+        bottomBar = {},
         floatingActionButtonPosition = FabPosition.Center,
-        floatingActionButton = {
-
-        }
+        floatingActionButton = {}
     ) { paddingValues ->
-
     }
-
 }
+
 @Preview
 @Composable
-fun TaskListScreen(){
+fun TaskListScreen() {
     var selected by remember { mutableStateOf(false) }
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
-                title = {
-                    Text("Task List")
-                },
+                title = { Text("Task List") },
                 actions = {
                     InputChip( // spoon selection button
                         selected = selected,
@@ -140,7 +138,7 @@ fun TaskListScreen(){
                     )
                     IconButton( // account button
                         onClick = {}
-                    ){
+                    ) {
                         Icon(
                             painter = painterResource(Res.drawable.logo), // todo figure out why
                             // todo it does not render
@@ -149,8 +147,6 @@ fun TaskListScreen(){
                     }
                 }
             )
-
-
         },
         bottomBar = {
             NavigationBar {
@@ -178,124 +174,94 @@ fun TaskListScreen(){
         floatingActionButton = {
             IconButton(
                 onClick = { // todo
-
                 },
                 shapes = IconButtonDefaults.shapes()
             ) {
-                Icon(
-                    painter = painterResource(Res.drawable.logo),
-                    contentDescription = "Logo"
-                )
+                Icon(painter = painterResource(Res.drawable.logo), contentDescription = "Logo")
             }
         }
     ) { paddingValues ->
-        BoxWithConstraints(modifier = Modifier.fillMaxSize()){
+        BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val boxWithConstraintsScope = this
             Image(
-                imageResource(
-                    Res.drawable.ocean_view
-                ),
+                imageResource(Res.drawable.ocean_view),
                 contentDescription = "Background image",
-                        contentScale = ContentScale.Crop, // scale the image so it fills the screen and
+                contentScale = ContentScale.Crop, // scale the image so it fills the screen and
                 // the parts that overflow off the screen are clipped
-                modifier = Modifier
-                    .fillMaxHeight()
+                modifier = Modifier.fillMaxHeight()
             )
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-
+                modifier = Modifier.fillMaxSize().padding(paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally
-            ){
+            ) {
                 TaskStatusFilter()
                 Spacer(modifier = Modifier.size(8.dp))
                 Card(
                     colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(8.dp),
-                    modifier = Modifier
-                        .widthIn(max = boxWithConstraintsScope.maxWidth * 0.9f)
-                        .heightIn(min = boxWithConstraintsScope.maxHeight * 0.25f)
+                    modifier =
+                        Modifier.widthIn(max = boxWithConstraintsScope.maxWidth * 0.9f)
+                            .heightIn(min = boxWithConstraintsScope.maxHeight * 0.25f)
                 ) {
-                    val tasks :List<Task> = List(8) { i ->
-                    Task(
-                        "Task $i",
-                        "description $i",
-                        i,
-                        priority = Priority.entries.get(i % Priority.entries.size),
-                        Category.entries.get(i % Category.entries.size),
-                        Clock.System.now().toLocalDateTime(
-                            TimeZone.currentSystemDefault()
-                        ).date,
-                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-                    )
+                    val tasks: List<Task> =
+                        List(8) { i ->
+                            Task(
+                                "Task $i",
+                                "description $i",
+                                i,
+                                priority = Priority.entries.get(i % Priority.entries.size),
+                                Category.entries.get(i % Category.entries.size),
+                                Clock.System.now()
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .date,
+                                Clock.System.now()
+                                    .toLocalDateTime(TimeZone.currentSystemDefault())
+                                    .time
+                            )
+                        }
 
-                }
-
-                    val sectionDatii = List(Category.entries.size) { i ->
-                        SectionData(
-                            header = Category.entries.get(i).name,
-                            tasks = tasks.filter { task ->
-                                task.category == Category.entries.get(i)
-                            }
-                        )
-                    }
+                    val sectionDatii =
+                        List(Category.entries.size) { i ->
+                            SectionData(
+                                header = Category.entries.get(i).name,
+                                tasks =
+                                    tasks.filter { task ->
+                                        task.category == Category.entries.get(i)
+                                    }
+                            )
+                        }
                     ExpandableList(sectionDatii)
-
                 }
             }
         }
-
     }
-
 }
 
 @Composable
-fun SectionItem(
-    task: Task,
-    modifier: Modifier = Modifier
-){
+fun SectionItem(task: Task, modifier: Modifier = Modifier) {
     Card(
-        modifier = Modifier
-            .background(Color(0xFFf6feff))
-            .height(80.dp)
-            .fillMaxWidth(),
+        modifier = Modifier.background(Color(0xFFf6feff)).height(80.dp).fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier
-                .background(Color(0xfff6feff))
-                .fillMaxSize(),
+            modifier = Modifier.background(Color(0xfff6feff)).fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-
-            ) {
-            Column(
-                Modifier.weight(3f)
-
-                    .padding(5.dp)
-            ) { // LHS
-                Text(
-                    task.title,
-                    fontWeight = FontWeight.W900
-                )
-                Text(
-                    task.description
-                )
+        ) {
+            Column(Modifier.weight(3f).padding(5.dp)) { // LHS
+                Text(task.title, fontWeight = FontWeight.W900)
+                Text(task.description)
             }
 
-            val categoryModifier = when(task.priority){
-                Priority.critical -> modifier.background(Color(0xffd4e2e3))
-                Priority.high -> modifier.background(Color(0xFFEAD3B6))
-                Priority.medium -> modifier.background(Color(0xFFfef2dc))
-                Priority.low -> modifier.background(Color(0xFFfef2dc))
-            }
+            val categoryModifier =
+                when (task.priority) {
+                    Priority.critical -> modifier.background(Color(0xffd4e2e3))
+                    Priority.high -> modifier.background(Color(0xFFEAD3B6))
+                    Priority.medium -> modifier.background(Color(0xFFfef2dc))
+                    Priority.low -> modifier.background(Color(0xFFfef2dc))
+                }
             Column( // RHS
-
-                modifier = categoryModifier
-                    .fillMaxHeight()
-                    .fillMaxWidth()
-                    .padding(5.dp)
-                    .weight(1.25f),
+                modifier =
+                    categoryModifier.fillMaxHeight().fillMaxWidth().padding(5.dp).weight(1.25f),
                 horizontalAlignment = Alignment.Start
             ) {
                 Row {
@@ -308,9 +274,11 @@ fun SectionItem(
                 }
                 Row {
                     Icon(
-
                         contentDescription = "low priority symbol",
-                        painter = painterResource(Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                        painter =
+                            painterResource(
+                                Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            ),
                         modifier = Modifier.size(18.dp, 18.dp)
                     )
                     Text("${task.priority}")
@@ -319,30 +287,38 @@ fun SectionItem(
                     Icon(
                         modifier = modifier.size(18.dp, 18.dp),
                         contentDescription = "Clock Symbol",
-                        painter = painterResource(Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                        painter =
+                            painterResource(
+                                Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            )
                     )
-                    val twelveHourFormat = LocalTime.Format{
-                        amPmHour(padding = Padding.ZERO)
-                        char(':')
-                        minute()
-                        char(' ')
-                        amPmMarker("AM", "PM")
-                    }
+                    val twelveHourFormat =
+                        LocalTime.Format {
+                            amPmHour(padding = Padding.ZERO)
+                            char(':')
+                            minute()
+                            char(' ')
+                            amPmMarker("AM", "PM")
+                        }
                     Text(task.due_time.format(twelveHourFormat))
                 }
                 Row {
                     Icon(
                         modifier = modifier.size(18.dp, 18.dp),
                         contentDescription = "Calendar Symbol",
-                        painter = painterResource(Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                        painter =
+                            painterResource(
+                                Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            )
                     )
-                    val dateFormat = LocalDate.Format {
-                        monthNumber()
-                        char('/')
-                        day()
-                        char('/')
-                        year()
-                    }
+                    val dateFormat =
+                        LocalDate.Format {
+                            monthNumber()
+                            char('/')
+                            day()
+                            char('/')
+                            year()
+                        }
                     Text(task.due_date.format(dateFormat))
                 }
             }
@@ -352,27 +328,18 @@ fun SectionItem(
 
 @Preview
 @Composable
-fun TaskCard(){
+fun TaskCard() {
     Card(
-        modifier = Modifier
-            .size(width = 300.dp, height = 80.dp),
+        modifier = Modifier.size(width = 300.dp, height = 80.dp),
         border = BorderStroke(1.dp, Color.Black)
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
-
         ) {
-            Column(
-                Modifier.weight(3f)
-                    .padding(5.dp)
-            ) { // LHS
-                Text(
-                    "Title",
-                    fontWeight = FontWeight.W900
-                )
+            Column(Modifier.weight(3f).padding(5.dp)) { // LHS
+                Text("Title", fontWeight = FontWeight.W900)
                 Text(
                     "Description with even more things to do. More text that lowkey means nothing...",
                 )
@@ -395,9 +362,11 @@ fun TaskCard(){
                 }
                 Row {
                     Icon(
-
                         contentDescription = "low priority symbol",
-                        painter = painterResource(Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                        painter =
+                            painterResource(
+                                Res.drawable.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            ),
                         modifier = Modifier.size(18.dp, 18.dp)
                     )
                     Text("High")
@@ -406,7 +375,10 @@ fun TaskCard(){
                     Icon(
                         modifier = Modifier.size(18.dp, 18.dp),
                         contentDescription = "Clock Symbol",
-                        painter = painterResource(Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                        painter =
+                            painterResource(
+                                Res.drawable.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            )
                     )
                     Text("12:30PM")
                 }
@@ -414,134 +386,119 @@ fun TaskCard(){
                     Icon(
                         modifier = Modifier.size(18.dp, 18.dp),
                         contentDescription = "Calendar Symbol",
-                        painter = painterResource(Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24)
+                        painter =
+                            painterResource(
+                                Res.drawable.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            )
                     )
                     Text("06/07/2026")
                 }
             }
         }
-
     }
-
 }
 
 @Preview
 @Composable
-fun TaskStatusFilter(){
+fun TaskStatusFilter() {
     var selectedIndex by remember { mutableIntStateOf(0) }
     val options = listOf("All Tasks", "Todo", "Done")
-    SingleChoiceSegmentedButtonRow(
-
-    ) { options.forEachIndexed { index, label ->
-        SegmentedButton(
-            shape = SegmentedButtonDefaults.itemShape(
-                index = index,
-                count = options.size
-            ),
-            onClick = {selectedIndex = index},
-            selected = index == selectedIndex,
-            label = {Text(label)},
-            colors = SegmentedButtonColors(
-                activeContainerColor = Color(0xFF27567D),
-                activeContentColor = Color(0xFFD0D7DB),
-                activeBorderColor = MaterialTheme.colorScheme.outline,
-                inactiveContainerColor = Color(0xFFD0D7DB),
-                inactiveContentColor = Color(0xFF27567D),
-                inactiveBorderColor = MaterialTheme.colorScheme.outline,
-                disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+    SingleChoiceSegmentedButtonRow() {
+        options.forEachIndexed { index, label ->
+            SegmentedButton(
+                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                onClick = { selectedIndex = index },
+                selected = index == selectedIndex,
+                label = { Text(label) },
+                colors =
+                    SegmentedButtonColors(
+                        activeContainerColor = Color(0xFF27567D),
+                        activeContentColor = Color(0xFFD0D7DB),
+                        activeBorderColor = MaterialTheme.colorScheme.outline,
+                        inactiveContainerColor = Color(0xFFD0D7DB),
+                        inactiveContentColor = Color(0xFF27567D),
+                        inactiveBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                    )
             )
-        )
+        }
     }
-    }
-
 }
 
 @Composable
-fun SectionHeader(text : String = "Important", isExpanded: Boolean = false, onHeaderClicked: () -> Unit){
+fun SectionHeader(
+    text: String = "Important",
+    isExpanded: Boolean = false,
+    onHeaderClick: () -> Unit
+) {
     // A Component. A Horizontal element with a "dropdown" chevron, a label, and a plus icon
 
-
     Row(
-        Modifier
-            .fillMaxWidth()
-            .background(Color.White),
+        Modifier.fillMaxWidth().background(Color.White),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton( // drop down icon
-            onClick = { onHeaderClicked()},
-            colors = IconButtonDefaults.iconButtonColors(
-                containerColor = Color.Transparent,
-                contentColor = Color(0xFF5D82A2),
-                disabledContentColor = Color.Unspecified,
-                disabledContainerColor = Color.Unspecified
-            ),
-
-        ){
+            onClick = { onHeaderClick() },
+            colors =
+                IconButtonDefaults.iconButtonColors(
+                    containerColor = Color.Transparent,
+                    contentColor = Color(0xFF5D82A2),
+                    disabledContentColor = Color.Unspecified,
+                    disabledContainerColor = Color.Unspecified
+                ),
+        ) {
             Icon(
-                painter = if (isExpanded) painterResource(Res.drawable.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24) else painterResource(Res.drawable.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                painter =
+                    if (isExpanded)
+                        painterResource(
+                            Res.drawable.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                        )
+                    else
+                        painterResource(
+                            Res.drawable.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                        ),
                 contentDescription = if (isExpanded) "drop down icon" else "drop up icon",
                 modifier = Modifier.size(24.dp)
             )
         }
-        Text(
-            text = text,
-            color = Color(0xFF5D82A2),
-            style = MaterialTheme.typography.labelMedium
-        )
+        Text(text = text, color = Color(0xFF5D82A2), style = MaterialTheme.typography.labelMedium)
         Spacer(Modifier.size(50.dp))
-
     }
-
 }
+
 @Composable
 fun ExpandableList(sections: List<SectionData>) {
     val expandedMapSaver =
         listSaver<SnapshotStateMap<Int, Boolean>, Boolean>(
-            save = { map ->
-                sections.indices.map { index ->
-                    map[index] ?: true
-                }
-            },
+            save = { map -> sections.indices.map { index -> map[index] ?: true } },
             restore = { savedValues ->
                 savedValues
-                    .mapIndexed { index, isExpanded ->
-                        index to isExpanded
-                    }
+                    .mapIndexed { index, isExpanded -> index to isExpanded }
                     .toMutableStateMap()
             }
         )
 
-    val isExpandedMap = rememberSaveable(
-        sections.size,
-        saver = expandedMapSaver
-    ) {
-        sections.indices
-            .map { index -> index to true }
-            .toMutableStateMap()
-    }
+    val isExpandedMap =
+        rememberSaveable(sections.size, saver = expandedMapSaver) {
+            sections.indices.map { index -> index to true }.toMutableStateMap()
+        }
 
-    LazyColumn(
-        modifier = Modifier
-            .padding(8.dp)
-            .background(Color.White)
-    ) {
+    LazyColumn(modifier = Modifier.padding(8.dp).background(Color.White)) {
         sections.forEachIndexed { index, sectionData ->
             Section(
                 sectionData = sectionData,
                 isExpanded = isExpandedMap[index] ?: true,
-                onHeaderClick = {
-                    isExpandedMap[index] =
-                        !(isExpandedMap[index] ?: true)
-                }
+                onHeaderClick = { isExpandedMap[index] = !(isExpandedMap[index] ?: true) }
             )
         }
     }
 }
+
 fun LazyListScope.Section(
     sectionData: SectionData,
     isExpanded: Boolean,
@@ -552,33 +509,24 @@ fun LazyListScope.Section(
         SectionHeader(
             text = sectionData.header,
             isExpanded = isExpanded,
-            onHeaderClicked = onHeaderClick
+            onHeaderClick = onHeaderClick
         )
     }
-    if(isExpanded){
-        items(sectionData.tasks){
-            SectionItem(task = it)
-        }
+    if (isExpanded) {
+        items(sectionData.tasks) { SectionItem(task = it) }
     }
-
 }
 
 @Preview
 @Composable
-fun NewTaskButton(){
-    var clicked by remember {mutableStateOf(false)}
+fun NewTaskButton() {
+    var clicked by remember { mutableStateOf(false) }
 
     IconButton(
-        onClick =  { clicked = !clicked},
+        onClick = { clicked = !clicked },
         shape = CircleShape,
-        modifier = Modifier
-            .dropShadow(
-                shape = CircleShape,
-                shadow = Shadow(
-                    4.dp
-                )
-            )
-    ){
+        modifier = Modifier.dropShadow(shape = CircleShape, shadow = Shadow(4.dp))
+    ) {
         Icon(
             painter = painterResource(Res.drawable.spoon),
             contentDescription = "Spoon Icon Button"
@@ -627,7 +575,4 @@ fun TaskList(tasks :List<Task> = List(8) { i ->
 }
  */
 
-
 data class SectionData(val header: String, val tasks: List<Task>)
-
-

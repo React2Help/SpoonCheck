@@ -1,6 +1,7 @@
+@file:Suppress("LongMethod", "MaxLineLength", "PreviewPublic")
+
 package dev.react2help.spooncheck.ui
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,9 +60,9 @@ import spooncheck.shared.generated.resources.spoon
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
-fun PatternsScreen(){
+fun PatternsScreen() {
 
-    PatternsTheme{
+    PatternsTheme {
         Scaffold(
             floatingActionButtonPosition = FabPosition.Center,
             topBar = {
@@ -69,9 +70,7 @@ fun PatternsScreen(){
                     title = { Text("Patterns") },
                     actions = {
                         IconButton(
-                            onClick = {
-                                println()
-                            },
+                            onClick = { println() },
                             shape = RectangleShape,
                             content = {
                                 Icon(
@@ -118,48 +117,27 @@ fun PatternsScreen(){
                 }
             }
         ) { paddingValues ->
-            Column(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-            ) {
-                Card(
-                    modifier = Modifier
-                        .padding(20.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                    ) {
-                        Text("Completed in the Last 7 Days",
-                            fontWeight = FontWeight.Bold)
+            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+                Card(modifier = Modifier.padding(20.dp)) {
+                    Column(modifier = Modifier.padding(15.dp)) {
+                        Text("Completed in the Last 7 Days", fontWeight = FontWeight.Bold)
                     }
                 }
-                Card(
-                    modifier = Modifier
-                        .padding(20.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                    ) {
-                        Text("Baseline Spoon Economy",
-                            fontWeight = FontWeight.Bold)
+                Card(modifier = Modifier.padding(20.dp)) {
+                    Column(modifier = Modifier.padding(15.dp)) {
+                        Text("Baseline Spoon Economy", fontWeight = FontWeight.Bold)
                     }
                 }
-                Card(
-                    modifier = Modifier
-                        .padding(20.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(15.dp)
-                    ) {
+                Card(modifier = Modifier.padding(20.dp)) {
+                    Column(modifier = Modifier.padding(15.dp)) {
+                        Text("Insights", fontWeight = FontWeight.Bold)
                         Text(
-                            "Insights",
-                            fontWeight = FontWeight.Bold
+                            "Hey There!\n\nNice work this week. You exceeded your goal! However, " +
+                                "i belive getting started earlier would lead to many improvements. " +
+                                "Additionally, I've noticed you have been forgetting to take the " +
+                                "trash out on Tuesdys, see if you can make that a priority this " +
+                                "week. Keep at it!"
                         )
-                        Text("Hey There!\n\nNice work this week. You exceeded your goal! However, i belive getting started earlier would lead to many improvements. Additionally, I've noticed you have been forgetting to take the trash out on Tuesdys, see if you can make that a priority this week. Keep at it!")
                     }
                 }
             }
@@ -186,48 +164,45 @@ fun InsightsCard(content: String, modifier: Modifier = Modifier){
  */
 @Preview
 @Composable
-fun InsightsCard(modifier: Modifier = Modifier){ // modify this as you iterate on the component
-    Card(
-        modifier = Modifier
-            .padding(20.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(15.dp)
-        ){
+fun InsightsCard(modifier: Modifier = Modifier) {
+    Card(modifier = modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(15.dp)) {
             // use filler text, random numbers, etc
             Text("Insights")
-            Text("Hey There!\n\nNice work this week. You exceeded your goal! However, i believe getting started earlier would lead to many improvements. Additionally, I've noticed you have been forgetting to take the trash out on Tuesdys, see if you can make that a priority this week. Keep at it!")
+            Text(
+                "Hey There!\n\nNice work this week. You exceeded your goal! However, i believe " +
+                    "getting started earlier would lead to many improvements. Additionally, I've " +
+                    "noticed you have been forgetting to take the trash out on Tuesdys, see if you " +
+                    "can make that a priority this week. Keep at it!"
+            )
         }
     }
 }
+
 @Composable
-fun InsightsCard(content: String, modifier: Modifier = Modifier){ // copy and paste the code, and wire in the UI state
-    Card(
-        modifier = Modifier
-            .padding(20.dp)
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(15.dp)
-        ){
+fun InsightsCard(
+    content: String,
+    modifier: Modifier = Modifier
+) { // copy and paste the code, and wire in the UI state
+    Card(modifier = modifier.padding(20.dp)) {
+        Column(modifier = Modifier.padding(15.dp)) {
             Text("Insights")
             Text(content)
         }
     }
 }
+
 data class ChartPoint(
     val x: Double,
     val y: Double,
 )
+
 @Composable
 fun SimpleLineChart(
     points: List<ChartPoint>,
     modifier: Modifier = Modifier,
 ) {
-    val modelProducer = remember {
-        CartesianChartModelProducer()
-    }
+    val modelProducer = remember { CartesianChartModelProducer() }
 
     LaunchedEffect(points) {
         modelProducer.runTransaction {
@@ -240,33 +215,41 @@ fun SimpleLineChart(
         }
     }
 
-    val point = LineCartesianLayer.Point(
-        component = ShapeComponent(
-            shape = CircleShape,
+    val point =
+        LineCartesianLayer.Point(
+            component =
+                ShapeComponent(
+                    shape = CircleShape,
+                )
         )
-    )
-    val line = LineCartesianLayer.rememberLine(
-        pointProvider = LineCartesianLayer.PointProvider.single(
-            point,
-        ),
-    )
+    val line =
+        LineCartesianLayer.rememberLine(
+            pointProvider =
+                LineCartesianLayer.PointProvider.single(
+                    point,
+                ),
+        )
 
-    val lineLayer = rememberLineCartesianLayer(
-        lineProvider = LineCartesianLayer.LineProvider.series(
-            line,
-        ),
-    )
+    val lineLayer =
+        rememberLineCartesianLayer(
+            lineProvider =
+                LineCartesianLayer.LineProvider.series(
+                    line,
+                ),
+        )
 
     CartesianChartHost(
         modifier = modifier,
         modelProducer = modelProducer,
-        chart = rememberCartesianChart(
-            lineLayer,
-            startAxis = VerticalAxis.rememberStart(),
-            bottomAxis = HorizontalAxis.rememberBottom(),
-        ),
+        chart =
+            rememberCartesianChart(
+                lineLayer,
+                startAxis = VerticalAxis.rememberStart(),
+                bottomAxis = HorizontalAxis.rememberBottom(),
+            ),
     )
 }
+
 @Preview(
     showBackground = true,
     widthDp = 400,
@@ -274,18 +257,17 @@ fun SimpleLineChart(
 )
 @Composable
 private fun SimpleLineChartPreview() {
-    val fakePoints = listOf(
-        ChartPoint(x = 0.0, y = 2.0),
-        ChartPoint(x = 1.0, y = 5.0),
-        ChartPoint(x = 2.0, y = 3.0),
-        ChartPoint(x = 3.0, y = 8.0),
-        ChartPoint(x = 4.0, y = 6.0),
-    )
+    val fakePoints =
+        listOf(
+            ChartPoint(x = 0.0, y = 2.0),
+            ChartPoint(x = 1.0, y = 5.0),
+            ChartPoint(x = 2.0, y = 3.0),
+            ChartPoint(x = 3.0, y = 8.0),
+            ChartPoint(x = 4.0, y = 6.0),
+        )
 
     SimpleLineChart(
         points = fakePoints,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(250.dp),
+        modifier = Modifier.fillMaxWidth().height(250.dp),
     )
 }

@@ -30,41 +30,27 @@ import spooncheck.shared.generated.resources.welcome_screen_background
 @Preview
 @Composable
 fun WelcomeScreen() {
-    Box(
-        contentAlignment = Alignment.TopStart,
-        modifier = Modifier.fillMaxSize()
-    ) {
+    Box(contentAlignment = Alignment.TopStart, modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(Res.drawable.welcome_screen_background),
             contentDescription = "Background Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .fillMaxSize()
-                .border(4.dp, Color.Black)
+            modifier = Modifier.fillMaxSize().border(4.dp, Color.Black)
         )
 
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(24.dp)
+            modifier = Modifier.fillMaxSize().padding(24.dp)
         ) {
-            Text(
-                text = "Welcome To SpoonCheck",
-                fontStyle = FontStyle.Italic
-            )
+            Text(text = "Welcome To SpoonCheck", fontStyle = FontStyle.Italic)
 
             Image(
                 painter = painterResource(Res.drawable.logo),
                 contentDescription = "Logo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .size(183.dp)
-                    .clip(CircleShape)
+                modifier = Modifier.size(183.dp).clip(CircleShape)
             )
-
-
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -73,19 +59,15 @@ fun WelcomeScreen() {
                 Button(
                     onClick = { println("Provider Clicked") },
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .size(109.dp, 56.dp)
+                    modifier = Modifier.size(109.dp, 56.dp)
                 ) {
-                    Text(
-                        "Provider"
-                    )
+                    Text("Provider")
                 }
 
                 Button(
                     onClick = { println("Patient Clicked!") },
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier
-                        .size(109.dp, 56.dp)
+                    modifier = Modifier.size(109.dp, 56.dp)
                 ) {
                     Text("Patient")
                 }
@@ -93,6 +75,3 @@ fun WelcomeScreen() {
         }
     }
 }
-
-
-

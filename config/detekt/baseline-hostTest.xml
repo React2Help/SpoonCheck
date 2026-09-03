@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MagicNumber:SharedLogicAndroidHostTest.kt$SharedLogicAndroidHostTest$3</ID>
+    <ID>NewLineAtEndOfFile:SharedLogicAndroidHostTest.kt$dev.react2help.spooncheck.SharedLogicAndroidHostTest.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>

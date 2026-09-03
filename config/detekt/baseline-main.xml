@@ -1,0 +1,8 @@
+<?xml version="1.0" ?>
+<SmellBaseline>
+  <ManuallySuppressedIssues/>
+  <CurrentIssues>
+    <ID>MatchingDeclarationName:Platform.android.kt$AndroidPlatform : Platform</ID>
+    <ID>NewLineAtEndOfFile:Platform.android.kt$dev.react2help.spooncheck.Platform.android.kt</ID>
+  </CurrentIssues>
+</SmellBaseline>
