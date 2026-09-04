@@ -1,19 +1,20 @@
 package dev.react2help.spooncheck.viewmodels
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
+import dev.react2help.spooncheck.modelsandstate.validateTask
 import dev.react2help.spooncheck.repositories.TaskRepository
-import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.coroutines.launch
 
 class TaskCreationViewModel(
-    @Suppress("UnusedPrivateProperty") private val taskRepository: TaskRepository
+    @Suppress("UnusedPrivateProperty") private val repository: TaskRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TaskCreationUIState())
@@ -30,30 +31,8 @@ class TaskCreationViewModel(
         just accept the boilerplate.
         */
         when (action) {
-            is TaskCreationActions.OnSave -> {
-                /*
-                   1. Validate
-                   2. persist // todo build out data layer
-                   3. report success or failure // todo
-                */
-                if (_uiState.value.title == "") {
-                    _uiState.update { currentState ->
-                        currentState.copy(errorMessage = "Title Cannot Be Blank!")
-                    }
-                    return
-                } else if (
-                    _uiState.value.startDate <
-                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-                ) {
-                    _uiState.update { currentState ->
-                        currentState.copy(errorMessage = "Start Date Cannot Be Before Today!")
-                    }
-                }
-                // todo
-                return
-            }
-            is TaskCreationActions.OnDelete -> { // todo
-            }
+            is TaskCreationActions.Save -> saveTask()
+            is TaskCreationActions.Cancel -> cancelTask()
             is TaskCreationActions.OnTitleChanged -> {
                 _uiState.update { currentState -> currentState.copy(title = action.title) }
             }
@@ -82,8 +61,56 @@ class TaskCreationViewModel(
             is TaskCreationActions.OnDueTimeChanged -> {
                 _uiState.update { currentState -> currentState.copy(startDate = action.dueTime) }
             }
-            is TaskCreationActions.OnRecurrsChanged -> {
+            is TaskCreationActions.OnRecursChanged -> {
                 _uiState.update { currentState -> currentState.copy(isRecurring = action.recurs) }
+            }
+        }
+    }
+
+    private fun cancelTask() {
+        TODO("Not yet implemented")
+    }
+
+    private fun updateState(transform: TaskCreationUIState.() -> TaskCreationUIState) {
+        _uiState.update(transform)
+    }
+
+    /*
+    private fun resetForm() {
+        _uiState.value = TaskCreationUIState()
+    }
+    */
+    private fun nextTaskId(): Long = repository.tasks.value.maxOfOrNull(Task::id)?.plus(1) ?: 1L
+
+    private fun saveTask() {
+        val current = _uiState.value
+        // validate
+        // attempt save
+        // report errors else report success
+        if (!validateTask(current)) { // TODO: workshop error message. Make it field aware.
+            updateState { copy(errorMessage = "Please input a valid task.") }
+            return
+        }
+        viewModelScope.launch {
+            updateState { copy(isLoading = true, errorMessage = "") }
+
+            try {
+                repository.save(
+                    Task(
+                        id = nextTaskId(),
+                        title = current.title,
+                        description = current.description,
+                        spoons = current.spoons,
+                        priority = current.priority,
+                        category = current.category,
+                        dueDate = current.dueDate,
+                        dueTime = current.dueTime,
+                        isDone = false
+                    )
+                )
+                updateState { copy(isLoading = false, wasSaved = true) }
+            } catch (_: Exception) {
+                updateState { copy(isLoading = false) }
             }
         }
     }

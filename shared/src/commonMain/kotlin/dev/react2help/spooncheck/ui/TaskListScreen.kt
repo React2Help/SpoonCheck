@@ -206,6 +206,7 @@ fun TaskListScreen() {
                     val tasks: List<Task> =
                         List(8) { i ->
                             Task(
+                                i.toLong(),
                                 "Task $i",
                                 "description $i",
                                 i,
@@ -238,8 +239,9 @@ fun TaskListScreen() {
 }
 
 @Composable
-fun SectionItem(task: Task, modifier: Modifier = Modifier) {
+fun SectionItem(task: Task, modifier: Modifier = Modifier) { // task card
     Card(
+        onClick = {},
         modifier = Modifier.background(Color(0xFFf6feff)).height(80.dp).fillMaxWidth(),
     ) {
         Row(
@@ -300,7 +302,7 @@ fun SectionItem(task: Task, modifier: Modifier = Modifier) {
                             char(' ')
                             amPmMarker("AM", "PM")
                         }
-                    Text(task.due_time.format(twelveHourFormat))
+                    Text(task.dueTime?.format(twelveHourFormat) ?: "--:--")
                 }
                 Row {
                     Icon(
@@ -319,7 +321,7 @@ fun SectionItem(task: Task, modifier: Modifier = Modifier) {
                             char('/')
                             year()
                         }
-                    Text(task.due_date.format(dateFormat))
+                    Text(task.dueDate?.format(dateFormat) ?: "--/--/--")
                 }
             }
         }
