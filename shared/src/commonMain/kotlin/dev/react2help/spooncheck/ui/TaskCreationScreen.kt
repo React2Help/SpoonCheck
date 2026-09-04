@@ -89,7 +89,7 @@ fun TaskCreationScreen(
                         IconButton(
                             onClick = {
                                 onAction(
-                                    TaskCreationActions.OnDelete
+                                    TaskCreationActions.Cancel
                                 ) // todo define this callback function here
                             }
                         ) {
@@ -106,7 +106,7 @@ fun TaskCreationScreen(
                     floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
                             onClick = {
-                                onAction(TaskCreationActions.OnSave)
+                                onAction(TaskCreationActions.Save)
                             }, // add a callback function here
                         ) {
                             Icon(
@@ -285,7 +285,7 @@ fun DueDateAndNotifications(
                     Switch(
                         checked = recurringSwitchIsChecked,
                         onCheckedChange = { // lambda AKA anonymous function
-                            onAction(TaskCreationActions.OnRecurrsChanged(it))
+                            onAction(TaskCreationActions.OnRecursChanged(it))
                         }
                     )
                 }
