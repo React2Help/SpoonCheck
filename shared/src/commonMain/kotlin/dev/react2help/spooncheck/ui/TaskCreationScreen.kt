@@ -86,23 +86,19 @@ import spooncheck.shared.generated.resources.spoon_unfilled
 // true if 4 digit entry is a valid HH:MM time
 fun isValidTime(raw: String): Boolean {
     if (raw.length != 4) return false
-    val h = raw.substring(0, 2).toIntOrNull() ?: return false
-    val m = raw.substring(2, 4).toIntOrNull() ?: return false
-    return h in 0..23 && m in 0..59
+    val h = raw.substring(0, 2).toIntOrNull()
+    val m = raw.substring(2, 4).toIntOrNull()
+    return h != null && m != null && h in 0..23 && m in 0..59
 }
 
 // true if the 6 digit entry is a valid mm/dd/yy date
 fun isValidDate(raw: String): Boolean {
     if (raw.length != 6) return false
-    val month = raw.substring(0, 2).toIntOrNull() ?: return false
-    val day = raw.substring(2, 4).toIntOrNull() ?: return false
-    val year = (raw.substring(4, 6).toIntOrNull() ?: return false) + 2000
-    return try {
-        LocalDate(year, month, day)
-        true
-    } catch (e: IllegalArgumentException) {
-        false
-    }
+    val month = raw.substring(0, 2).toIntOrNull()
+    val day = raw.substring(2, 4).toIntOrNull()
+    val year = raw.substring(4, 6).toIntOrNull()
+    return month != null && day != null && year != null &&
+        runCatching { LocalDate(year + 2000, month, day) }.isSuccess
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -267,8 +263,8 @@ fun TaskCreationScreenGen(
                         dateFieldState = dateFieldState,
                         timeError = timeError,
                         dateError = dateError,
-                        onTimeErrorCleared = { timeError = false },
-                        onDateErrorCleared = { dateError = false }
+                        onClearTimeError = { timeError = false },
+                        onClearDateError = { dateError = false }
                     )
                     SpoonSelectionCard()
                     CategoryAndPriorityCard()
@@ -406,11 +402,11 @@ fun DueDateAndNotifications(
     recurringSwitchIsChecked: Boolean,
     timeFieldState: TextFieldState,
     dateFieldState: TextFieldState,
+    modifier: Modifier = Modifier,
     timeError: Boolean = false,
     dateError: Boolean = false,
-    onTimeErrorCleared: () -> Unit = {},
-    onDateErrorCleared: () -> Unit = {},
-    modifier: Modifier = Modifier
+    onClearTimeError: () -> Unit = {},
+    onClearDateError: () -> Unit = {},
 ) {
     Card(modifier = Modifier) {
         Column(modifier = modifier.padding(10.dp)) {
@@ -468,7 +464,7 @@ fun DueDateAndNotifications(
                             modifier =
                                 modifier.size(18.dp).clickable {
                                     timeFieldState.clearText()
-                                    onTimeErrorCleared()
+                                    onClearTimeError()
                                 }
                         )
                     },
@@ -489,7 +485,7 @@ fun DueDateAndNotifications(
                         ),
                     modifier =
                         modifier.weight(1f).onFocusChanged {
-                            if (it.isFocused) onTimeErrorCleared()
+                            if (it.isFocused) onClearTimeError()
                         }
                 )
                 // date field, chars only, 6 digits max
@@ -508,7 +504,7 @@ fun DueDateAndNotifications(
                             modifier =
                                 modifier.size(18.dp).clickable {
                                     dateFieldState.clearText()
-                                    onDateErrorCleared()
+                                    onClearDateError()
                                 }
                         )
                     },
@@ -533,7 +529,7 @@ fun DueDateAndNotifications(
                         ),
                     modifier =
                         modifier.weight(1f).onFocusChanged {
-                            if (it.isFocused) onDateErrorCleared()
+                            if (it.isFocused) onClearDateError()
                         }
                 )
             }
