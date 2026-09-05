@@ -36,9 +36,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
+import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Switch
+import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TopAppBar
@@ -51,6 +53,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -70,7 +73,7 @@ import spooncheck.shared.generated.resources.spoon_unfilled
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun TaskCreationScreen(
+fun TaskCreationScreenGen(
     onAction: (TaskCreationActions) -> Unit,
     state: TaskCreationUIState
 ) { // function that houses all UI on this screen.
@@ -132,7 +135,7 @@ fun TaskCreationScreen(
                     modifier = Modifier.fillMaxHeight()
                 )
                 Column( // arrange all the fields in a column
-                    verticalArrangement = Arrangement.SpaceAround, // control how the elements are
+                    verticalArrangement = Arrangement.spacedBy(2.dp), // control how the elements are
                     // placed on the Vertical axis.
                     modifier = Modifier.fillMaxSize().padding(paddingValues)
                 ) {
@@ -160,7 +163,9 @@ fun TaskCreationScreen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
-fun TaskCreationScreen() { // function that houses all UI on this screen.
+fun TaskCreationScreenGen() { // function that houses all UI on this screen.
+    val titleState = rememberTextFieldState()
+    val descriptionState = rememberTextFieldState()
     MaterialTheme {
         Scaffold(
             topBar = { // define the Header
@@ -187,6 +192,8 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
                     floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
                             onClick = {}, // add a callback function here
+                            containerColor = Color(0xFF7799A4),
+                            contentColor = Color(0xFFFFFFFF),
                         ) {
                             Icon(
                                 painter =
@@ -211,20 +218,43 @@ fun TaskCreationScreen() { // function that houses all UI on this screen.
                     modifier = Modifier.fillMaxHeight()
                 )
                 Column( // arrange all the fields in a column
-                    verticalArrangement = Arrangement.SpaceBetween, // control how the elements are
+                    verticalArrangement = Arrangement.spacedBy(6.dp), // control how the elements are
                     // placed on the Vertical axis.
                     modifier = Modifier.fillMaxSize().padding(paddingValues)
                 ) {
                     TextField(
-                        state = rememberTextFieldState(),
+                        state = titleState,
                         placeholder = { Text("Title") },
-                        modifier = Modifier.fillMaxWidth().alpha(0.85f)
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                                contentDescription = "Clear title",
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clickable { titleState.clearText() }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     )
                     TextField(
-                        state = rememberTextFieldState(),
+                        state = descriptionState,
                         placeholder = { Text("Description") },
-                        modifier = Modifier.fillMaxWidth().alpha(0.85f)
-                    )
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                                contentDescription = "Clear description",
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clickable { descriptionState.clearText() }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+
+                        )
                     DueDateAndNotifications()
                     SpoonSelectionCard()
                     CategoryAndPriorityCard()
@@ -362,7 +392,7 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
     var recurringSwitchChecked by remember { mutableStateOf(true) }
     var timeFieldState = rememberTextFieldState("")
     var dateFieldState = rememberTextFieldState("")
-    Card(modifier = Modifier.alpha(0.85f)) {
+    Card(modifier = Modifier) {
         /*
          * the elements within this card can be grouped into two groups: The switches and the
          * input fields.These groups are stacked in a column.
@@ -391,7 +421,14 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         checked = notifySwitchIsChecked,
                         onCheckedChange = { // lambda AKA anonymous function
                             notifySwitchIsChecked = it
-                        }
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color(0xFFFFFFFF),
+                            checkedTrackColor = Color(0xFF2E4F57),
+                            //uncheckedThumbColor = Color(0xFF27567D),
+                            //uncheckedTrackColor = Color(0xFFD0D7DB),
+                            //uncheckedBorderColor = Color(0xFF27567D),
+                        )
                     )
                 }
 
@@ -405,7 +442,11 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         checked = recurringSwitchChecked,
                         onCheckedChange = { // lambda AKA anonymous function
                             recurringSwitchChecked = it
-                        }
+                        },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color(0xFFFFFFFF),
+                            checkedTrackColor = Color(0xFF2E4F57),
+                        )
                     )
                 }
             }
@@ -416,7 +457,7 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                  */
                 OutlinedTextField(
                     state = timeFieldState,
-                    label = { Text("Select Due Time") },
+                    label = { Text("HH:MM:SS") },
                     trailingIcon = {
                         Icon(
                             painter =
@@ -446,7 +487,7 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                 )
                 OutlinedTextField(
                     state = dateFieldState,
-                    label = { Text("Select Due Date") },
+                    label = { Text("mm/dd/yy") },
                     trailingIcon = {
                         Icon(
                             painter =
@@ -539,7 +580,7 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier) {
 
     val maxSpoons = 5
     var selectedSpoons by remember { mutableIntStateOf(2) }
-    Card(modifier = modifier.fillMaxWidth().alpha(0.85f)) {
+    Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = modifier.padding(12.dp).fillMaxWidth()) {
             Text("Spoons Required")
             Row( // how to center this in the card:
@@ -575,7 +616,7 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
     val menuItems = listOf<String>("Hygiene", "Household", "Work", "Recreation", "Social", "Pets")
     var selectedOption by remember { mutableIntStateOf(0) }
     var expanded by remember { mutableStateOf(false) }
-    Card(modifier = Modifier.fillMaxWidth().alpha(0.85f)) {
+    Card(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Category")
@@ -632,7 +673,22 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
                 // in the view model instead, but for now I'm leaving that until it's time to
                 // refactor
                 selected = index == selectedIndex,
-                label = { Text(label) }
+                label = { Text(label) },
+                colors =
+                    SegmentedButtonColors(
+                        activeContainerColor = Color(0xFF2E4F57),
+                        activeContentColor = Color(0xFFFFFFFF),
+                        activeBorderColor = MaterialTheme.colorScheme.outline,
+                        inactiveContainerColor = Color(0xFF7799A4),
+                        inactiveContentColor = Color(0xFFFFFFFF),
+                        inactiveBorderColor = MaterialTheme.colorScheme.outline,
+                        disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                    )
             )
         }
     }
