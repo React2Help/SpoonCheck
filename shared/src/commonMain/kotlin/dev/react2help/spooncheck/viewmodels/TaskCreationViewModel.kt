@@ -83,35 +83,7 @@ class TaskCreationViewModel(
     private fun nextTaskId(): Long = repository.tasks.value.maxOfOrNull(Task::id)?.plus(1) ?: 1L
 
     private fun saveTask() {
-        val current = _uiState.value
-        // validate
-        // attempt save
-        // report errors else report success
-        if (!validateTask(current)) { // TODO: workshop error message. Make it field aware.
-            updateState { copy(errorMessage = "Please input a valid task.") }
-            return
-        }
-        viewModelScope.launch {
-            updateState { copy(isLoading = true, errorMessage = "") }
-
-            try {
-                repository.save(
-                    Task(
-                        id = nextTaskId(),
-                        title = current.title,
-                        description = current.description,
-                        spoons = current.spoons,
-                        priority = current.priority,
-                        category = current.category,
-                        dueDate = current.dueDate,
-                        dueTime = current.dueTime,
-                        isDone = false
-                    )
-                )
-                updateState { copy(isLoading = false, wasSaved = true) }
-            } catch (_: Exception) {
-                updateState { copy(isLoading = false) }
-            }
-        }
+        //validation is handled in the UI before this is called.  Then save and navigate
+        updateState { copy(wasSaved = true) }
     }
 }

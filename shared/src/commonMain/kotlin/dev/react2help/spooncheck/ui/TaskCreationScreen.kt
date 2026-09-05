@@ -22,8 +22,8 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.foundation.text.input.OutputTransformation
-import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.clearText
 import androidx.compose.foundation.text.input.delete
 import androidx.compose.foundation.text.input.insert
@@ -60,16 +60,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.foundation.background
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
-import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -79,6 +83,28 @@ import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
 
+//true if 4 digit entry is a valid HH:MM time
+fun isValidTime(raw: String): Boolean {
+    if (raw.length != 4) return false
+    val h = raw.substring(0, 2).toIntOrNull() ?: return false
+    val m = raw.substring(2, 4).toIntOrNull() ?: return false
+    return h in 0..23 && m in 0..59
+}
+
+//true if the 6 digit entry is a valid mm/dd/yy date
+fun isValidDate(raw: String): Boolean {
+    if (raw.length != 6) return false
+    val month = raw.substring(0, 2).toIntOrNull() ?: return false
+    val day   = raw.substring(2, 4).toIntOrNull() ?: return false
+    val year  = (raw.substring(4, 6).toIntOrNull() ?: return false) + 2000
+    return try {
+        LocalDate(year, month, day)
+        true
+    } catch (e: IllegalArgumentException) {
+        false
+    }
+}
+
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TaskCreationScreenGen(
@@ -87,6 +113,14 @@ fun TaskCreationScreenGen(
 ) { // function that houses all UI on this screen.
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
+    val timeFieldState = rememberTextFieldState()
+    val dateFieldState = rememberTextFieldState()
+
+    //error flags when save is pressed with invalid input
+    var titleError by remember { mutableStateOf(false) }
+    var timeError  by remember { mutableStateOf(false) }
+    var dateError  by remember { mutableStateOf(false) }
+
     MaterialTheme {
         Scaffold(
             topBar = { // define the Header
@@ -112,7 +146,20 @@ fun TaskCreationScreenGen(
                     },
                     floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
-                            onClick = {}, // add a callback function here
+                            onClick = {
+                                //validate all fields before saving
+                                val isTitleOk = titleState.text.isNotBlank()
+                                val isTimeOk  = isValidTime(timeFieldState.text.toString())
+                                val isDateOk  = isValidDate(dateFieldState.text.toString())
+
+                                titleError = !isTitleOk
+                                timeError  = !isTimeOk
+                                dateError  = !isDateOk
+
+                                if (isTitleOk && isTimeOk && isDateOk) {
+                                    onAction(TaskCreationActions.Save)
+                                }
+                            },
                             containerColor = Color(0xFF7799A4),
                             contentColor = Color(0xFFFFFFFF),
                         ) {
@@ -140,12 +187,24 @@ fun TaskCreationScreenGen(
                 )
                 Column( // arrange all the fields in a column
                     verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
-                    // placed on the Vertical axis.
-                    modifier = Modifier.fillMaxSize().padding(paddingValues)
+                    // placed on the Vertical axis (now set for scrolling).
+                    modifier = Modifier.fillMaxSize()
+                                        .verticalScroll(rememberScrollState())
+                                        .padding(paddingValues)
                 ) {
                     TextField(
                         state = titleState,
                         placeholder = { Text("Title") },
+                        isError = titleError,
+                        supportingText = {
+                            if (titleError) Text(
+                                "Title cannot be empty",
+                                //color = Color(0xFF531E1E),
+                                modifier = Modifier
+                                    .background(Color(0xFFFFFFFF))
+                                    .padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                        },
                         trailingIcon = {
                             Icon(
                                 painter = painterResource(
@@ -154,10 +213,15 @@ fun TaskCreationScreenGen(
                                 contentDescription = "Clear title",
                                 modifier = Modifier
                                     .size(18.dp)
-                                    .clickable { titleState.clearText() },
+                                    .clickable {
+                                        titleState.clearText()
+                                        titleError = false
+                                    },
                             )
                         },
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .onFocusChanged { if (it.isFocused) titleError = false },
                         colors = TextFieldDefaults.colors(
                             focusedIndicatorColor = Color(0xFF2E4F57),
                             focusedTextColor = Color.Black,
@@ -175,7 +239,7 @@ fun TaskCreationScreenGen(
                                 ),
                                 contentDescription = "Clear description",
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(14.dp)
                                     .clickable { descriptionState.clearText() }
                             )
                         },
@@ -187,7 +251,17 @@ fun TaskCreationScreenGen(
                             cursorColor = Color.Black
                         ),
                     )
-                    DueDateAndNotifications()
+                    DueDateAndNotifications(
+                        onAction = onAction,
+                        notifySwitchIsChecked = state.notificationsOn,
+                        recurringSwitchIsChecked = state.isRecurring,
+                        timeFieldState = timeFieldState,
+                        dateFieldState = dateFieldState,
+                        timeError = timeError,
+                        dateError = dateError,
+                        onTimeErrorCleared = { timeError = false },
+                        onDateErrorCleared = { dateError = false }
+                    )
                     SpoonSelectionCard()
                     CategoryAndPriorityCard()
                 }
@@ -255,8 +329,10 @@ fun TaskCreationScreenGen() { // function that houses all UI on this screen.
                 )
                 Column( // arrange all the fields in a column
                     verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
-                    // placed on the Vertical axis.
-                    modifier = Modifier.fillMaxSize().padding(paddingValues)
+                    // placed on the Vertical axis (now set for scrolling).
+                    modifier = Modifier.fillMaxSize()
+                                        .verticalScroll(rememberScrollState())
+                                        .padding(paddingValues)
                 ) {
                     TextField(
                         state = titleState,
@@ -290,7 +366,7 @@ fun TaskCreationScreenGen() { // function that houses all UI on this screen.
                                 ),
                                 contentDescription = "Clear description",
                                 modifier = Modifier
-                                    .size(18.dp)
+                                    .size(14.dp)
                                     .clickable { descriptionState.clearText() }
                             )
                         },
@@ -316,117 +392,157 @@ fun DueDateAndNotifications(
     onAction: (TaskCreationActions) -> Unit,
     notifySwitchIsChecked: Boolean,
     recurringSwitchIsChecked: Boolean,
-    @Suppress("UnusedParameter") dateTime: LocalDateTime,
+    timeFieldState: TextFieldState,
+    dateFieldState: TextFieldState,
+    timeError: Boolean = false,
+    dateError: Boolean = false,
+    onTimeErrorCleared: () -> Unit = {},
+    onDateErrorCleared: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-
-    Card(modifier = Modifier.alpha(0.85f)) {
-        /*
-         * the elements within this card can be grouped into two groups: The switches and the
-         * input fields.These groups are stacked in a column.
-         */
-        Column( // column to stack the two groups
-            modifier = modifier.padding(10.dp)
-        ) {
-            /*
-             * The switches can be thought of as a row of rows:
-             * Row(Row(Text Switch) Row(Text Switch))
-             */
-            Row( // Wrapping Row
+    Card(modifier = Modifier) {
+        Column(modifier = modifier.padding(10.dp)) {
+            Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
-                    // place children next to each other inline
                     verticalAlignment = Alignment.CenterVertically,
-                    // , with a little space between each
-                    // other
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text("Notify Me")
-
                     Switch(
                         checked = notifySwitchIsChecked,
-                        onCheckedChange = { // lambda AKA anonymous function
-                            onAction(TaskCreationActions.OnNotificationsChanged(it))
-                        }
+                        onCheckedChange = { onAction(TaskCreationActions.OnNotificationsChanged(it)) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color(0xFFFFFFFF),
+                            checkedTrackColor = Color(0xFF2E4F57),
+                        )
                     )
                 }
-
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text("Recurring")
-
                     Switch(
                         checked = recurringSwitchIsChecked,
-                        onCheckedChange = { // lambda AKA anonymous function
-                            onAction(TaskCreationActions.OnRecursChanged(it))
-                        }
+                        onCheckedChange = { onAction(TaskCreationActions.OnRecursChanged(it)) },
+                        colors = SwitchDefaults.colors(
+                            checkedThumbColor = Color(0xFFFFFFFF),
+                            checkedTrackColor = Color(0xFF2E4F57),
+                        )
                     )
                 }
             }
-            Row { // row of text fields
-                /*
-                 * outputTransformation is used to automatically insert colons and forward
-                 * slashes while the user types
-                 */
-                /*
+            Row {
+                //time field, digits only, max 4 chars
                 OutlinedTextField(
-                    state = rememberTextFieldState(),
-                    label = { Text("Select Due Time")},
+                    state = timeFieldState,
+                    label = { Text("HH:MM") },
+                    isError = timeError,
+                    supportingText = {
+                        if (timeError) Text("Enter a valid time (e.g. 10:30)")
+                    },
                     trailingIcon = {
                         Icon(
                             painter = painterResource(
                                 Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
                             ),
-                            contentDescription = "Cancel Icon",
-
-                            modifier = modifier
-                                .size(18.dp) // scale the icon up so it is easily clickable
-                                .clickable{// lambda AKA anonymous function
-                                    timeFieldState.clearText()
-                                }
-                        )},
-
-                    placeholder = {Text("HH:MM:SS")},
-                    outputTransformation = OutputTransformation{// lambda AKA anonymous function
-                        if(length > 2) insert(2, ":")
-                        if(length > 5) insert(5, ":")
+                            contentDescription = "Clear time",
+                            modifier = modifier.size(18.dp).clickable {
+                                timeFieldState.clearText()
+                                onTimeErrorCleared()
+                            }
+                        )
                     },
-                    onValueChange = {
-                        onAction()
+                    inputTransformation = InputTransformation {
+                        val digitsOnly = asCharSequence().filter { it.isDigit() }.toString()
+                        replace(0, length, digitsOnly)
+                        if (length > 4) delete(4, length)
                     },
+                    outputTransformation = OutputTransformation {
+                        if (length > 2) insert(2, ":")
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF2E4F57),
+                        focusedLabelColor = Color(0xFF2E4F57),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color.Black
+                    ),
                     modifier = modifier
-                        // weight() is used so each TextField attempts to occupy
-                        // equal space
                         .weight(1f)
+                        .onFocusChanged { if (it.isFocused) onTimeErrorCleared() }
                 )
+                //date field, chars only, 6 digits max
                 OutlinedTextField(
                     state = dateFieldState,
-                    label = {Text("Select Due Date")},
+                    label = { Text("mm/dd/yy") },
+                    isError = dateError,
+                    supportingText = {
+                        if (dateError) Text("Enter a valid date (e.g. 12/22/26)")
+                    },
                     trailingIcon = {
                         Icon(
-                            painter = painterResource(Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
-                            contentDescription = "Spoon icon",
-                            modifier = modifier.size(18.dp)
-                                .clickable{// lambda AKA anonymous function
-                                    dateFieldState.clearText()
-                                }
-                        )},
-                    placeholder = {Text("mm/dd/yy")},
-                    outputTransformation = OutputTransformation{// lambda AKA anonymous function
-                        if(length > 2) insert(2, "/")
-                        if(length > 5) insert(5, "/")
+                            painter = painterResource(
+                                Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                            ),
+                            contentDescription = "Clear date",
+                            modifier = modifier.size(18.dp).clickable {
+                                dateFieldState.clearText()
+                                onDateErrorCleared()
+                            }
+                        )
                     },
+                    inputTransformation = InputTransformation {
+                        val digitsOnly = asCharSequence().filter { it.isDigit() }.toString()
+                        replace(0, length, digitsOnly)
+                        if (length > 6) delete(6, length)
+                    },
+                    outputTransformation = OutputTransformation {
+                        if (length > 2) insert(2, "/")
+                        if (length > 5) insert(5, "/")
+                    },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF2E4F57),
+                        focusedLabelColor = Color(0xFF2E4F57),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color.Black
+                    ),
                     modifier = modifier
-                        // weight() is used so each TextField attempts to occupy
-                        // equal space
                         .weight(1f)
+                        .onFocusChanged { if (it.isFocused) onDateErrorCleared() }
                 )
-
-                 */
+            }
+            Row { //AM/PM button selection
+                var selectedIndex by remember { mutableIntStateOf(0) }
+                val options = listOf("AM", "PM")
+                SingleChoiceSegmentedButtonRow {
+                    options.forEachIndexed { index, label ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                            onClick = { selectedIndex = index },
+                            selected = index == selectedIndex,
+                            label = { Text(label) },
+                            colors = SegmentedButtonColors(
+                                activeContainerColor = Color(0xFF2E4F57),
+                                activeContentColor = Color(0xFFFFFFFF),
+                                activeBorderColor = MaterialTheme.colorScheme.outline,
+                                inactiveContainerColor = Color(0xFF7799A4),
+                                inactiveContentColor = Color(0xFFFFFFFF),
+                                inactiveBorderColor = MaterialTheme.colorScheme.outline,
+                                disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                                disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                            )
+                        )
+                    }
+                }
             }
         }
     }
