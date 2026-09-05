@@ -21,8 +21,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.OutputTransformation
+import androidx.compose.foundation.text.input.TextFieldBuffer
 import androidx.compose.foundation.text.input.clearText
+import androidx.compose.foundation.text.input.delete
 import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomAppBar
@@ -525,11 +528,16 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         unfocusedTextColor = Color.Black,
                         cursorColor = Color.Black
                     ),
-                    placeholder = { Text("HH:MM:SS") },
+                    placeholder = { Text("HH:MM") },
+                    //input requirements, must be a digit and must be of correct length
+                    inputTransformation = InputTransformation {
+                        val digitsOnly = asCharSequence().filter { it.isDigit() }.toString()
+                        replace(0, length, digitsOnly)
+                        if (length > 4) delete(4, length)
+                    },
                     outputTransformation =
                         OutputTransformation { // lambda AKA anonymous function
                             if (length > 2) insert(2, ":")
-                            if (length > 5) insert(5, ":")
                         },
                     modifier =
                         modifier
@@ -554,6 +562,12 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         )
                     },
                     placeholder = { Text("mm/dd/yy") },
+                    //input requirements, must be a digit and must be of correct length
+                    inputTransformation = InputTransformation {
+                        val digitsOnly = asCharSequence().filter { it.isDigit() }.toString()
+                        replace(0, length, digitsOnly)
+                        if (length > 6) delete(6, length)
+                    },
                     outputTransformation =
                         OutputTransformation { // lambda AKA anonymous function
                             if (length > 2) insert(2, "/")
