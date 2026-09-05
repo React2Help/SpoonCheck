@@ -26,9 +26,16 @@ fun App() {
                 val viewModel = viewModel { TaskCreationViewModel(InMemoryTaskRepository()) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-                // When the trash icon is pressed, navigate to TaskListScreen
+                //trash icon is pressed, navigate to TaskListScreen
                 LaunchedEffect(state.wasCancelled) {
                     if (state.wasCancelled) {
+                        navController.navigate("taskList")
+                    }
+                }
+
+                //save succeeds, navigate to TaskListScreen
+                LaunchedEffect(state.wasSaved) {
+                    if (state.wasSaved) {
                         navController.navigate("taskList")
                     }
                 }
