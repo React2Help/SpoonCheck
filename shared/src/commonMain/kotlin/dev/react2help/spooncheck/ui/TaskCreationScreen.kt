@@ -73,12 +73,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.keyboard_arrow_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
@@ -417,10 +418,14 @@ fun DueDateAndNotifications(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Row(
+                    // place children next to each other inline
                     verticalAlignment = Alignment.CenterVertically,
+                    // , with a little space between each
+                    // other
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text("Notify Me")
+
                     Switch(
                         checked = notifySwitchIsChecked,
                         onCheckedChange = {
@@ -433,11 +438,13 @@ fun DueDateAndNotifications(
                             )
                     )
                 }
+
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     Text("Recurring")
+
                     Switch(
                         checked = recurringSwitchIsChecked,
                         onCheckedChange = { onAction(TaskCreationActions.OnRecursChanged(it)) },
