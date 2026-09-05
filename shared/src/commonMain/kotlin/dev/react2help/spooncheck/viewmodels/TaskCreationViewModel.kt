@@ -68,7 +68,7 @@ class TaskCreationViewModel(
     }
 
     private fun cancelTask() {
-        TODO("Not yet implemented")
+        updateState { copy(wasCancelled = true) }
     }
 
     private fun updateState(transform: TaskCreationUIState.() -> TaskCreationUIState) {

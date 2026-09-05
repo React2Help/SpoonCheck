@@ -82,6 +82,8 @@ fun TaskCreationScreenGen(
     onAction: (TaskCreationActions) -> Unit,
     state: TaskCreationUIState
 ) { // function that houses all UI on this screen.
+    val titleState = rememberTextFieldState()
+    val descriptionState = rememberTextFieldState()
     MaterialTheme {
         Scaffold(
             topBar = { // define the Header
@@ -94,13 +96,7 @@ fun TaskCreationScreenGen(
             bottomBar = { // define the two buttons on the bottom of the screen
                 BottomAppBar(
                     actions = {
-                        IconButton(
-                            onClick = {
-                                onAction(
-                                    TaskCreationActions.Cancel
-                                ) // todo define this callback function here
-                            }
-                        ) {
+                        IconButton(onClick = {onAction(TaskCreationActions.Cancel)}) { // todo add a callback function here
                             Icon(
                                 painter =
                                     painterResource(
@@ -113,9 +109,9 @@ fun TaskCreationScreenGen(
                     },
                     floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
-                            onClick = {
-                                onAction(TaskCreationActions.Save)
-                            }, // add a callback function here
+                            onClick = {}, // add a callback function here
+                            containerColor = Color(0xFF7799A4),
+                            contentColor = Color(0xFFFFFFFF),
                         ) {
                             Icon(
                                 painter =
@@ -140,21 +136,53 @@ fun TaskCreationScreenGen(
                     modifier = Modifier.fillMaxHeight()
                 )
                 Column( // arrange all the fields in a column
-                    verticalArrangement = Arrangement.spacedBy(2.dp), // control how the elements are
+                    verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
                     // placed on the Vertical axis.
                     modifier = Modifier.fillMaxSize().padding(paddingValues)
                 ) {
                     TextField(
-                        value = state.title,
+                        state = titleState,
                         placeholder = { Text("Title") },
-                        onValueChange = { onAction(TaskCreationActions.OnTitleChanged(it)) },
-                        modifier = Modifier.fillMaxWidth().alpha(0.85f)
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                                contentDescription = "Clear title",
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clickable { titleState.clearText() },
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color(0xFF2E4F57),
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
                     )
                     TextField(
-                        value = state.description,
+                        state = descriptionState,
                         placeholder = { Text("Description") },
-                        onValueChange = { onAction(TaskCreationActions.OnDescriptionChanged(it)) },
-                        modifier = Modifier.fillMaxWidth().alpha(0.85f)
+                        trailingIcon = {
+                            Icon(
+                                painter = painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                                contentDescription = "Clear description",
+                                modifier = Modifier
+                                    .size(18.dp)
+                                    .clickable { descriptionState.clearText() }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color(0xFF2E4F57),
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            cursorColor = Color.Black
+                        ),
                     )
                     DueDateAndNotifications()
                     SpoonSelectionCard()
@@ -473,7 +501,7 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                  */
                 OutlinedTextField(
                     state = timeFieldState,
-                    label = { Text("HH:MM:SS") },
+                    label = { Text("HH:MM") },
                     trailingIcon = {
                         Icon(
                             painter =
@@ -544,6 +572,37 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         cursorColor = Color.Black
                     ),
                 )
+            }
+            Row {  //AM/PM button selection
+                var selectedIndex by remember { mutableIntStateOf(0) }
+                val options = listOf("AM","PM")
+                SingleChoiceSegmentedButtonRow {
+                    options.forEachIndexed { index, label ->
+                        SegmentedButton(
+                            shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                            onClick = {
+                                selectedIndex = index
+                            },
+                            selected = index == selectedIndex,
+                            label = { Text(label) },
+                            colors =
+                                SegmentedButtonColors(
+                                    activeContainerColor = Color(0xFF2E4F57),
+                                    activeContentColor = Color(0xFFFFFFFF),
+                                    activeBorderColor = MaterialTheme.colorScheme.outline,
+                                    inactiveContainerColor = Color(0xFF7799A4),
+                                    inactiveContentColor = Color(0xFFFFFFFF),
+                                    inactiveBorderColor = MaterialTheme.colorScheme.outline,
+                                    disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                                    disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                                    disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                                    disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                                    disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
+                                    disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                                ),
+                        )
+                    }
+                }
             }
         }
     }
@@ -646,7 +705,7 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier) {
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
-    val menuItems = listOf<String>("Hygiene", "Household", "Work", "Recreation", "Social", "Pets")
+    val menuItems = listOf<String>("General","Hygiene", "Household", "Work", "Recreation", "Social", "Pets")
     var selectedOption by remember { mutableIntStateOf(0) }
     var expanded by remember { mutableStateOf(false) }
     Card(modifier = Modifier.fillMaxWidth()) {

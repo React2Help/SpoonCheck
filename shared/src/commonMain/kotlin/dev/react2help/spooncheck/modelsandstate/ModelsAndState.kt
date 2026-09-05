@@ -72,7 +72,8 @@ data class TaskCreationUIState(
             .toLocalDateTime(TimeZone.currentSystemDefault())
             .time
             .plusHoursSimple(DefaultAdditionToDueTimeField),
-    val wasSaved: Boolean = false
+    val wasSaved: Boolean = false,
+    val wasCancelled: Boolean = false
 )
 
 sealed interface TaskCreationActions { // defining types for our actions, so the callback functions
