@@ -97,7 +97,9 @@ fun isValidDate(raw: String): Boolean {
     val month = raw.substring(0, 2).toIntOrNull()
     val day = raw.substring(2, 4).toIntOrNull()
     val year = raw.substring(4, 6).toIntOrNull()
-    return month != null && day != null && year != null &&
+    return month != null &&
+        day != null &&
+        year != null &&
         runCatching { LocalDate(year + 2000, month, day) }.isSuccess
 }
 
@@ -484,9 +486,7 @@ fun DueDateAndNotifications(
                             cursorColor = Color.Black
                         ),
                     modifier =
-                        modifier.weight(1f).onFocusChanged {
-                            if (it.isFocused) onClearTimeError()
-                        }
+                        modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearTimeError() }
                 )
                 // date field, chars only, 6 digits max
                 OutlinedTextField(
@@ -528,9 +528,7 @@ fun DueDateAndNotifications(
                             cursorColor = Color.Black
                         ),
                     modifier =
-                        modifier.weight(1f).onFocusChanged {
-                            if (it.isFocused) onClearDateError()
-                        }
+                        modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearDateError() }
                 )
             }
             Row { // AM/PM button selection
