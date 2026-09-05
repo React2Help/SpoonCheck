@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.input.OutputTransformation
@@ -26,14 +27,18 @@ import androidx.compose.foundation.text.input.insert
 import androidx.compose.foundation.text.input.rememberTextFieldState
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
+import androidx.compose.material3.MenuAnchorType
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
@@ -43,6 +48,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -66,7 +72,6 @@ import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-import spooncheck.shared.generated.resources.keyboard_arrow_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
@@ -218,7 +223,7 @@ fun TaskCreationScreenGen() { // function that houses all UI on this screen.
                     modifier = Modifier.fillMaxHeight()
                 )
                 Column( // arrange all the fields in a column
-                    verticalArrangement = Arrangement.spacedBy(6.dp), // control how the elements are
+                    verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
                     // placed on the Vertical axis.
                     modifier = Modifier.fillMaxSize().padding(paddingValues)
                 ) {
@@ -233,10 +238,16 @@ fun TaskCreationScreenGen() { // function that houses all UI on this screen.
                                 contentDescription = "Clear title",
                                 modifier = Modifier
                                     .size(18.dp)
-                                    .clickable { titleState.clearText() }
+                                    .clickable { titleState.clearText() },
                             )
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color(0xFF2E4F57),
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            cursorColor = Color.Black
+                        )
                     )
                     TextField(
                         state = descriptionState,
@@ -252,9 +263,14 @@ fun TaskCreationScreenGen() { // function that houses all UI on this screen.
                                     .clickable { descriptionState.clearText() }
                             )
                         },
-                        modifier = Modifier.fillMaxWidth(),
-
-                        )
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                        colors = TextFieldDefaults.colors(
+                            focusedIndicatorColor = Color(0xFF2E4F57),
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            cursorColor = Color.Black
+                        ),
+                    )
                     DueDateAndNotifications()
                     SpoonSelectionCard()
                     CategoryAndPriorityCard()
@@ -470,9 +486,17 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                                     .size(18.dp) // scale the icon up so it is easily clickable
                                     .clickable { // lambda AKA anonymous function
                                         timeFieldState.clearText()
-                                    }
+                                    },
+
                         )
                     },
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF2E4F57),
+                        focusedLabelColor = Color(0xFF2E4F57),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color.Black
+                    ),
                     placeholder = { Text("HH:MM:SS") },
                     outputTransformation =
                         OutputTransformation { // lambda AKA anonymous function
@@ -511,7 +535,14 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         modifier
                             // weight() is used so each TextField attempts to occupy
                             // equal space
-                            .weight(1f)
+                            .weight(1f),
+                    colors = OutlinedTextFieldDefaults.colors(
+                        focusedBorderColor = Color(0xFF2E4F57),
+                        focusedLabelColor = Color(0xFF2E4F57),
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color.Black,
+                        cursorColor = Color.Black
+                    ),
                 )
             }
         }
@@ -610,8 +641,10 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier) {
     }
 }
 
+
 @Preview
 @Composable
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
     val menuItems = listOf<String>("Hygiene", "Household", "Work", "Recreation", "Social", "Pets")
     var selectedOption by remember { mutableIntStateOf(0) }
@@ -620,33 +653,39 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Category")
-                Row(
-                    verticalAlignment = Alignment.CenterVertically, // make elements inline with
-                    // each other
-                    horizontalArrangement = Arrangement.Center
+                ExposedDropdownMenuBox(
+                    expanded = expanded,
+                    onExpandedChange = { expanded = it },
+                    modifier = Modifier.fillMaxWidth()
                 ) {
-                    Text(menuItems.get(selectedOption)) // show which option was selected
-                    Box(modifier = Modifier.padding(16.dp)) {
-                        IconButton(onClick = { expanded = !expanded }) {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable
-                                            .keyboard_arrow_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Category Drop Down Menu Icon"
+                    OutlinedTextField(
+                        value = menuItems[selectedOption],
+                        onValueChange = {},
+                        readOnly = true,
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
+                        colors = ExposedDropdownMenuDefaults.outlinedTextFieldColors(
+                            focusedBorderColor = Color(0xFF2E4F57),
+                            focusedLabelColor = Color(0xFF2E4F57),
+                            focusedTextColor = Color.Black,
+                            unfocusedTextColor = Color.Black,
+                            cursorColor = Color.Black
+                        ),
+                        modifier = Modifier
+                            .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                            .fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = expanded,
+                        onDismissRequest = { expanded = false }
+                    ) {
+                        menuItems.forEachIndexed { index, option ->
+                            DropdownMenuItem(
+                                text = { Text(option) },
+                                onClick = {
+                                    selectedOption = index
+                                    expanded = false
+                                }
                             )
-                        }
-                        DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
-                            menuItems.forEachIndexed { index, option ->
-                                DropdownMenuItem(
-                                    text = { Text(option) },
-                                    onClick = {
-                                        selectedOption = index
-                                        expanded = false
-                                    }
-                                )
-                            }
                         }
                     }
                 }
