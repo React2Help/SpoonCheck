@@ -1,17 +1,14 @@
 package dev.react2help.spooncheck.viewmodels
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
-import dev.react2help.spooncheck.modelsandstate.validateTask
 import dev.react2help.spooncheck.repositories.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 class TaskCreationViewModel(
     @Suppress("UnusedPrivateProperty") private val repository: TaskRepository
@@ -83,7 +80,7 @@ class TaskCreationViewModel(
     private fun nextTaskId(): Long = repository.tasks.value.maxOfOrNull(Task::id)?.plus(1) ?: 1L
 
     private fun saveTask() {
-        //validation is handled in the UI before this is called.  Then save and navigate
+        // validation is handled in the UI before this is called.  Then save and navigate
         updateState { copy(wasSaved = true) }
     }
 }
