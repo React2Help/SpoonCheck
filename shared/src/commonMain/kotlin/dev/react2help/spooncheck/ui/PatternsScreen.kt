@@ -2,6 +2,7 @@
 
 package dev.react2help.spooncheck.ui
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,7 +26,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -39,6 +39,10 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLa
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
 import dev.react2help.spooncheck.theme.PatternsTheme
+import dev.react2help.spooncheck.ui.components.BaselineSpoonEconomyChart
+import dev.react2help.spooncheck.ui.components.CompletedLastSevenDaysChart
+import dev.react2help.spooncheck.ui.components.DailyCompletion
+import dev.react2help.spooncheck.ui.components.SpoonEconomyPoint
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.logo
@@ -104,29 +108,50 @@ fun PatternsScreen() {
                 }
             }
         ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
-                Card(modifier = Modifier.padding(20.dp)) {
-                    Column(modifier = Modifier.padding(15.dp)) {
-                        Text("Completed in the Last 7 Days", fontWeight = FontWeight.Bold)
-                    }
+            val completions =
+                listOf(
+                    DailyCompletion("M", 12, 8),
+                    DailyCompletion("Tu", 14, 10),
+                    DailyCompletion("We", 10, 7),
+                    DailyCompletion("Th", 13, 9),
+                    DailyCompletion("F", 11, 7),
+                    DailyCompletion("S", 7, 4),
+                    DailyCompletion("Su", 6, 3),
+                )
+            val economy =
+                listOf(10, 14, 19, 16, 22, 25, 17, 15, 13, 11, 20, 28, 21, 16).mapIndexed {
+                    index,
+                    value ->
+                    SpoonEconomyPoint(
+                        listOf("M", "Tu", "We", "Th", "F", "S", "Su")[index % 7],
+                        value.toDouble()
+                    )
                 }
-                Card(modifier = Modifier.padding(20.dp)) {
-                    Column(modifier = Modifier.padding(15.dp)) {
-                        Text("Baseline Spoon Economy", fontWeight = FontWeight.Bold)
-                    }
-                }
-                Card(modifier = Modifier.padding(20.dp)) {
-                    Column(modifier = Modifier.padding(15.dp)) {
-                        Text("Insights", fontWeight = FontWeight.Bold)
-                        Text(
-                            "Hey There!\n\nNice work this week. You exceeded your goal! However, " +
-                                "i belive getting started earlier would lead to many improvements. " +
-                                "Additionally, I've noticed you have been forgetting to take the " +
-                                "trash out on Tuesdys, see if you can make that a priority this " +
-                                "week. Keep at it!"
-                        )
-                    }
-                }
+            Column(
+                modifier =
+                    Modifier.padding(paddingValues)
+                        .padding(horizontal = 20.dp, vertical = 12.dp)
+                        .fillMaxSize(),
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+                CompletedLastSevenDaysChart(
+                    data = completions,
+                    modifier = Modifier.fillMaxWidth().height(190.dp),
+                )
+
+                BaselineSpoonEconomyChart(
+                    points = economy,
+                    modifier = Modifier.fillMaxWidth().height(150.dp),
+                )
+
+                InsightsCard(
+                    content =
+                        "Hey There!\n\nNice work this week. You exceeded your goal! However, i believe " +
+                            "getting started earlier would lead to many improvements. Additionally, I've " +
+                            "noticed you have been forgetting to take the trash out on Tuesdys, see if you " +
+                            "can make that a priority this week. Keep at it!",
+                    modifier = Modifier.fillMaxWidth(),
+                )
             }
         }
     }
@@ -149,29 +174,13 @@ fun InsightsCard(content: String, modifier: Modifier = Modifier){
 }
 
  */
-@Preview
-@Composable
-fun InsightsCard(modifier: Modifier = Modifier) {
-    Card(modifier = modifier.padding(20.dp)) {
-        Column(modifier = Modifier.padding(15.dp)) {
-            // use filler text, random numbers, etc
-            Text("Insights")
-            Text(
-                "Hey There!\n\nNice work this week. You exceeded your goal! However, i believe " +
-                    "getting started earlier would lead to many improvements. Additionally, I've " +
-                    "noticed you have been forgetting to take the trash out on Tuesdys, see if you " +
-                    "can make that a priority this week. Keep at it!"
-            )
-        }
-    }
-}
 
 @Composable
 fun InsightsCard(
     content: String,
     modifier: Modifier = Modifier
 ) { // copy and paste the code, and wire in the UI state
-    Card(modifier = modifier.padding(20.dp)) {
+    Card {
         Column(modifier = Modifier.padding(15.dp)) {
             Text("Insights")
             Text(content)
