@@ -160,18 +160,34 @@ data class SettingsUIState(
     val selectedTheme: AppTheme = AppTheme.FOREST,
     val userName: String = "",
     val userEmail: String = "",
+    val password: String = "",
+    val hasUnsavedChanges: Boolean = false,
     val wasSaved: Boolean = false,
     val wasCancelled: Boolean = false
 )
 
 sealed interface SettingsActions {
     data class OnNotificationsChanged(val enabled: Boolean) : SettingsActions
+
     data class OnThemeChanged(val theme: AppTheme) : SettingsActions
+
     data object OnChangeName : SettingsActions
+
     data object OnChangeEmail : SettingsActions
+
     data object OnPasswordReset : SettingsActions
+
     data object OnLogOut : SettingsActions
+
     data object OnQrCodeScan : SettingsActions
+
     data object OnSave : SettingsActions
+
     data object OnCancel : SettingsActions
+
+    data class OnNameChanged(val name: String) : SettingsActions
+
+    data class OnEmailChanged(val email: String) : SettingsActions
+
+    data class OnPasswordChanged(val password: String) : SettingsActions
 }

@@ -15,17 +15,37 @@ class SettingsViewModel : ViewModel() {
 
     fun onAction(action: SettingsActions) {
         when (action) {
-            is SettingsActions.OnSave -> _uiState.update { it.copy(wasSaved = true) }
-            is SettingsActions.OnCancel -> _uiState.update { it.copy(wasCancelled = true) }
+            is SettingsActions.OnSave ->
+                _uiState.update { it.copy(wasSaved = true, hasUnsavedChanges = false) }
+            is SettingsActions.OnCancel ->
+                _uiState.update { it.copy(wasCancelled = true, hasUnsavedChanges = false) }
             is SettingsActions.OnNotificationsChanged ->
-                _uiState.update { it.copy(notificationsEnabled = action.enabled) }
+                _uiState.update {
+                    it.copy(notificationsEnabled = action.enabled, hasUnsavedChanges = true)
+                }
             is SettingsActions.OnThemeChanged ->
-                _uiState.update { it.copy(selectedTheme = action.theme) }
-            is SettingsActions.OnChangeName -> { /* todo: open name-edit dialog */ }
-            is SettingsActions.OnChangeEmail -> { /* todo: open email-edit dialog */ }
-            is SettingsActions.OnPasswordReset -> { /* todo: trigger password reset flow */ }
-            is SettingsActions.OnLogOut -> { /* todo: sign-out logic */ }
-            is SettingsActions.OnQrCodeScan -> { /* todo: launch QR scanner */ }
+                _uiState.update { it.copy(selectedTheme = action.theme, hasUnsavedChanges = true) }
+            is SettingsActions.OnNameChanged ->
+                _uiState.update { it.copy(userName = action.name, hasUnsavedChanges = true) }
+            is SettingsActions.OnEmailChanged ->
+                _uiState.update { it.copy(userEmail = action.email, hasUnsavedChanges = true) }
+            is SettingsActions.OnPasswordChanged ->
+                _uiState.update { it.copy(password = action.password, hasUnsavedChanges = true) }
+            is SettingsActions.OnChangeName -> {
+                /* opens editing — handled locally in UI */
+            }
+            is SettingsActions.OnChangeEmail -> {
+                /* opens editing — handled locally in UI */
+            }
+            is SettingsActions.OnPasswordReset -> {
+                /* todo: trigger password reset flow */
+            }
+            is SettingsActions.OnLogOut -> {
+                /* todo: sign-out logic */
+            }
+            is SettingsActions.OnQrCodeScan -> {
+                /* todo: launch QR scanner */
+            }
         }
     }
 }
