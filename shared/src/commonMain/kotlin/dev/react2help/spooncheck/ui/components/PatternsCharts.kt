@@ -1,3 +1,5 @@
+@file:Suppress("LongMethod", "MaxLineLength", "PreviewPublic", "MagicNumber")
+
 package dev.react2help.spooncheck.ui.components
 
 import androidx.compose.foundation.layout.Arrangement
