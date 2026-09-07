@@ -1,4 +1,4 @@
-@file:Suppress("LongMethod", "MaxLineLength", "PreviewPublic")
+@file:Suppress("LongMethod", "MaxLineLength", "PreviewPublic", "MagicNumber")
 
 package dev.react2help.spooncheck.ui
 
@@ -180,7 +180,7 @@ fun InsightsCard(
     content: String,
     modifier: Modifier = Modifier
 ) { // copy and paste the code, and wire in the UI state
-    Card {
+    Card(modifier = modifier) {
         Column(modifier = Modifier.padding(15.dp)) {
             Text("Insights")
             Text(content)
