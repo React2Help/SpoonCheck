@@ -9,8 +9,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
+import dev.react2help.spooncheck.ui.SettingsScreenGen
 import dev.react2help.spooncheck.ui.TaskCreationScreenGen
 import dev.react2help.spooncheck.ui.TaskListScreen
+import dev.react2help.spooncheck.viewmodels.SettingsViewModel
 import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
 import dev.react2help.spooncheck.viewmodels.TaskListViewModel
 
@@ -20,23 +22,35 @@ fun App() {
     MaterialTheme {
         val navController = rememberNavController()
 
-        NavHost(navController = navController, startDestination = "taskCreation") {
+        NavHost(navController = navController, startDestination = "settings") {
+            composable("settings") {
+                val viewModel = viewModel { SettingsViewModel() }
+                val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+                LaunchedEffect(state.wasCancelled) {
+                    if (state.wasCancelled) navController.navigate("taskList")
+                }
+
+                LaunchedEffect(state.wasSaved) {
+                    if (state.wasSaved) navController.navigate("taskList")
+                }
+
+                SettingsScreenGen(
+                    onAction = { action -> viewModel.onAction(action) },
+                    state = state
+                )
+            }
+
             composable("taskCreation") {
                 val viewModel = viewModel { TaskCreationViewModel(InMemoryTaskRepository()) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
-                // trash icon is pressed, navigate to TaskListScreen
                 LaunchedEffect(state.wasCancelled) {
-                    if (state.wasCancelled) {
-                        navController.navigate("taskList")
-                    }
+                    if (state.wasCancelled) navController.navigate("taskList")
                 }
 
-                // save succeeds, navigate to TaskListScreen
                 LaunchedEffect(state.wasSaved) {
-                    if (state.wasSaved) {
-                        navController.navigate("taskList")
-                    }
+                    if (state.wasSaved) navController.navigate("taskList")
                 }
 
                 TaskCreationScreenGen(
