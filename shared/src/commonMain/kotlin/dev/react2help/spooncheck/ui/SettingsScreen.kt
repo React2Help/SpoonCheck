@@ -5,6 +5,7 @@
     "ModifierNotUsedAtRoot",
     "ModifierReused",
     "PreviewPublic",
+    "UnusedParameter"
 )
 
 package dev.react2help.spooncheck.ui
