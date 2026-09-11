@@ -1,6 +1,7 @@
 package dev.react2help.spooncheck.viewmodels
 
 import androidx.lifecycle.ViewModel
+import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.repositories.TaskRepository
@@ -13,7 +14,7 @@ class TaskCreationViewModel(
     @Suppress("UnusedPrivateProperty") private val repository: TaskRepository
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(TaskCreationUIState())
+    private val _uiState = MutableStateFlow(TaskCreationUIState(category = Category.HYGIENE))
     val uiState: StateFlow<TaskCreationUIState> = _uiState.asStateFlow()
     // again, all these functions should perform validation as needed but right now we just assume
     // the new value is "valid" and slap it in

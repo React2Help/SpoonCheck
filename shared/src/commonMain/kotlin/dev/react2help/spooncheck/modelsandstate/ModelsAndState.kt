@@ -62,7 +62,7 @@ data class TaskCreationUIState(
     val spoons: Int = 0,
     val notificationsOn: Boolean = false,
     val isRecurring: Boolean = false,
-    val category: Category = Category.NONE,
+    val category: Category,
     // should startdate be nullable?
     val startDate: LocalTime =
         Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
@@ -125,17 +125,14 @@ data class Task( // todo add other fields
 )
 
 fun validateTask(uiState: TaskCreationUIState): Boolean {
-    /*
-       This function is responsible for checking if a Task is "Valid" and can be saved.
-       // in service of the workshop
-       todo on TaskCreationViewModel::saveTask() maybe have this function return a error message
-         screen and use a switch on UIState to produce the right string
-    */
+    // This function is responsible for checking if a Task is "Valid" and can be saved.
+    // // in service of the workshop
+    // todo on TaskCreationViewModel::saveTask() maybe have this function return a error message
+    // screen and use a switch on UIState to produce the right string
     return uiState.spoons != 0 && uiState.title != ""
 }
 
 enum class Category {
-    NONE,
     HYGIENE,
     WORK,
     SCHOOL
