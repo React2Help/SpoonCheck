@@ -1,4 +1,3 @@
-
 @file:Suppress(
     "LongMethod",
     "MagicNumber",
