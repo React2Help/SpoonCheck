@@ -54,7 +54,7 @@ fun App() {
                         }
                     )
             ) { backStackEntry ->
-                val dateEnabled = backStackEntry.arguments?.getBoolean("dateEnabled") ?: false
+                val dateEnabled = backStackEntry.arguments?.get("dateEnabled") as? Boolean ?: false
                 val viewModel = viewModel { TaskCreationViewModel(InMemoryTaskRepository()) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
