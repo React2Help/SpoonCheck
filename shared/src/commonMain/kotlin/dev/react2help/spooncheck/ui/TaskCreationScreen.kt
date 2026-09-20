@@ -109,7 +109,7 @@ fun isValidDate(raw: String): Boolean {
 fun TaskCreationScreenGen(
     onAction: (TaskCreationActions) -> Unit,
     state: TaskCreationUIState,
-    isDateFieldEnabled: Boolean = false
+    isDateFieldEnabled: Boolean = false,
 ) { // function that houses all UI on this screen.
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
@@ -271,7 +271,7 @@ fun TaskCreationScreenGen(
                         dateError = dateError,
                         onClearTimeError = { timeError = false },
                         onClearDateError = { dateError = false },
-                        isDateFieldEnabled = isDateFieldEnabled
+                        isDateFieldEnabled = isDateFieldEnabled,
                     )
                     SpoonSelectionCard()
                     CategoryAndPriorityCard()
