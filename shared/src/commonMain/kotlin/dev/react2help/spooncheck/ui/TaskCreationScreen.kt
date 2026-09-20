@@ -152,9 +152,8 @@ fun TaskCreationScreenGen(
                                 // validate all fields before saving
                                 val isTitleOk = titleState.text.isNotBlank()
                                 val isTimeOk = isValidTime(timeFieldState.text.toString())
-                                val isDateOk =
-                                    !isDateFieldEnabled ||
-                                        isValidDate(dateFieldState.text.toString())
+                                val dateCheck = isValidDate(dateFieldState.text.toString())
+                                val isDateOk = !isDateFieldEnabled || dateCheck
 
                                 titleError = !isTitleOk
                                 timeError = !isTimeOk
