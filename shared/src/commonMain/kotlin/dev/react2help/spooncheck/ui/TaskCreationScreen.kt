@@ -1,3 +1,5 @@
+//note: pass dateEnabled boolean in LaunchEffect in app.kt
+
 @file:Suppress(
     "LongMethod",
     "MagicNumber",
@@ -107,7 +109,8 @@ fun isValidDate(raw: String): Boolean {
 @Composable
 fun TaskCreationScreenGen(
     onAction: (TaskCreationActions) -> Unit,
-    state: TaskCreationUIState
+    state: TaskCreationUIState,
+    isDateFieldEnabled: Boolean = false
 ) { // function that houses all UI on this screen.
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
@@ -150,11 +153,11 @@ fun TaskCreationScreenGen(
                                 // validate all fields before saving
                                 val isTitleOk = titleState.text.isNotBlank()
                                 val isTimeOk = isValidTime(timeFieldState.text.toString())
-                                val isDateOk = isValidDate(dateFieldState.text.toString())
+                                val isDateOk = !isDateFieldEnabled || isValidDate(dateFieldState.text.toString())
 
                                 titleError = !isTitleOk
                                 timeError = !isTimeOk
-                                dateError = !isDateOk
+                                dateError = isDateFieldEnabled && !isDateOk
 
                                 if (isTitleOk && isTimeOk && isDateOk) {
                                     onAction(TaskCreationActions.Save)
@@ -266,7 +269,8 @@ fun TaskCreationScreenGen(
                         timeError = timeError,
                         dateError = dateError,
                         onClearTimeError = { timeError = false },
-                        onClearDateError = { dateError = false }
+                        onClearDateError = { dateError = false },
+                        isDateFieldEnabled = isDateFieldEnabled
                     )
                     SpoonSelectionCard()
                     CategoryAndPriorityCard()
@@ -409,6 +413,7 @@ fun DueDateAndNotifications(
     dateError: Boolean = false,
     onClearTimeError: () -> Unit = {},
     onClearDateError: () -> Unit = {},
+    isDateFieldEnabled: Boolean = true,
 ) {
     Card(modifier = Modifier) {
         Column(modifier = modifier.padding(10.dp)) {
@@ -492,6 +497,7 @@ fun DueDateAndNotifications(
                 OutlinedTextField(
                     state = dateFieldState,
                     label = { Text("mm/dd/yy") },
+                    enabled = isDateFieldEnabled,
                     isError = dateError,
                     supportingText = { if (dateError) Text("Enter a valid date (e.g. 12/22/26)") },
                     trailingIcon = {

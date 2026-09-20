@@ -7,7 +7,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.NavType
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
 import dev.react2help.spooncheck.ui.SettingsScreenGen
 import dev.react2help.spooncheck.ui.TaskCreationScreenGen
@@ -27,12 +29,13 @@ fun App() {
                 val viewModel = viewModel { SettingsViewModel() }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
+                //temp for demonstration. Eventually navigate from home page/setup day screen
                 LaunchedEffect(state.wasCancelled) {
-                    if (state.wasCancelled) navController.navigate("taskList")
+                    if (state.wasCancelled) navController.navigate("taskCreation?dateEnabled=false")
                 }
 
                 LaunchedEffect(state.wasSaved) {
-                    if (state.wasSaved) navController.navigate("taskList")
+                    if (state.wasSaved) navController.navigate("taskCreation?dateEnabled=true")
                 }
 
                 SettingsScreenGen(
@@ -41,7 +44,14 @@ fun App() {
                 )
             }
 
-            composable("taskCreation") {
+            composable(
+                route = "taskCreation?dateEnabled={dateEnabled}",
+                arguments = listOf(navArgument("dateEnabled") {
+                    type = NavType.BoolType
+                    defaultValue = false
+                })
+            ) { backStackEntry ->
+                val dateEnabled = backStackEntry.arguments?.getBoolean("dateEnabled") ?: false
                 val viewModel = viewModel { TaskCreationViewModel(InMemoryTaskRepository()) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -55,7 +65,8 @@ fun App() {
 
                 TaskCreationScreenGen(
                     onAction = { action -> viewModel.onAction(action) },
-                    state = state
+                    state = state,
+                    isDateFieldEnabled = dateEnabled
                 )
             }
 
