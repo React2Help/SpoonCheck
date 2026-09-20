@@ -1,4 +1,3 @@
-// note: pass dateEnabled boolean in LaunchEffect in app.kt
 
 @file:Suppress(
     "LongMethod",
