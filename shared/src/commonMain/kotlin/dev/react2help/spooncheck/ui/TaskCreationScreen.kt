@@ -1,4 +1,4 @@
-//note: pass dateEnabled boolean in LaunchEffect in app.kt
+// note: pass dateEnabled boolean in LaunchEffect in app.kt
 
 @file:Suppress(
     "LongMethod",
@@ -153,7 +153,9 @@ fun TaskCreationScreenGen(
                                 // validate all fields before saving
                                 val isTitleOk = titleState.text.isNotBlank()
                                 val isTimeOk = isValidTime(timeFieldState.text.toString())
-                                val isDateOk = !isDateFieldEnabled || isValidDate(dateFieldState.text.toString())
+                                val isDateOk =
+                                    !isDateFieldEnabled ||
+                                        isValidDate(dateFieldState.text.toString())
 
                                 titleError = !isTitleOk
                                 timeError = !isTimeOk
