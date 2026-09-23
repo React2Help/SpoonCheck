@@ -20,8 +20,18 @@ jobs:
           cache: 'gradle'
 
       - name: Grant execute permission for gradlew
+        id: gradle-validation
         run: chmod +x gradlew
 
       - name: Run checks, static code analysis, and build
         # This will execute your ktfmtCheck along with standard Android/KMP tests
         run: ./gradlew check detektAll build
+
+      - name: Upload Problems Report
+        # upload report as artifact for visibility into problems
+        if: steps.gradle-validation.outcome == 'failure'
+        uses: actions/upload-artifact@v4
+        with:
+          name: gradle-problems-report
+          path: '**/build/reports/problems/problems-report.html'
+          retention-days: 7 # auto-delete after a week to not accrue charges. Billed $0.25/GB/Month
