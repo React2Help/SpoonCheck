@@ -6,7 +6,9 @@ import kotlinx.coroutines.flow.StateFlow
 interface TaskRepository {
     val tasks: StateFlow<List<Task>>
 
-    suspend fun save(task: Task)
+    suspend fun save(task: Task): Result<Unit>
+
+    suspend fun deleteOne(taskId: Long): Result<Unit>
 
     suspend fun setCompleted(taskId: Long, isDone: Boolean)
 }

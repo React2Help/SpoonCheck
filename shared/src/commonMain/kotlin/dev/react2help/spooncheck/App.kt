@@ -34,8 +34,8 @@ fun App() {
     // every screen inside the NavHost gets the saved theme's colors.
     SpoonCheckTheme(appTheme = savedTheme) {
         val navController = rememberNavController()
-
-        NavHost(navController = navController, startDestination = "settings") {
+        val taskRepository = InMemoryTaskRepository()
+        NavHost(navController = navController, startDestination = "taskList") {
             composable("settings") {
                 val viewModel = viewModel { SettingsViewModel(themeRepository) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -56,7 +56,7 @@ fun App() {
             }
 
             composable("taskCreationDateDisabled") {
-                val viewModel = viewModel { TaskCreationViewModel(InMemoryTaskRepository()) }
+                val viewModel = viewModel { TaskCreationViewModel(taskRepository) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
                 LaunchedEffect(state.wasCancelled) {
@@ -67,15 +67,11 @@ fun App() {
                     if (state.wasSaved) navController.navigate("taskList")
                 }
 
-                TaskCreationScreenGen(
-                    onAction = { action -> viewModel.onAction(action) },
-                    state = state,
-                    isDateFieldEnabled = false
-                )
+                TaskCreationScreenGen(viewModel = viewModel, isDateFieldEnabled = false)
             }
 
             composable("taskCreationDateEnabled") {
-                val viewModel = viewModel { TaskCreationViewModel(InMemoryTaskRepository()) }
+                val viewModel = viewModel { TaskCreationViewModel(taskRepository) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
 
                 LaunchedEffect(state.wasCancelled) {
@@ -86,11 +82,7 @@ fun App() {
                     if (state.wasSaved) navController.navigate("taskList")
                 }
 
-                TaskCreationScreenGen(
-                    onAction = { action -> viewModel.onAction(action) },
-                    state = state,
-                    isDateFieldEnabled = true
-                )
+                TaskCreationScreenGen(viewModel = viewModel, isDateFieldEnabled = true)
             }
 
             // daily Reflection variants
@@ -152,7 +144,16 @@ fun App() {
             }
 
             composable("taskList") {
-                val viewModel = viewModel { TaskListViewModel() }
+                val viewModel = viewModel { TaskListViewModel(taskRepository) }
+                val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+                LaunchedEffect(state.shouldNavigateToTaskCreation) {
+                    if (state.shouldNavigateToTaskCreation)
+                        navController.navigate("taskCreationDateEnabled")
+                }
+                /*
+                TODO: implement navigation to other screens
+                 */
                 TaskListScreen(viewModel = viewModel)
             }
         }

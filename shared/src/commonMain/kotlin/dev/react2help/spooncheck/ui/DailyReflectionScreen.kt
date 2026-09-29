@@ -9,11 +9,13 @@
 
 package dev.react2help.spooncheck.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -41,6 +43,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,63 +55,73 @@ import dev.react2help.spooncheck.modelsandstate.DailyReflectionActions
 import dev.react2help.spooncheck.modelsandstate.DailyReflectionUIState
 import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import dev.react2help.spooncheck.theme.ThemedBackground
+import dev.react2help.spooncheck.modelsandstate.DailyReflectionVariant
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.pine_tree_background
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun DailyReflectionScreen(variant: DailyReflectionVariant) {
-    Scaffold(
-        topBar = { // define the Header
-            TopAppBar(
-                title = { Text("Evening Check-in", fontWeight = FontWeight.Bold) },
-                subtitle = { Text("") },
-                titleHorizontalAlignment = Alignment.CenterHorizontally
-            )
-        },
-        bottomBar = { // define the two buttons at the bottom of the screen
-            BottomAppBar {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Button(
-                        onClick = { /* Handle click */},
-                        content = { Text("Skip") },
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
-                            ),
-                        shape = RoundedCornerShape(8.dp),
-                    )
-                    Button(
-                        onClick = { /* Handle click */},
-                        content = { Text("Submit") },
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
-                            ),
-                        shape = RoundedCornerShape(8.dp),
-                    )
+    MaterialTheme {
+        Scaffold(
+            topBar = { // define the Header
+                TopAppBar(
+                    title = { Text("Evening Check-in", fontWeight = FontWeight.Bold) },
+                    subtitle = { Text("") },
+                    titleHorizontalAlignment = Alignment.CenterHorizontally
+                )
+            },
+            bottomBar = { // define the two buttons at the bottom of the screen
+                BottomAppBar {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Button(
+                            onClick = { /* Handle click */},
+                            content = { Text("Skip") },
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    contentColor = Color(0xFF254A50),
+                                    containerColor = Color(0xFFD4E2E3)
+                                ),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                        Button(
+                            onClick = { /* Handle click */},
+                            content = { Text("Submit") },
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    contentColor = Color(0xFF254A50),
+                                    containerColor = Color(0xFFD4E2E3)
+                                ),
+                            shape = RoundedCornerShape(8.dp),
+                        )
+                    }
                 }
             }
-        }
-    ) { paddingValues ->
-        Box( // use a box so the fields are stacked on top of the image
-        ) {
-            ThemedBackground() // pine trees / ocean / solid dark, depending on the theme
-            Row(
-                modifier =
-                    Modifier.fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(paddingValues),
-                verticalAlignment = Alignment.CenterVertically
+        ) { paddingValues ->
+            Box( // use a box so the fields are stacked on top of the image
             ) {
-                CheckInCard(variant = variant)
+                Image(
+                    painter = painterResource(Res.drawable.pine_tree_background),
+                    contentDescription = "Background Image of a grove of pine trees.",
+                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
+                    // the parts that overflow off the screen are clipped
+                    modifier = Modifier.fillMaxHeight()
+                )
+                Row(
+                    modifier =
+                        Modifier.fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(paddingValues),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    CheckInCard(variant = variant)
+                }
             }
         }
     }

@@ -28,6 +28,29 @@ fun LocalTime.plusHoursSimple(hours: Int): LocalTime {
 }
 
 @Suppress("MagicNumber")
+fun TextToTime(text: String): LocalTime {
+    /* converts the text in a TextField, which is formatted as follows:
+       into a LocalTime
+    */
+    val hour = text.substring(0, 2).toInt()
+    val minute = text.substring(2, 4).toInt()
+    val time = LocalTime(hour, minute, 0, 0)
+    return time
+}
+
+@Suppress("MagicNumber")
+fun TextToDate(text: String): LocalDate {
+    /* converts the text in a TextField, which is formatted as follows:
+       into a LocalDate
+    */
+    val month = text.substring(0, 2).toInt()
+    val day = text.substring(2, 4).toInt()
+    val year = text.substring(4, 6).toInt()
+    val date = LocalDate(year = year, month = month, day = day)
+    return date
+}
+
+@Suppress("MagicNumber")
 fun generateRandomFutureDate(): LocalDate? {
 
     val year =
