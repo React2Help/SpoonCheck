@@ -10,6 +10,7 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.YearMonth
 import kotlinx.datetime.toLocalDateTime
+import kotlin.math.min
 
 class DateAndTimeFunctions {
     fun LocalDateTime.format() = toString().substringBefore('T')
@@ -26,6 +27,30 @@ fun LocalTime.plusHoursSimple(hours: Int): LocalTime {
         nanosecond = this.nanosecond
     )
 }
+fun TextToTime(text: String): LocalTime {
+    /* converts the text in a TextField, which is formatted as follows:
+        into a LocalTime
+     */
+    val hour = text.substring(0,2).toInt()
+    val minute = text.substring(3, 4).toInt()
+    val time = LocalTime(hour, minute, 0,0)
+    return time
+}
+fun TextToDate(text:String): LocalDate {
+    /* converts the text in a TextField, which is formatted as follows:
+        into a LocalDate
+     */
+    val month = text.substring(0,2).toInt()
+    val day = text.substring(3, 5).toInt()
+    val year = text.substring(6, 8).toInt()
+    val date = LocalDate(
+        year = year,
+        month = month,
+        day = day
+    )
+    return date
+}
+
 @Suppress("MagicNumber")
 fun generateRandomFutureDate(): LocalDate? {
 

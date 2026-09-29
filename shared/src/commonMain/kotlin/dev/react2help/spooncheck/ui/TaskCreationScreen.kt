@@ -57,6 +57,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -71,14 +72,20 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
+import dev.react2help.spooncheck.utils.TextToDate
+import dev.react2help.spooncheck.utils.TextToTime
+import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
+import spooncheck.shared.generated.resources.arrow_back_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.mic_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
@@ -107,14 +114,14 @@ fun isValidDate(raw: String): Boolean {
 @Composable
 fun TaskCreationScreenGen(
     onAction: (TaskCreationActions) -> Unit,
-    state: TaskCreationUIState,
+    viewModel: TaskCreationViewModel,
     isDateFieldEnabled: Boolean = false,
 ) { // function that houses all UI on this screen.
+    val uiState by viewModel.uiState.collectAsState()
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
     val timeFieldState = rememberTextFieldState()
     val dateFieldState = rememberTextFieldState()
-
     // error flags when save is pressed with invalid input
     var titleError by remember { mutableStateOf(false) }
     var timeError by remember { mutableStateOf(false) }
@@ -133,7 +140,7 @@ fun TaskCreationScreenGen(
                 BottomAppBar(
                     actions = {
                         IconButton(
-                            onClick = { onAction(TaskCreationActions.Cancel) }
+                            onClick = { viewModel.onAction(TaskCreationActions.Cancel) }
                         ) { // todo add a callback function here
                             Icon(
                                 painter =
@@ -154,15 +161,24 @@ fun TaskCreationScreenGen(
                                 val dateCheck = isValidDate(dateFieldState.text.toString())
                                 val isDateOk = !isDateFieldEnabled || dateCheck
 
-                                titleError = !isTitleOk
-                                timeError = !isTimeOk
-                                dateError = isDateFieldEnabled && !isDateOk
+                                 viewModel.onAction(TaskCreationActions.SetTitleError(!isTitleOk))
+                                viewModel.onAction(TaskCreationActions.SetTimeError(!isTimeOk))
+                                viewModel.onAction(TaskCreationActions.SetDateError(isDateFieldEnabled && !isDateOk))
 
                                 if (isTitleOk && isTimeOk && isDateOk) {
-                                    onAction(TaskCreationActions.Save)
+                                    val task = Task(
+                                        id = 0, // TODO: Create function for making IDs
+                                        title = uiState.titleFieldState.text.toString(),
+                                        description = uiState.descriptionFieldState.text.toString(),
+                                        priority = uiState.priority,
+                                        category = uiState.category,
+                                        dueDate = TextToDate(uiState.dateFieldState.text.toString()),
+                                        dueTime = TextToTime(uiState.timeFieldState.text.toString())
+                                    )
+                                    viewModel.onAction(TaskCreationActions.Save(task))
                                 }
                             },
-                            containerColor = Color(0xFF7799A4),
+                            containerColor = Color(0xFF7799A4), // todo extract out to theme
                             contentColor = Color(0xFFFFFFFF),
                         ) {
                             Icon(
@@ -170,7 +186,7 @@ fun TaskCreationScreenGen(
                                     painterResource(
                                         Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
                                     ),
-                                contentDescription = "Check Button",
+                                contentDescription = "Save Task",
                                 modifier = Modifier.size(16.dp)
                             )
                         }
@@ -197,7 +213,7 @@ fun TaskCreationScreenGen(
                             .padding(paddingValues)
                 ) {
                     TextField(
-                        state = titleState,
+                        state = uiState.titleFieldState,
                         placeholder = { Text("Title") },
                         isError = titleError,
                         supportingText = {
@@ -220,13 +236,13 @@ fun TaskCreationScreenGen(
                                 modifier =
                                     Modifier.size(18.dp).clickable {
                                         titleState.clearText()
-                                        titleError = false
+                                        viewModel.onAction(TaskCreationActions.SetTitleError(false))
                                     },
                             )
                         },
                         modifier =
                             Modifier.fillMaxWidth().onFocusChanged {
-                                if (it.isFocused) titleError = false
+                                if (it.isFocused) viewModel.onAction(TaskCreationActions.SetTitleError(false))
                             },
                         colors =
                             TextFieldDefaults.colors(
@@ -237,7 +253,7 @@ fun TaskCreationScreenGen(
                             )
                     )
                     TextField(
-                        state = descriptionState,
+                        state = uiState.descriptionFieldState,
                         placeholder = { Text("Description") },
                         trailingIcon = {
                             Icon(
@@ -261,14 +277,14 @@ fun TaskCreationScreenGen(
                     )
                     DueDateAndNotifications(
                         onAction = onAction,
-                        notifySwitchIsChecked = state.notificationsOn,
-                        recurringSwitchIsChecked = state.isRecurring,
-                        timeFieldState = timeFieldState,
-                        dateFieldState = dateFieldState,
-                        timeError = timeError,
-                        dateError = dateError,
-                        onClearTimeError = { timeError = false },
-                        onClearDateError = { dateError = false },
+                        notifySwitchIsChecked = uiState.notificationsOn,
+                        recurringSwitchIsChecked = uiState.isRecurring,
+                        timeFieldState = uiState.timeFieldState,
+                        dateFieldState = uiState.dateFieldState,
+                        timeError = uiState.timeError,
+                        dateError = uiState.dateError,
+                        onClearTimeError = { viewModel.onAction(TaskCreationActions.ClearTimeError) },
+                        onClearDateError = { viewModel.onAction(TaskCreationActions.ClearDateError) },
                         isDateFieldEnabled = isDateFieldEnabled,
                     )
                     SpoonSelectionCard()
@@ -282,19 +298,30 @@ fun TaskCreationScreenGen(
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
-fun TaskCreationScreenGen() { // function that houses all UI on this screen.
+private fun PreviewTaskCreationScreenGen() { // function that houses all UI on this screen.
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
     MaterialTheme {
         Scaffold(
             topBar = { // define the Header
                 TopAppBar(
+                    navigationIcon = {
+                        IconButton(
+                            onClick = {},
+                        ) {
+                            Icon(
+                                painter = painterResource(Res.drawable.arrow_back_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Navigate Back",
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    },
                     title = { Text("Create Task", fontWeight = FontWeight.Bold) },
                     subtitle = { Text("") },
                     titleHorizontalAlignment = Alignment.CenterHorizontally
                 )
             },
-            bottomBar = { // define the two buttons on the bottom of the screen
+            bottomBar = { // define the two buttons at the bottom of the screen
                 BottomAppBar(
                     actions = {
                         IconButton(onClick = {}) { // todo add a callback function here
@@ -307,6 +334,16 @@ fun TaskCreationScreenGen() { // function that houses all UI on this screen.
                                 modifier = Modifier.size(32.dp)
                             )
                         }
+
+                        FloatingActionButton(onClick = {}){
+                            Icon(
+                                painter = painterResource(Res.drawable.mic_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24),
+                                contentDescription = "Dictate",
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+
+
                     },
                     floatingActionButton = { // RHS button with the special styling
                         FloatingActionButton(
@@ -454,7 +491,7 @@ fun DueDateAndNotifications(
                 }
             }
             Row {
-                // time field, digits only, max 4 chars
+                // time field, digits only, max 4 chars: 10:30. No AM/PM
                 OutlinedTextField(
                     state = timeFieldState,
                     label = { Text("HH:MM") },
@@ -907,7 +944,8 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
                                 cursorColor = Color.Black
                             ),
                         modifier =
-                            Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                            Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
