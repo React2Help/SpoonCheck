@@ -1,12 +1,11 @@
 package dev.react2help.spooncheck.modelsandstate
 
-import dev.react2help.spooncheck.utils.plusHoursSimple
-import kotlin.time.Clock
+import androidx.compose.foundation.text.input.TextFieldState
+import androidx.compose.material3.TimePickerState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
-import kotlinx.datetime.todayIn
+
+public const val max_spoons = 5
 
 data class DashboardUIState(
     val total_spoons: Int,
@@ -21,14 +20,37 @@ data class DashboardUIState(
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
     val tasks: List<Task> = emptyList(),
-    val listFilterOption: TaskListFilterOptions = TaskListFilterOptions.ALL_TASKS,
-    val spoons: Int = 1,
+    val listFilterOption: TaskListFilterOptions = TaskListFilterOptions.Todo,
+    val spoonBudget: Int = 1,
+    val shouldNavigateToDashboard: Boolean = false,
+    val shouldNavigateToPatterns: Boolean = false,
+    val shouldNavigateToTaskCreation: Boolean = false,
+    val shouldNavigateToAccount: Boolean = false,
+
     // todo add a field for the Icon of the Account button. Pending learning how to do this.
     val errorMessage: String? = null
 )
 
 sealed interface TaskListActions {
+    /*
+    TaskList ViewModel is not responsible for handling the following events:
+    - expanding / collapsing a section within the task list. This is handled by the component logic.
+     */
     data class onFilterOptionChange(val filterOption: TaskListFilterOptions) : TaskListActions
+
+    data object NavigateToAccount : TaskListActions
+
+    data object NavigateToDashboard : TaskListActions
+
+    data object NavigateToTaskList : TaskListActions // this should be a NO-OP
+
+    data object NavigateToPatterns : TaskListActions
+
+    data object NavigateToTaskCreation : TaskListActions
+
+    data class NavigateToTaskDetails(val taskId: Long) : TaskListActions
+
+    data class onSpoonBudgetChange(val newSpoonBudget: Int) : TaskListActions
 
     data class CompletionChanged(
         val taskId: Long,
@@ -36,6 +58,7 @@ sealed interface TaskListActions {
     ) : TaskListActions
     // don't think I need to hoist the state for the list.
     // Until we implement more complex functionality.
+    data class OnDelete(val taskId: Long) : TaskListActions
 }
 
 enum class TaskListFilterOptions {
@@ -55,52 +78,60 @@ data class TaskCreationUIState(
     // ---
 
     // fields for the data in the form
-    val title: String = "",
-    val description: String = "",
+
+    val titleFieldState: TextFieldState,
+    val descriptionFieldState: TextFieldState,
+    val dateFieldState: TextFieldState,
+    val timePickerState: TimePickerState,
+    val titleError: Boolean,
+    val dateError: Boolean,
     val priority: Priority = Priority.medium,
-    val dueDate: LocalDate = Clock.System.todayIn(TimeZone.currentSystemDefault()),
     val spoons: Int = 0,
     val notificationsOn: Boolean = false,
     val isRecurring: Boolean = false,
     val category: Category,
     // should startdate be nullable?
-    val startDate: LocalTime =
-        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
     val errorMessage: String = "",
-    val dueTime: LocalTime =
-        Clock.System.now()
-            .toLocalDateTime(TimeZone.currentSystemDefault())
-            .time
-            .plusHoursSimple(DefaultAdditionToDueTimeField),
     val wasSaved: Boolean = false,
-    val wasCancelled: Boolean = false
+    val wasCancelled: Boolean = false,
+
+    // fields to support components in the form
+    val selectedCategory: Int = Category.HYGIENE.ordinal, // supports the CategoryAndPriority card
+    val selectedSpoons: Int = 1
 )
 
 sealed interface TaskCreationActions { // defining types for our actions, so the callback functions
     // must satisfy this contract
     data object Cancel : TaskCreationActions // since these actions don't need arguments, they are
     // specified as objects
-    data object Save : TaskCreationActions
+    data class Save(val task: Task) : TaskCreationActions
 
-    data class OnTitleChanged( // these actions need arguments, so they are specified as classes
-        val title: String
-    ) : TaskCreationActions
 
-    data class OnDescriptionChanged(val description: String) : TaskCreationActions
+    data object ClearDateError : TaskCreationActions
+
+
+    data class SetDateError(val value: Boolean) : TaskCreationActions
+
+    data class SetTitleError(val value: Boolean) : TaskCreationActions
 
     data class OnNotificationsChanged(val shouldNotify: Boolean) : TaskCreationActions
 
-    data class OnDueTimeChanged(val dueTime: LocalTime) : TaskCreationActions
-
-    data class OnDueDateChanged(val dueDate: LocalDate) : TaskCreationActions
-
     data class OnSpoonSelectedChanged(val spoons: Int) : TaskCreationActions
 
-    data class OnCategoryChanged(val category: Category) : TaskCreationActions
+    data class OnCategoryChanged(val category: Category) : TaskCreationActions // category of a task
 
     data class OnPriorityChanged(val priority: Priority) : TaskCreationActions
 
     data class OnRecursChanged(val recurs: Boolean) : TaskCreationActions
+
+    /*
+    supports CategoryAndPriority card. This callback should not be confused with OnCategoryChanged.
+    this callback is responsible for managing the selected option in the Category Dropdown menu.
+    */
+    data class OnSelectedCategoryChange(val selectedCategory: Int) : TaskCreationActions
+
+    data class OnSelectedSpoonsChanged(val newSpoonCount: Int) : TaskCreationActions
+    data class OnTimeChange(val newTime: TimePickerState): TaskCreationActions
 }
 
 data class Task( // todo add other fields
@@ -113,7 +144,7 @@ data class Task( // todo add other fields
 
 
     */
-    val id: Long,
+    var id: Long,
     val title: String,
     val description: String,
     val spoons: Int = 0,
@@ -123,14 +154,6 @@ data class Task( // todo add other fields
     val dueTime: LocalTime?,
     val isDone: Boolean = false
 )
-
-fun validateTask(uiState: TaskCreationUIState): Boolean {
-    // This function is responsible for checking if a Task is "Valid" and can be saved.
-    // // in service of the workshop
-    // todo on TaskCreationViewModel::saveTask() maybe have this function return a error message
-    // screen and use a switch on UIState to produce the right string
-    return uiState.spoons != 0 && uiState.title != ""
-}
 
 enum class Category {
     HYGIENE,
@@ -187,6 +210,13 @@ sealed interface SettingsActions {
     data class OnEmailChanged(val email: String) : SettingsActions
 
     data class OnPasswordChanged(val password: String) : SettingsActions
+}
+
+// The three variants of the Daily Reflection screen, each with its own heading message.
+enum class DailyReflectionVariant(val message: String) {
+    Success("Congratulations!\nYou Completed All Your Tasks!"),
+    SuccessPartial("Congratulations!\nYou Completed Most Of Your Tasks!"),
+    RoughDay("Today might’ve been a hard day.\nThat’s Ok, take some time to reflect.")
 }
 
 data class DailyReflectionUIState(

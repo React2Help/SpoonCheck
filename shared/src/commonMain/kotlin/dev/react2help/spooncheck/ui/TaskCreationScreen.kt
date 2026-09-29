@@ -9,17 +9,22 @@
 
 package dev.react2help.spooncheck.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.OutputTransformation
@@ -32,6 +37,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ElevatedButton
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.ExposedDropdownMenuAnchorType
@@ -48,13 +54,20 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonColors
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.TimePicker
+import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.isPm
+import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -62,25 +75,34 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import dev.react2help.spooncheck.modelsandstate.AppTheme
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
+import dev.react2help.spooncheck.modelsandstate.Priority
+import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
-import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
-import dev.react2help.spooncheck.theme.SpoonCheckTheme
-import dev.react2help.spooncheck.theme.ThemedBackground
+import dev.react2help.spooncheck.modelsandstate.max_spoons
+import dev.react2help.spooncheck.utils.TextToDate
+import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
 import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
+import kotlin.time.Clock
 
 // true if 4 digit entry is a valid HH:MM time
 fun isValidTime(raw: String): Boolean {
@@ -105,293 +127,246 @@ fun isValidDate(raw: String): Boolean {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TaskCreationScreenGen(
-    onAction: (TaskCreationActions) -> Unit,
-    state: TaskCreationUIState,
+    viewModel: TaskCreationViewModel,
     isDateFieldEnabled: Boolean = false,
 ) { // function that houses all UI on this screen.
-    val titleState = rememberTextFieldState()
-    val descriptionState = rememberTextFieldState()
-    val timeFieldState = rememberTextFieldState()
-    val dateFieldState = rememberTextFieldState()
-
+    val uiState by viewModel.uiState.collectAsState()
     // error flags when save is pressed with invalid input
-    var titleError by remember { mutableStateOf(false) }
-    var timeError by remember { mutableStateOf(false) }
-    var dateError by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = { // define the Header
-            TopAppBar(
-                title = { Text("Create Task", fontWeight = FontWeight.Bold) },
-                subtitle = { Text("") },
-                titleHorizontalAlignment = Alignment.CenterHorizontally
-            )
-        },
-        bottomBar = { // define the two buttons on the bottom of the screen
-            BottomAppBar(
-                actions = {
-                    IconButton(
-                        onClick = { onAction(TaskCreationActions.Cancel) }
-                    ) { // todo add a callback function here
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Delete Icon",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                },
-                floatingActionButton = { // RHS button with the special styling
-                    FloatingActionButton(
-                        onClick = {
-                            // validate all fields before saving
-                            val isTitleOk = titleState.text.isNotBlank()
-                            val isTimeOk = isValidTime(timeFieldState.text.toString())
-                            val dateCheck = isValidDate(dateFieldState.text.toString())
-                            val isDateOk = !isDateFieldEnabled || dateCheck
-
-                            titleError = !isTitleOk
-                            timeError = !isTimeOk
-                            dateError = isDateFieldEnabled && !isDateOk
-
-                            if (isTitleOk && isTimeOk && isDateOk) {
-                                onAction(TaskCreationActions.Save)
-                            }
-                        },
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                    ) {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Check Button",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Box( // use a box so the fields are stacked on top of the image
-        ) {
-            ThemedBackground()
-            Column( // arrange all the fields in a column
-                verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
-                // placed on the Vertical axis (now set for scrolling).
-                modifier =
-                    Modifier.fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(paddingValues)
-            ) {
-                TextField(
-                    state = titleState,
-                    placeholder = { Text("Title") },
-                    isError = titleError,
-                    supportingText = {
-                        if (titleError)
-                            Text(
-                                "Title cannot be empty",
-                                // color = Color(0xFF531E1E),
-                                modifier =
-                                    Modifier.background(MaterialTheme.colorScheme.surface)
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+    MaterialTheme {
+        Scaffold(
+            topBar = { // define the Header
+                TopAppBar(
+                    title = { Text("Create Task", fontWeight = FontWeight.Bold) },
+                    subtitle = { Text("") },
+                    titleHorizontalAlignment = Alignment.CenterHorizontally
+                )
+            },
+            bottomBar = { // define the two buttons on the bottom of the screen
+                BottomAppBar(
+                    actions = {
+                        IconButton(
+                            onClick = { viewModel.onAction(TaskCreationActions.Cancel) }
+                        ) { // todo add a callback function here
+                            Icon(
+                                painter =
+                                    painterResource(
+                                        Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Delete Icon",
+                                modifier = Modifier.size(32.dp)
                             )
+                        }
                     },
-                    trailingIcon = {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Clear title",
-                            modifier =
-                                Modifier.size(18.dp).clickable {
-                                    titleState.clearText()
-                                    titleError = false
-                                },
-                        )
-                    },
+                    floatingActionButton = { // RHS button with the special styling
+                        FloatingActionButton(
+                            onClick = {
+                                /*
+                                TODO validate time. Deleted old validation logic because it didn't fit with the new composable.
+                                 */
+                                // validate all fields before saving
+                                val isTitleOk = uiState.titleFieldState.text.isNotBlank()
+                                val dateCheck = isValidDate(uiState.dateFieldState.text.toString())
+                                val isDateOk = !isDateFieldEnabled || dateCheck
+
+                                viewModel.onAction(TaskCreationActions.SetTitleError(!isTitleOk))
+                                viewModel.onAction(
+                                    TaskCreationActions.SetDateError(
+                                        isDateFieldEnabled && !isDateOk
+                                    )
+                                )
+
+                                if (isTitleOk && isDateOk) {
+                                    val task =
+                                        Task(
+                                            id = 0, // TODO: Create function for making IDs
+                                            title = uiState.titleFieldState.text.toString(),
+                                            description =
+                                                uiState.descriptionFieldState.text.toString(),
+                                            priority = uiState.priority,
+                                            category = uiState.category,
+                                            dueDate =
+                                                TextToDate(uiState.dateFieldState.text.toString()),
+                                            dueTime = LocalTime(
+                                                hour = uiState.timePickerState.hour,
+                                                minute = uiState.timePickerState.minute
+                                            ),
+                                            spoons = uiState.spoons
+                                        )
+                                    viewModel.onAction(TaskCreationActions.Save(task))
+                                }
+                            },
+                            containerColor = Color(0xFF7799A4), // todo extract out to theme
+                            contentColor = Color(0xFFFFFFFF),
+                        ) {
+                            Icon(
+                                painter =
+                                    painterResource(
+                                        Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Save Task",
+                                modifier = Modifier.size(16.dp)
+                            )
+                        }
+                    }
+                )
+            }
+        ) { paddingValues ->
+            Box( // use a box so the fields are stacked on top of the image
+            ) {
+                Image(
+                    painter = painterResource(Res.drawable.pine_tree_background),
+                    contentDescription = "Background Image of a grove of pine trees.",
+                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
+                    // the parts that overflow off the screen are clipped
+                    modifier = Modifier.fillMaxHeight()
+                )
+                Column( // arrange all the fields in a column
+                    verticalArrangement =
+                        Arrangement.spacedBy(8.dp), // control how the elements are
+                    // placed on the Vertical axis (now set for scrolling).
                     modifier =
-                        Modifier.fillMaxWidth().onFocusChanged {
-                            if (it.isFocused) titleError = false
+                        Modifier.fillMaxSize()
+                            .verticalScroll(rememberScrollState())
+                            .padding(paddingValues)
+                ) {
+                    TextField(
+                        state = uiState.titleFieldState,
+                        placeholder = { Text("Title") },
+                        isError = uiState.titleError,
+                        supportingText = {
+                            if (uiState.titleError)
+                                Text(
+                                    "Title cannot be empty",
+                                    // color = Color(0xFF531E1E),
+                                    modifier =
+                                        Modifier.background(Color(0xFFFFFFFF))
+                                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
                         },
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        )
-                )
-                TextField(
-                    state = descriptionState,
-                    placeholder = { Text("Description") },
-                    trailingIcon = {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Clear description",
-                            modifier =
-                                Modifier.size(14.dp).clickable { descriptionState.clearText() }
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        ),
-                )
-                DueDateAndNotifications(
-                    onAction = onAction,
-                    notifySwitchIsChecked = state.notificationsOn,
-                    recurringSwitchIsChecked = state.isRecurring,
-                    timeFieldState = timeFieldState,
-                    dateFieldState = dateFieldState,
-                    timeError = timeError,
-                    dateError = dateError,
-                    onClearTimeError = { timeError = false },
-                    onClearDateError = { dateError = false },
-                    isDateFieldEnabled = isDateFieldEnabled,
-                )
-                SpoonSelectionCard()
-                CategoryAndPriorityCard()
+                        trailingIcon = {
+                            Icon(
+                                painter =
+                                    painterResource(
+                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Clear title",
+                                modifier =
+                                    Modifier.size(18.dp).clickable {
+                                        uiState.titleFieldState.clearText()
+                                        viewModel.onAction(TaskCreationActions.SetTitleError(false))
+                                    },
+                            )
+                        },
+                        modifier =
+                            Modifier.fillMaxWidth().onFocusChanged {
+                                if (it.isFocused)
+                                    viewModel.onAction(TaskCreationActions.SetTitleError(false))
+                            },
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color(0xFF2E4F57),
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                cursorColor = Color.Black
+                            )
+                    )
+                    TextField(
+                        state = uiState.descriptionFieldState,
+                        placeholder = { Text("Description") },
+                        trailingIcon = {
+                            Icon(
+                                painter =
+                                    painterResource(
+                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Clear description",
+                                modifier =
+                                    Modifier.size(14.dp).clickable {
+                                        uiState.descriptionFieldState.clearText()
+                                    }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedIndicatorColor = Color(0xFF2E4F57),
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color.Black,
+                                cursorColor = Color.Black
+                            ),
+                    )
+                    DueDateAndNotifications(
+                        onNotificationsToggle = { notificationsOn: Boolean ->
+                            viewModel.onAction(
+                                TaskCreationActions.OnNotificationsChanged(notificationsOn)
+                            )
+                        },
+                        onDoesTaskRecurToggle = { doesTaskRecur ->
+                            viewModel.onAction(TaskCreationActions.OnRecursChanged(doesTaskRecur))
+                        },
+                        notifySwitchIsChecked = uiState.notificationsOn,
+                        recurringSwitchIsChecked = uiState.isRecurring,
+                        dateFieldState = uiState.dateFieldState,
+                        dateError = uiState.dateError,
+
+                        onClearDateError = {
+                            viewModel.onAction(TaskCreationActions.ClearDateError)
+                        },
+                        isDateFieldEnabled = isDateFieldEnabled,
+                        onConfirmTime = {newTime -> viewModel.onAction(TaskCreationActions.OnTimeChange(newTime))},
+                        timePickerState = uiState.timePickerState,
+                    )
+                    SpoonSelectionCard(
+                        uiState.spoons,
+                        { spoons ->
+                            viewModel.onAction(TaskCreationActions.OnSpoonSelectedChanged(spoons))
+                        }
+                    )
+                    CategoryAndPriorityCard(
+                        onCategoryChanged = { category ->
+                            viewModel.onAction(TaskCreationActions.OnCategoryChanged(category))
+                        },
+                        selectedCategory = uiState.category,
+                        priority = uiState.priority,
+                        onPriorityChanged = { priority ->
+                            viewModel.onAction(TaskCreationActions.OnPriorityChanged(priority))
+                        }
+                    )
+                }
             }
         }
     }
 }
-
+/*
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
 @Composable
-fun TaskCreationScreenGen() { // function that houses all UI on this screen.
+private fun PreviewTaskCreationScreenGen() { // function that houses all UI on this screen.
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
-    Scaffold(
-        topBar = { // define the Header
-            TopAppBar(
-                title = { Text("Create Task", fontWeight = FontWeight.Bold) },
-                subtitle = { Text("") },
-                titleHorizontalAlignment = Alignment.CenterHorizontally
-            )
-        },
-        bottomBar = { // define the two buttons on the bottom of the screen
-            BottomAppBar(
-                actions = {
-                    IconButton(onClick = {}) { // todo add a callback function here
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Delete Icon",
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                },
-                floatingActionButton = { // RHS button with the special styling
-                    FloatingActionButton(
-                        onClick = {}, // add a callback function here
-                        containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary,
-                    ) {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Check Button",
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                }
-            )
-        }
-    ) { paddingValues ->
-        Box( // use a box so the fields are stacked on top of the image
-        ) {
-            ThemedBackground()
-            Column( // arrange all the fields in a column
-                verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
-                // placed on the Vertical axis (now set for scrolling).
-                modifier =
-                    Modifier.fillMaxSize()
-                        .verticalScroll(rememberScrollState())
-                        .padding(paddingValues)
-            ) {
-                TextField(
-                    state = titleState,
-                    placeholder = { Text("Title") },
-                    trailingIcon = {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Clear title",
-                            modifier = Modifier.size(18.dp).clickable { titleState.clearText() },
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth(),
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        )
-                )
-                TextField(
-                    state = descriptionState,
-                    placeholder = { Text("Description") },
-                    trailingIcon = {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Clear description",
-                            modifier =
-                                Modifier.size(14.dp).clickable { descriptionState.clearText() }
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
-                    colors =
-                        TextFieldDefaults.colors(
-                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        ),
-                )
-                DueDateAndNotifications()
-                SpoonSelectionCard()
-                CategoryAndPriorityCard()
-            }
-        }
-    }
+    TaskCreationScreenGen(
+        viewModel = TODO()
+    )
+
 }
+
+ */
 
 @Composable
 fun DueDateAndNotifications(
-    onAction: (TaskCreationActions) -> Unit,
+    onNotificationsToggle: (Boolean) -> Unit,
+    onDoesTaskRecurToggle: (Boolean) -> Unit,
+    onClearDateError: () -> Unit = {},
+    onConfirmTime: (TimePickerState) -> Unit,
     notifySwitchIsChecked: Boolean,
     recurringSwitchIsChecked: Boolean,
-    timeFieldState: TextFieldState,
+    timePickerState: TimePickerState,
     dateFieldState: TextFieldState,
     modifier: Modifier = Modifier,
-    timeError: Boolean = false,
+
     dateError: Boolean = false,
-    onClearTimeError: () -> Unit = {},
-    onClearDateError: () -> Unit = {},
+
     isDateFieldEnabled: Boolean = true,
 ) {
     Card(modifier = Modifier) {
@@ -407,9 +382,7 @@ fun DueDateAndNotifications(
                     Text("Notify Me")
                     Switch(
                         checked = notifySwitchIsChecked,
-                        onCheckedChange = {
-                            onAction(TaskCreationActions.OnNotificationsChanged(it))
-                        },
+                        onCheckedChange = { onNotificationsToggle(it) },
                         colors =
                             SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
@@ -424,7 +397,9 @@ fun DueDateAndNotifications(
                     Text("Recurring")
                     Switch(
                         checked = recurringSwitchIsChecked,
-                        onCheckedChange = { onAction(TaskCreationActions.OnRecursChanged(it)) },
+                        onCheckedChange = {
+                            onDoesTaskRecurToggle(it)
+                        }, // use 2: change state of recurring task
                         colors =
                             SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
@@ -433,44 +408,14 @@ fun DueDateAndNotifications(
                     )
                 }
             }
-            Row {
-                // time field, digits only, max 4 chars
-                OutlinedTextField(
-                    state = timeFieldState,
-                    label = { Text("HH:MM") },
-                    isError = timeError,
-                    supportingText = { if (timeError) Text("Enter a valid time (e.g. 10:30)") },
-                    trailingIcon = {
-                        Icon(
-                            painter =
-                                painterResource(
-                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                ),
-                            contentDescription = "Clear time",
-                            modifier =
-                                modifier.size(18.dp).clickable {
-                                    timeFieldState.clearText()
-                                    onClearTimeError()
-                                }
-                        )
-                    },
-                    inputTransformation =
-                        InputTransformation {
-                            val digitsOnly = asCharSequence().filter { it.isDigit() }.toString()
-                            replace(0, length, digitsOnly)
-                            if (length > 4) delete(4, length)
-                        },
-                    outputTransformation = OutputTransformation { if (length > 2) insert(2, ":") },
-                    colors =
-                        OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = MaterialTheme.colorScheme.primary,
-                            focusedLabelColor = MaterialTheme.colorScheme.primary,
-                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        ),
-                    modifier =
-                        modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearTimeError() }
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                // time field, digits only, max 4 chars: 10:30. No AM/PM
+                Wrapper(
+                    onConfirm = {timePickerState -> onConfirmTime(timePickerState)},
+                    modifier = Modifier.weight(1f)
                 )
                 // date field, chars only, 6 digits max
                 OutlinedTextField(
@@ -516,52 +461,16 @@ fun DueDateAndNotifications(
                         modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearDateError() }
                 )
             }
-            Row { // AM/PM button selection
-                var selectedIndex by remember { mutableIntStateOf(0) }
-                val options = listOf("AM", "PM")
-                SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed { index, label ->
-                        SegmentedButton(
-                            shape =
-                                SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = options.size
-                                ),
-                            onClick = { selectedIndex = index },
-                            selected = index == selectedIndex,
-                            label = { Text(label) },
-                            colors =
-                                SegmentedButtonColors(
-                                    activeContainerColor = MaterialTheme.colorScheme.primary,
-                                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
-                                    activeBorderColor = MaterialTheme.colorScheme.outline,
-                                    inactiveContainerColor = MaterialTheme.colorScheme.secondary,
-                                    inactiveContentColor = MaterialTheme.colorScheme.onSecondary,
-                                    inactiveBorderColor = MaterialTheme.colorScheme.outline,
-                                    disabledActiveContainerColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledActiveContentColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledActiveBorderColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledInactiveContainerColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledInactiveContentColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledInactiveBorderColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                )
-                        )
-                    }
-                }
-            }
+
         }
     }
 }
 
 @Preview
 @Composable
-fun DueDateAndNotifications(modifier: Modifier = Modifier) {
+fun PreviewDueDateAndNotifications(
+    modifier: Modifier = Modifier
+) { // TODO rewrite to use the actual component
     var notifySwitchIsChecked by remember { mutableStateOf(true) }
     var recurringSwitchChecked by remember { mutableStateOf(true) }
     var timeFieldState = rememberTextFieldState("")
@@ -762,10 +671,11 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
     }
 }
 
+
 @Composable
 fun SpoonSelectionCard(
-    onAction: (TaskCreationActions) -> Unit,
     selectedSpoon: Int,
+    onSpoonChange: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     /*
@@ -775,55 +685,6 @@ fun SpoonSelectionCard(
       - The spoon icons need to be replaced to match the Figma
      */
 
-    val maxSpoons = 5
-    Card(modifier = modifier.fillMaxWidth().alpha(0.85f)) {
-        Column(modifier = modifier.padding(12.dp).fillMaxWidth()) {
-            Text("Spoons Required")
-            Row( // how to center this in the card:
-                // order of operations matters with modifiers!!!
-                modifier = modifier.fillMaxWidth(), // give the element the max available width
-                horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
-                verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
-            ) {
-                for (i in 1..maxSpoons) { // a for loop creates icons programmatically instead
-                    // of specifying 5 Icons
-                    if (i <= selectedSpoon) {
-                        Icon(
-                            painter = painterResource(Res.drawable.spoon_filled),
-                            contentDescription = "Unfilled Spoon Icon",
-                            modifier =
-                                modifier.size(64.dp).clickable {
-                                    onAction(TaskCreationActions.OnSpoonSelectedChanged(i))
-                                }
-                        )
-                    } else {
-                        Icon(
-                            painter = painterResource(Res.drawable.spoon_unfilled),
-                            contentDescription = "Filled Spoon Icon",
-                            modifier =
-                                modifier.size(64.dp).clickable {
-                                    onAction(TaskCreationActions.OnSpoonSelectedChanged(i))
-                                }
-                        )
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun SpoonSelectionCard(modifier: Modifier = Modifier) {
-    /*
-    Potential Issues
-     - THe clickable surface is too small and cumbersome to use effectively. CInsider replacing with
-      a Surface.
-      - The spoon icons need to be replaced to match the Figma
-     */
-
-    val maxSpoons = 5
-    var selectedSpoons by remember { mutableIntStateOf(2) }
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = modifier.padding(12.dp).fillMaxWidth()) {
             Text("Spoons Required")
@@ -833,19 +694,19 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier) {
                 horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
                 verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
             ) {
-                for (i in 1..maxSpoons) { // a for loop creates icons programmatically instead
+                for (i in 1..max_spoons) { // a for loop creates icons programmatically instead
                     // of specifying 5 Icons
-                    if (i <= selectedSpoons) {
+                    if (i <= selectedSpoon) {
                         Icon(
                             painter = painterResource(Res.drawable.spoon_filled),
                             contentDescription = "Unfilled Spoon Icon",
-                            modifier = modifier.size(64.dp).clickable { selectedSpoons = i }
+                            modifier = modifier.size(64.dp).clickable { onSpoonChange(i) }
                         )
                     } else {
                         Icon(
                             painter = painterResource(Res.drawable.spoon_unfilled),
                             contentDescription = "Filled Spoon Icon",
-                            modifier = modifier.size(64.dp).clickable { selectedSpoons = i }
+                            modifier = modifier.size(64.dp).clickable { onSpoonChange(i) }
                         )
                     }
                 }
@@ -853,27 +714,43 @@ fun SpoonSelectionCard(modifier: Modifier = Modifier) {
         }
     }
 }
-
+/*
 @Preview
 @Composable
+private fun PreviewSpoonSelectionCard(){
+    SpoonSelectionCard(
+        onAction = {selection -> viewModel.onAction(TaskCreationActions.OnSelectedSpoonsChanged(selection)) },
+        selectedSpoon = TODO()
+    )
+}
+
+ */
+@Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
-fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
-    val menuItems =
-        listOf<String>("General", "Hygiene", "Household", "Work", "Recreation", "Social", "Pets")
-    var selectedOption by remember { mutableIntStateOf(0) }
-    var expanded by remember { mutableStateOf(false) }
+fun CategoryAndPriorityCard(
+    onCategoryChanged: (Category) -> Unit,
+    selectedCategory: Category,
+    priority: Priority,
+    onPriorityChanged: (Priority) -> Unit
+) {
+    // change to reference category enum
+
+    var expanded by remember { mutableStateOf(false) } // can stay local
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Category")
                 ExposedDropdownMenuBox(
-                    expanded = expanded,
-                    onExpandedChange = { expanded = it },
+                    expanded = expanded, // don't extract
+                    onExpandedChange = { expanded = it }, // don't extract
                     modifier = Modifier.fillMaxWidth()
                 ) {
-                    OutlinedTextField(
-                        value = menuItems[selectedOption],
-                        onValueChange = {},
+                    OutlinedTextField( // Category Selection Box
+                        value =
+                            selectedCategory
+                                .name, // DONE extract selected option, change menuItems to
+                        // reference enum
+                        onValueChange = {}, // call viewModel.OnCategoryChanged here?
                         readOnly = true,
                         trailingIcon = {
                             ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
@@ -894,11 +771,11 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
                         expanded = expanded,
                         onDismissRequest = { expanded = false }
                     ) {
-                        menuItems.forEachIndexed { index, option ->
+                        Category.entries.forEach { category ->
                             DropdownMenuItem(
-                                text = { Text(option) },
+                                text = { Text(category.name) },
                                 onClick = {
-                                    selectedOption = index
+                                    onCategoryChanged(category)
                                     expanded = false
                                 }
                             )
@@ -908,27 +785,38 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
             }
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Priority Level")
-                PrioritySelectButton()
+                PrioritySelectButton(priority = priority, onPriorityChanged = onPriorityChanged)
             }
         }
     }
 }
 
+/*
+@Preview
 @Composable
-fun PrioritySelectButton(modifier: Modifier = Modifier) {
-    var selectedIndex by remember { mutableIntStateOf(0) }
-    val options = listOf("low", "medium", "high", "critical")
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
+fun PreviewCategoryAndPriorityCard() {
+var selectedOption by remember { mutableIntStateOf(Category.HYGIENE.ordinal) }
+var selectedCategory by remember { mutableStateOf(Category.HYGIENE) }
+CategoryAndPriorityCard(
+onCategoryChanged = { category ->
+onAction(TaskCreationActions.OnCategoryChanged(category))
+},
+selectedCategory = selectedCategory
+)
+}
+*/
+
+@Composable
+fun PrioritySelectButton(priority: Priority, onPriorityChanged: (Priority) -> Unit) {
     SingleChoiceSegmentedButtonRow {
-        options.forEachIndexed { index, label ->
+        Priority.entries.forEachIndexed { index, option ->
             SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
-                onClick = {
-                    selectedIndex = index
-                }, // this callback function should change the value
-                // in the view model instead, but for now I'm leaving that until it's time to
-                // refactor
-                selected = index == selectedIndex,
-                label = { Text(label) },
+                shape =
+                    SegmentedButtonDefaults.itemShape(index = index, count = Priority.entries.size),
+                onClick = { onPriorityChanged(option) },
+                selected = option == priority,
+                label = { Text(option.name.lowercase()) },
                 colors =
                     SegmentedButtonColors(
                         activeContainerColor = MaterialTheme.colorScheme.primary,
@@ -942,46 +830,73 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
                         disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
-                        disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                        disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim
                     )
             )
         }
     }
 }
 
-// Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TimePickerDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, content: @Composable () -> Unit){
+
+    Dialog(
+        onDismissRequest = { onDismiss() },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ){
+        Surface(shape = MaterialTheme.shapes.extraLarge, tonalElevation = 6.dp, modifier = Modifier.width(
+            IntrinsicSize.Min).height(IntrinsicSize.Min).background(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surface)) {
+            Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally){
+                content()
+                Row(
+                    modifier = Modifier.height(40.dp).fillMaxWidth()
+                ){
+                    TextButton(onClick = onDismiss){Text("Cancel")}
+                    TextButton(onClick = {
+                                    onConfirm()
+                                    onDismiss()
+                                    },
+                    ){Text("Ok")}
+                }
+            }
+
+        }
+    }
+}
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Wrapper(onConfirm: (TimePickerState) -> Unit, modifier: Modifier = Modifier){
+    val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
+    val timePickerState = rememberTimePickerState(
+        initialHour = currentTime.hour,
+        initialMinute = currentTime.minute,
+        is24Hour = false
+    )
+    var showDialog by remember {mutableStateOf(false)}
+    Box(modifier){
+        ElevatedButton(onClick = {showDialog = true}){
+            Text("${timePickerState.hour}:${timePickerState.minute} ${if (timePickerState.isPm) "PM" else "AM"}", style = MaterialTheme.typography.bodyLarge)
+        }
+        if (showDialog) {
+            TimePickerDialog(
+                onConfirm = { onConfirm(timePickerState) },
+                onDismiss = { showDialog = false },
+                content = { TimePicker(state = timePickerState) }
+            )
+
+        }
+    }
+}
 @Preview
 @Composable
-private fun TaskCreationScreenForestPreview() {
-    SpoonCheckTheme(appTheme = AppTheme.FOREST) {
-        TaskCreationScreenGen(
-            onAction = {},
-            state = TaskCreationUIState(category = Category.HYGIENE),
-            isDateFieldEnabled = true
-        )
+@OptIn(ExperimentalMaterial3Api::class)
+private fun PreviewWrapper(){
+    Card{
+        Wrapper({})
     }
+
+
 }
 
-@Preview
-@Composable
-private fun TaskCreationScreenBeachPreview() {
-    SpoonCheckTheme(appTheme = AppTheme.BEACH) {
-        TaskCreationScreenGen(
-            onAction = {},
-            state = TaskCreationUIState(category = Category.HYGIENE),
-            isDateFieldEnabled = true
-        )
-    }
-}
 
-@Preview
-@Composable
-private fun TaskCreationScreenDarkPreview() {
-    SpoonCheckTheme(appTheme = AppTheme.DARK) {
-        TaskCreationScreenGen(
-            onAction = {},
-            state = TaskCreationUIState(category = Category.HYGIENE),
-            isDateFieldEnabled = true
-        )
-    }
-}
