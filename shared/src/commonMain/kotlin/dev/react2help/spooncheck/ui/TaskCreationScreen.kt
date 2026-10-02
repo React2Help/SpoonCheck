@@ -907,7 +907,8 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
                                 cursorColor = Color.Black
                             ),
                         modifier =
-                            Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable).fillMaxWidth()
+                            Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                                .fillMaxWidth()
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
