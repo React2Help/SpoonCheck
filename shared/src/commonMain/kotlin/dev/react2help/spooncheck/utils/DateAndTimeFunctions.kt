@@ -26,6 +26,7 @@ fun LocalTime.plusHoursSimple(hours: Int): LocalTime {
         nanosecond = this.nanosecond
     )
 }
+
 @Suppress("MagicNumber")
 fun generateRandomFutureDate(): LocalDate? {
 
