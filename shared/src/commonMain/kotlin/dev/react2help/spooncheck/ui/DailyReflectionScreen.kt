@@ -40,8 +40,6 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,13 +54,6 @@ import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.pine_tree_background
-
-// The three variants of the Daily Reflection screen, each with its own heading message.
-enum class DailyReflectionVariant(val message: String) {
-    Success("Congratulations!\nYou Completed All Your Tasks!"),
-    SuccessPartial("Congratulations!\nYou Completed Most Of Your Tasks!"),
-    RoughDay("Today might’ve been a hard day.\nThat’s Ok, take some time to reflect.")
-}
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -155,8 +146,6 @@ fun CheckInCard(
 ) {
 
     val inquiryState = rememberTextFieldState()
-    val maxSpoons = 5
-    var selectedSpoons by remember { mutableIntStateOf(2) }
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = modifier.padding(12.dp).fillMaxWidth()) {
             Text(
