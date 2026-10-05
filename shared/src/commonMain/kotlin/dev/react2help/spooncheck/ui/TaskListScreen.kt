@@ -10,7 +10,6 @@
 package dev.react2help.spooncheck.ui
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -61,13 +60,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.shadow.Shadow
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.Task
+import dev.react2help.spooncheck.theme.LocalAppTheme
+import dev.react2help.spooncheck.theme.SpoonCheckTheme
+import dev.react2help.spooncheck.theme.ThemedBackground
+import dev.react2help.spooncheck.theme.fourth
 import dev.react2help.spooncheck.viewmodels.TaskListViewModel
 import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
@@ -77,14 +80,12 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import kotlinx.datetime.toLocalDateTime
-import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.logo
-import spooncheck.shared.generated.resources.ocean_view
 import spooncheck.shared.generated.resources.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.spoon
 import spooncheck.shared.generated.resources.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -183,13 +184,7 @@ fun TaskListScreen() {
     ) { paddingValues ->
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val boxWithConstraintsScope = this
-            Image(
-                imageResource(Res.drawable.ocean_view),
-                contentDescription = "Background image",
-                contentScale = ContentScale.Crop, // scale the image so it fills the screen and
-                // the parts that overflow off the screen are clipped
-                modifier = Modifier.fillMaxHeight()
-            )
+            ThemedBackground()
             Column(
                 modifier = Modifier.fillMaxSize().padding(paddingValues),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -197,7 +192,10 @@ fun TaskListScreen() {
                 TaskStatusFilter()
                 Spacer(modifier = Modifier.size(8.dp))
                 Card(
-                    colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+                    colors =
+                        CardDefaults.elevatedCardColors(
+                            containerColor = MaterialTheme.colorScheme.surface
+                        ),
                     elevation = CardDefaults.cardElevation(8.dp),
                     modifier =
                         Modifier.widthIn(max = boxWithConstraintsScope.maxWidth * 0.9f)
@@ -242,10 +240,11 @@ fun TaskListScreen() {
 fun SectionItem(task: Task, modifier: Modifier = Modifier) { // task card
     Card(
         onClick = {},
-        modifier = Modifier.background(Color(0xFFf6feff)).height(80.dp).fillMaxWidth(),
+        modifier =
+            Modifier.background(MaterialTheme.colorScheme.fourth).height(80.dp).fillMaxWidth(),
     ) {
         Row(
-            modifier = Modifier.background(Color(0xfff6feff)).fillMaxSize(),
+            modifier = Modifier.background(MaterialTheme.colorScheme.fourth).fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
@@ -254,13 +253,7 @@ fun SectionItem(task: Task, modifier: Modifier = Modifier) { // task card
                 Text(task.description)
             }
 
-            val categoryModifier =
-                when (task.priority) {
-                    Priority.critical -> modifier.background(Color(0xffd4e2e3))
-                    Priority.high -> modifier.background(Color(0xFFEAD3B6))
-                    Priority.medium -> modifier.background(Color(0xFFfef2dc))
-                    Priority.low -> modifier.background(Color(0xFFfef2dc))
-                }
+            val categoryModifier = modifier.background(priorityColor(task.priority))
             Column( // RHS
                 modifier =
                     categoryModifier.fillMaxHeight().fillMaxWidth().padding(5.dp).weight(1.25f),
@@ -333,7 +326,7 @@ fun SectionItem(task: Task, modifier: Modifier = Modifier) { // task card
 fun TaskCard() {
     Card(
         modifier = Modifier.size(width = 300.dp, height = 80.dp),
-        border = BorderStroke(1.dp, Color.Black)
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.onSurface)
     ) {
         Row(
             modifier = Modifier.fillMaxSize(),
@@ -347,7 +340,7 @@ fun TaskCard() {
                 )
             }
             Column( // RHS
-                Modifier.background(Color.LightGray)
+                Modifier.background(MaterialTheme.colorScheme.fourth)
                     .fillMaxHeight()
                     .fillMaxWidth()
                     .padding(5.dp)
@@ -414,11 +407,11 @@ fun TaskStatusFilter() {
                 label = { Text(label) },
                 colors =
                     SegmentedButtonColors(
-                        activeContainerColor = Color(0xFF27567D),
-                        activeContentColor = Color(0xFFD0D7DB),
+                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeContentColor = MaterialTheme.colorScheme.tertiary,
                         activeBorderColor = MaterialTheme.colorScheme.outline,
-                        inactiveContainerColor = Color(0xFFD0D7DB),
-                        inactiveContentColor = Color(0xFF27567D),
+                        inactiveContainerColor = MaterialTheme.colorScheme.tertiary,
+                        inactiveContentColor = MaterialTheme.colorScheme.onTertiary,
                         inactiveBorderColor = MaterialTheme.colorScheme.outline,
                         disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
@@ -441,7 +434,7 @@ fun SectionHeader(
     // A Component. A Horizontal element with a "dropdown" chevron, a label, and a plus icon
 
     Row(
-        Modifier.fillMaxWidth().background(Color.White),
+        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton( // drop down icon
@@ -449,7 +442,7 @@ fun SectionHeader(
             colors =
                 IconButtonDefaults.iconButtonColors(
                     containerColor = Color.Transparent,
-                    contentColor = Color(0xFF5D82A2),
+                    contentColor = MaterialTheme.colorScheme.secondary,
                     disabledContentColor = Color.Unspecified,
                     disabledContainerColor = Color.Unspecified
                 ),
@@ -468,7 +461,11 @@ fun SectionHeader(
                 modifier = Modifier.size(24.dp)
             )
         }
-        Text(text = text, color = Color(0xFF5D82A2), style = MaterialTheme.typography.labelMedium)
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.labelMedium
+        )
         Spacer(Modifier.size(50.dp))
     }
 }
@@ -490,7 +487,7 @@ fun ExpandableList(sections: List<SectionData>) {
             sections.indices.map { index -> index to true }.toMutableStateMap()
         }
 
-    LazyColumn(modifier = Modifier.padding(8.dp).background(Color.White)) {
+    LazyColumn(modifier = Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
         sections.forEachIndexed { index, sectionData ->
             Section(
                 sectionData = sectionData,
@@ -535,6 +532,38 @@ fun NewTaskButton() {
         )
     }
 }
+// Priority colors on the task cards. They mean the same thing in every theme, so Forest and Beach
+// share them; Dark gets darker versions so the light text on top stays readable.
+@Composable
+private fun priorityColor(priority: Priority): Color {
+    val isDark = LocalAppTheme.current == AppTheme.DARK
+    return when (priority) {
+        Priority.critical -> if (isDark) Color(0xFF2F4A50) else Color(0xFFD4E2E3)
+        Priority.high -> if (isDark) Color(0xFF5A4632) else Color(0xFFEAD3B6)
+        Priority.medium,
+        Priority.low -> if (isDark) Color(0xFF4A4232) else Color(0xFFFEF2DC)
+    }
+}
+
+// Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
+@Preview
+@Composable
+private fun TaskListForestPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.FOREST) { TaskListScreen() }
+}
+
+@Preview
+@Composable
+private fun TaskListBeachPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.BEACH) { TaskListScreen() }
+}
+
+@Preview
+@Composable
+private fun TaskListDarkPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.DARK) { TaskListScreen() }
+}
+
 /*
 @Preview
 @Composable

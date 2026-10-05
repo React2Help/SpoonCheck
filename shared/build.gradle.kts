@@ -50,6 +50,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.navigation3)
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
             implementation(libs.vico.compose.m3)
+            implementation(libs.multiplatform.settings.no.arg)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
         }
         commonTest.dependencies {
