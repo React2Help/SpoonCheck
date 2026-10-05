@@ -149,7 +149,7 @@ enum class Priority {
 enum class AppTheme {
     FOREST,
     BEACH,
-    HIGH_CONTRAST
+    DARK
 }
 
 data class SettingsUIState(
@@ -187,4 +187,18 @@ sealed interface SettingsActions {
     data class OnEmailChanged(val email: String) : SettingsActions
 
     data class OnPasswordChanged(val password: String) : SettingsActions
+}
+
+data class DailyReflectionUIState(
+    val reflectionText: String = "",
+    val wasSkipped: Boolean = false,
+    val wasSubmitted: Boolean = false
+)
+
+sealed interface DailyReflectionActions {
+    data class OnReflectionChanged(val text: String) : DailyReflectionActions
+
+    data object OnSkip : DailyReflectionActions
+
+    data object OnSubmit : DailyReflectionActions
 }

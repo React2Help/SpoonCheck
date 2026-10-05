@@ -67,6 +67,8 @@ import androidx.compose.ui.unit.sp
 import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.SettingsActions
 import dev.react2help.spooncheck.modelsandstate.SettingsUIState
+import dev.react2help.spooncheck.theme.SpoonCheckTheme
+import dev.react2help.spooncheck.theme.ThemedBackground
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -222,7 +224,9 @@ fun ThemeCard(modifier: Modifier = Modifier) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Theme", color = Color(0xFF254A50), fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.size(10.dp))
-                ThemeSelectButton()
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    ThemeSelectButton()
+                }
             }
         }
     }
@@ -232,7 +236,7 @@ fun ThemeCard(modifier: Modifier = Modifier) {
 @Composable
 fun ThemeSelectButton(modifier: Modifier = Modifier) {
     var selectedIndex by remember { mutableIntStateOf(0) }
-    val options = listOf("Forest", "Beach", "HighContrast")
+    val options = listOf("Forest", "Beach", "Dark")
     SingleChoiceSegmentedButtonRow {
         options.forEachIndexed { index, label ->
             SegmentedButton(
@@ -361,7 +365,8 @@ fun UnsavedChangesCard(modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIState) {
-    MaterialTheme {
+    // selectedTheme here used for demonstration, use savedTheme on all other pages
+    SpoonCheckTheme(appTheme = state.selectedTheme) {
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -387,8 +392,8 @@ fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIStat
                     floatingActionButton = {
                         FloatingActionButton(
                             onClick = { onAction(SettingsActions.OnSave) },
-                            containerColor = Color(0xFF7799A4),
-                            contentColor = Color(0xFFFFFFFF),
+                            containerColor = MaterialTheme.colorScheme.secondary,
+                            contentColor = MaterialTheme.colorScheme.onSecondary,
                         ) {
                             Icon(
                                 painter =
@@ -404,12 +409,7 @@ fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIStat
             }
         ) { paddingValues ->
             Box {
-                Image(
-                    painter = painterResource(Res.drawable.pine_tree_background),
-                    contentDescription = "Background Image of a grove of pine trees.",
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier.fillMaxHeight()
-                )
+                ThemedBackground()
                 Column(
                     verticalArrangement = Arrangement.spacedBy(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -431,12 +431,16 @@ fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIStat
                                 modifier = Modifier.size(30.dp),
                             )
                             Spacer(modifier = Modifier.width(8.dp))
-                            Text("Link Account", color = Color(0xFF254A50), fontSize = 20.sp)
+                            Text(
+                                "Link Account",
+                                color = MaterialTheme.colorScheme.primary,
+                                fontSize = 20.sp
+                            )
                         },
                         colors =
                             ButtonDefaults.buttonColors(
-                                contentColor = Color.Black,
-                                containerColor = Color.White
+                                contentColor = MaterialTheme.colorScheme.onSurface,
+                                containerColor = MaterialTheme.colorScheme.surface
                             ),
                         modifier = Modifier.width(255.dp).height(85.dp),
                         shape = RoundedCornerShape(15.dp)
@@ -467,7 +471,11 @@ fun GeneralCard(
     Card(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("General", color = Color(0xFF254A50), fontWeight = FontWeight.Bold)
+                Text(
+                    "General",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -478,8 +486,8 @@ fun GeneralCard(
                         onCheckedChange = { onAction(SettingsActions.OnNotificationsChanged(it)) },
                         colors =
                             SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFFFFF),
-                                checkedTrackColor = Color(0xFF2E4F57),
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
                             )
                     )
                 }
@@ -488,8 +496,8 @@ fun GeneralCard(
                     content = { Text("Replay Tutorial") },
                     colors =
                         ButtonDefaults.buttonColors(
-                            contentColor = Color(0xFF254A50),
-                            containerColor = Color(0xFFD4E2E3)
+                            contentColor = MaterialTheme.colorScheme.onTertiary,
+                            containerColor = MaterialTheme.colorScheme.tertiary
                         ),
                 )
             }
@@ -506,47 +514,55 @@ fun ThemeCard(
     Card(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Theme", color = Color(0xFF254A50), fontWeight = FontWeight.Bold)
+                Text(
+                    "Theme",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.size(10.dp))
                 val options =
                     listOf(
                         AppTheme.FOREST to "Forest",
                         AppTheme.BEACH to "Beach",
-                        AppTheme.HIGH_CONTRAST to "HighContrast"
+                        AppTheme.DARK to "Dark"
                     )
-                SingleChoiceSegmentedButtonRow {
-                    options.forEachIndexed { index, (theme, label) ->
-                        SegmentedButton(
-                            shape =
-                                SegmentedButtonDefaults.itemShape(
-                                    index = index,
-                                    count = options.size
-                                ),
-                            onClick = { onAction(SettingsActions.OnThemeChanged(theme)) },
-                            selected = selectedTheme == theme,
-                            label = { Text(label) },
-                            colors =
-                                SegmentedButtonColors(
-                                    activeContainerColor = Color(0xFF2E4F57),
-                                    activeContentColor = Color(0xFFFFFFFF),
-                                    activeBorderColor = MaterialTheme.colorScheme.outline,
-                                    inactiveContainerColor = Color(0xFF7799A4),
-                                    inactiveContentColor = Color(0xFFFFFFFF),
-                                    inactiveBorderColor = MaterialTheme.colorScheme.outline,
-                                    disabledActiveContainerColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledActiveContentColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledActiveBorderColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledInactiveContainerColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledInactiveContentColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                    disabledInactiveBorderColor =
-                                        MaterialTheme.colorScheme.surfaceDim,
-                                )
-                        )
+                Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                    SingleChoiceSegmentedButtonRow {
+                        options.forEachIndexed { index, (theme, label) ->
+                            SegmentedButton(
+                                shape =
+                                    SegmentedButtonDefaults.itemShape(
+                                        index = index,
+                                        count = options.size
+                                    ),
+                                onClick = { onAction(SettingsActions.OnThemeChanged(theme)) },
+                                selected = selectedTheme == theme,
+                                label = { Text(label) },
+                                colors =
+                                    SegmentedButtonColors(
+                                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
+                                        activeBorderColor = MaterialTheme.colorScheme.outline,
+                                        inactiveContainerColor =
+                                            MaterialTheme.colorScheme.secondary,
+                                        inactiveContentColor =
+                                            MaterialTheme.colorScheme.onSecondary,
+                                        inactiveBorderColor = MaterialTheme.colorScheme.outline,
+                                        disabledActiveContainerColor =
+                                            MaterialTheme.colorScheme.surfaceDim,
+                                        disabledActiveContentColor =
+                                            MaterialTheme.colorScheme.surfaceDim,
+                                        disabledActiveBorderColor =
+                                            MaterialTheme.colorScheme.surfaceDim,
+                                        disabledInactiveContainerColor =
+                                            MaterialTheme.colorScheme.surfaceDim,
+                                        disabledInactiveContentColor =
+                                            MaterialTheme.colorScheme.surfaceDim,
+                                        disabledInactiveBorderColor =
+                                            MaterialTheme.colorScheme.surfaceDim,
+                                    )
+                            )
+                        }
                     }
                 }
             }
@@ -574,7 +590,11 @@ fun AccountSettingsCard(
     Card(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
             Column(modifier = Modifier.padding(16.dp)) {
-                Text("Account Settings", color = Color(0xFF254A50), fontWeight = FontWeight.Bold)
+                Text(
+                    "Account Settings",
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold
+                )
                 Spacer(modifier = Modifier.size(10.dp))
 
                 // Username row
@@ -587,8 +607,8 @@ fun AccountSettingsCard(
                         content = { Text("Change Username") },
                         colors =
                             ButtonDefaults.buttonColors(
-                                contentColor = Color(0xFF254A50),
-                                containerColor = Color(0xFFD4E2E3)
+                                contentColor = MaterialTheme.colorScheme.onTertiary,
+                                containerColor = MaterialTheme.colorScheme.tertiary
                             ),
                     )
                     if (isEditingName) {
@@ -621,8 +641,8 @@ fun AccountSettingsCard(
                         content = { Text("   Change Email   ") },
                         colors =
                             ButtonDefaults.buttonColors(
-                                contentColor = Color(0xFF254A50),
-                                containerColor = Color(0xFFD4E2E3)
+                                contentColor = MaterialTheme.colorScheme.onTertiary,
+                                containerColor = MaterialTheme.colorScheme.tertiary
                             ),
                     )
                     if (isEditingEmail) {
@@ -659,8 +679,8 @@ fun AccountSettingsCard(
                         content = { Text(" Password Reset ") },
                         colors =
                             ButtonDefaults.buttonColors(
-                                contentColor = Color(0xFF254A50),
-                                containerColor = Color(0xFFD4E2E3)
+                                contentColor = MaterialTheme.colorScheme.onTertiary,
+                                containerColor = MaterialTheme.colorScheme.tertiary
                             ),
                     )
                     if (isEditingPassword) {
@@ -705,4 +725,22 @@ fun AccountSettingsCard(
             }
         }
     }
+}
+
+@Preview
+@Composable
+private fun SettingsScreenForestPreview() {
+    SettingsScreenGen(onAction = {}, state = SettingsUIState(selectedTheme = AppTheme.FOREST))
+}
+
+@Preview
+@Composable
+private fun SettingsScreenBeachPreview() {
+    SettingsScreenGen(onAction = {}, state = SettingsUIState(selectedTheme = AppTheme.BEACH))
+}
+
+@Preview
+@Composable
+private fun SettingsScreenDarkPreview() {
+    SettingsScreenGen(onAction = {}, state = SettingsUIState(selectedTheme = AppTheme.DARK))
 }

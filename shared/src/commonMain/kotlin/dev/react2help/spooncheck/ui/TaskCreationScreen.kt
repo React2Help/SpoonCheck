@@ -9,14 +9,12 @@
 
 package dev.react2help.spooncheck.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -66,20 +64,21 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.modelsandstate.AppTheme
+import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
+import dev.react2help.spooncheck.theme.SpoonCheckTheme
+import dev.react2help.spooncheck.theme.ThemedBackground
 import kotlinx.datetime.LocalDate
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
 
@@ -120,160 +119,151 @@ fun TaskCreationScreenGen(
     var timeError by remember { mutableStateOf(false) }
     var dateError by remember { mutableStateOf(false) }
 
-    MaterialTheme {
-        Scaffold(
-            topBar = { // define the Header
-                TopAppBar(
-                    title = { Text("Create Task", fontWeight = FontWeight.Bold) },
-                    subtitle = { Text("") },
-                    titleHorizontalAlignment = Alignment.CenterHorizontally
-                )
-            },
-            bottomBar = { // define the two buttons on the bottom of the screen
-                BottomAppBar(
-                    actions = {
-                        IconButton(
-                            onClick = { onAction(TaskCreationActions.Cancel) }
-                        ) { // todo add a callback function here
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Delete Icon",
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-                    },
-                    floatingActionButton = { // RHS button with the special styling
-                        FloatingActionButton(
-                            onClick = {
-                                // validate all fields before saving
-                                val isTitleOk = titleState.text.isNotBlank()
-                                val isTimeOk = isValidTime(timeFieldState.text.toString())
-                                val dateCheck = isValidDate(dateFieldState.text.toString())
-                                val isDateOk = !isDateFieldEnabled || dateCheck
-
-                                titleError = !isTitleOk
-                                timeError = !isTimeOk
-                                dateError = isDateFieldEnabled && !isDateOk
-
-                                if (isTitleOk && isTimeOk && isDateOk) {
-                                    onAction(TaskCreationActions.Save)
-                                }
-                            },
-                            containerColor = Color(0xFF7799A4),
-                            contentColor = Color(0xFFFFFFFF),
-                        ) {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Check Button",
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
+    Scaffold(
+        topBar = { // define the Header
+            TopAppBar(
+                title = { Text("Create Task", fontWeight = FontWeight.Bold) },
+                subtitle = { Text("") },
+                titleHorizontalAlignment = Alignment.CenterHorizontally
+            )
+        },
+        bottomBar = { // define the two buttons on the bottom of the screen
+            BottomAppBar(
+                actions = {
+                    IconButton(
+                        onClick = { onAction(TaskCreationActions.Cancel) }
+                    ) { // todo add a callback function here
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Delete Icon",
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
-                )
-            }
-        ) { paddingValues ->
-            Box( // use a box so the fields are stacked on top of the image
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.pine_tree_background),
-                    contentDescription = "Background Image of a grove of pine trees.",
-                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
-                    // the parts that overflow off the screen are clipped
-                    modifier = Modifier.fillMaxHeight()
-                )
-                Column( // arrange all the fields in a column
-                    verticalArrangement =
-                        Arrangement.spacedBy(8.dp), // control how the elements are
-                    // placed on the Vertical axis (now set for scrolling).
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(paddingValues)
-                ) {
-                    TextField(
-                        state = titleState,
-                        placeholder = { Text("Title") },
-                        isError = titleError,
-                        supportingText = {
-                            if (titleError)
-                                Text(
-                                    "Title cannot be empty",
-                                    // color = Color(0xFF531E1E),
-                                    modifier =
-                                        Modifier.background(Color(0xFFFFFFFF))
-                                            .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
+                },
+                floatingActionButton = { // RHS button with the special styling
+                    FloatingActionButton(
+                        onClick = {
+                            // validate all fields before saving
+                            val isTitleOk = titleState.text.isNotBlank()
+                            val isTimeOk = isValidTime(timeFieldState.text.toString())
+                            val dateCheck = isValidDate(dateFieldState.text.toString())
+                            val isDateOk = !isDateFieldEnabled || dateCheck
+
+                            titleError = !isTitleOk
+                            timeError = !isTimeOk
+                            dateError = isDateFieldEnabled && !isDateOk
+
+                            if (isTitleOk && isTimeOk && isDateOk) {
+                                onAction(TaskCreationActions.Save)
+                            }
                         },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear title",
-                                modifier =
-                                    Modifier.size(18.dp).clickable {
-                                        titleState.clearText()
-                                        titleError = false
-                                    },
-                            )
-                        },
-                        modifier =
-                            Modifier.fillMaxWidth().onFocusChanged {
-                                if (it.isFocused) titleError = false
-                            },
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
-                            )
-                    )
-                    TextField(
-                        state = descriptionState,
-                        placeholder = { Text("Description") },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear description",
-                                modifier =
-                                    Modifier.size(14.dp).clickable { descriptionState.clearText() }
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
-                            ),
-                    )
-                    DueDateAndNotifications(
-                        onAction = onAction,
-                        notifySwitchIsChecked = state.notificationsOn,
-                        recurringSwitchIsChecked = state.isRecurring,
-                        timeFieldState = timeFieldState,
-                        dateFieldState = dateFieldState,
-                        timeError = timeError,
-                        dateError = dateError,
-                        onClearTimeError = { timeError = false },
-                        onClearDateError = { dateError = false },
-                        isDateFieldEnabled = isDateFieldEnabled,
-                    )
-                    SpoonSelectionCard()
-                    CategoryAndPriorityCard()
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    ) {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Check Button",
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
+            )
+        }
+    ) { paddingValues ->
+        Box( // use a box so the fields are stacked on top of the image
+        ) {
+            ThemedBackground()
+            Column( // arrange all the fields in a column
+                verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
+                // placed on the Vertical axis (now set for scrolling).
+                modifier =
+                    Modifier.fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(paddingValues)
+            ) {
+                TextField(
+                    state = titleState,
+                    placeholder = { Text("Title") },
+                    isError = titleError,
+                    supportingText = {
+                        if (titleError)
+                            Text(
+                                "Title cannot be empty",
+                                // color = Color(0xFF531E1E),
+                                modifier =
+                                    Modifier.background(MaterialTheme.colorScheme.surface)
+                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                            )
+                    },
+                    trailingIcon = {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Clear title",
+                            modifier =
+                                Modifier.size(18.dp).clickable {
+                                    titleState.clearText()
+                                    titleError = false
+                                },
+                        )
+                    },
+                    modifier =
+                        Modifier.fillMaxWidth().onFocusChanged {
+                            if (it.isFocused) titleError = false
+                        },
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        )
+                )
+                TextField(
+                    state = descriptionState,
+                    placeholder = { Text("Description") },
+                    trailingIcon = {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Clear description",
+                            modifier =
+                                Modifier.size(14.dp).clickable { descriptionState.clearText() }
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        ),
+                )
+                DueDateAndNotifications(
+                    onAction = onAction,
+                    notifySwitchIsChecked = state.notificationsOn,
+                    recurringSwitchIsChecked = state.isRecurring,
+                    timeFieldState = timeFieldState,
+                    dateFieldState = dateFieldState,
+                    timeError = timeError,
+                    dateError = dateError,
+                    onClearTimeError = { timeError = false },
+                    onClearDateError = { dateError = false },
+                    isDateFieldEnabled = isDateFieldEnabled,
+                )
+                SpoonSelectionCard()
+                CategoryAndPriorityCard()
             }
         }
     }
@@ -285,116 +275,106 @@ fun TaskCreationScreenGen(
 fun TaskCreationScreenGen() { // function that houses all UI on this screen.
     val titleState = rememberTextFieldState()
     val descriptionState = rememberTextFieldState()
-    MaterialTheme {
-        Scaffold(
-            topBar = { // define the Header
-                TopAppBar(
-                    title = { Text("Create Task", fontWeight = FontWeight.Bold) },
-                    subtitle = { Text("") },
-                    titleHorizontalAlignment = Alignment.CenterHorizontally
-                )
-            },
-            bottomBar = { // define the two buttons on the bottom of the screen
-                BottomAppBar(
-                    actions = {
-                        IconButton(onClick = {}) { // todo add a callback function here
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Delete Icon",
-                                modifier = Modifier.size(32.dp)
-                            )
-                        }
-                    },
-                    floatingActionButton = { // RHS button with the special styling
-                        FloatingActionButton(
-                            onClick = {}, // add a callback function here
-                            containerColor = Color(0xFF7799A4),
-                            contentColor = Color(0xFFFFFFFF),
-                        ) {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Check Button",
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
+    Scaffold(
+        topBar = { // define the Header
+            TopAppBar(
+                title = { Text("Create Task", fontWeight = FontWeight.Bold) },
+                subtitle = { Text("") },
+                titleHorizontalAlignment = Alignment.CenterHorizontally
+            )
+        },
+        bottomBar = { // define the two buttons on the bottom of the screen
+            BottomAppBar(
+                actions = {
+                    IconButton(onClick = {}) { // todo add a callback function here
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Delete Icon",
+                            modifier = Modifier.size(32.dp)
+                        )
                     }
-                )
-            }
-        ) { paddingValues ->
-            Box( // use a box so the fields are stacked on top of the image
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.pine_tree_background),
-                    contentDescription = "Background Image of a grove of pine trees.",
-                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
-                    // the parts that overflow off the screen are clipped
-                    modifier = Modifier.fillMaxHeight()
-                )
-                Column( // arrange all the fields in a column
-                    verticalArrangement =
-                        Arrangement.spacedBy(8.dp), // control how the elements are
-                    // placed on the Vertical axis (now set for scrolling).
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(paddingValues)
-                ) {
-                    TextField(
-                        state = titleState,
-                        placeholder = { Text("Title") },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear title",
-                                modifier =
-                                    Modifier.size(18.dp).clickable { titleState.clearText() },
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth(),
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
-                            )
-                    )
-                    TextField(
-                        state = descriptionState,
-                        placeholder = { Text("Description") },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear description",
-                                modifier =
-                                    Modifier.size(14.dp).clickable { descriptionState.clearText() }
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
-                            ),
-                    )
-                    DueDateAndNotifications()
-                    SpoonSelectionCard()
-                    CategoryAndPriorityCard()
+                },
+                floatingActionButton = { // RHS button with the special styling
+                    FloatingActionButton(
+                        onClick = {}, // add a callback function here
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
+                    ) {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Check Button",
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
                 }
+            )
+        }
+    ) { paddingValues ->
+        Box( // use a box so the fields are stacked on top of the image
+        ) {
+            ThemedBackground()
+            Column( // arrange all the fields in a column
+                verticalArrangement = Arrangement.spacedBy(8.dp), // control how the elements are
+                // placed on the Vertical axis (now set for scrolling).
+                modifier =
+                    Modifier.fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(paddingValues)
+            ) {
+                TextField(
+                    state = titleState,
+                    placeholder = { Text("Title") },
+                    trailingIcon = {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Clear title",
+                            modifier = Modifier.size(18.dp).clickable { titleState.clearText() },
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth(),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        )
+                )
+                TextField(
+                    state = descriptionState,
+                    placeholder = { Text("Description") },
+                    trailingIcon = {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Clear description",
+                            modifier =
+                                Modifier.size(14.dp).clickable { descriptionState.clearText() }
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        ),
+                )
+                DueDateAndNotifications()
+                SpoonSelectionCard()
+                CategoryAndPriorityCard()
             }
         }
     }
@@ -432,8 +412,8 @@ fun DueDateAndNotifications(
                         },
                         colors =
                             SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFFFFF),
-                                checkedTrackColor = Color(0xFF2E4F57),
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
                             )
                     )
                 }
@@ -447,8 +427,8 @@ fun DueDateAndNotifications(
                         onCheckedChange = { onAction(TaskCreationActions.OnRecursChanged(it)) },
                         colors =
                             SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFFFFF),
-                                checkedTrackColor = Color(0xFF2E4F57),
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
                             )
                     )
                 }
@@ -483,11 +463,11 @@ fun DueDateAndNotifications(
                     outputTransformation = OutputTransformation { if (length > 2) insert(2, ":") },
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2E4F57),
-                            focusedLabelColor = Color(0xFF2E4F57),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            cursorColor = Color.Black
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
                         ),
                     modifier =
                         modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearTimeError() }
@@ -526,11 +506,11 @@ fun DueDateAndNotifications(
                         },
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2E4F57),
-                            focusedLabelColor = Color(0xFF2E4F57),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            cursorColor = Color.Black
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
                         ),
                     modifier =
                         modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearDateError() }
@@ -552,11 +532,11 @@ fun DueDateAndNotifications(
                             label = { Text(label) },
                             colors =
                                 SegmentedButtonColors(
-                                    activeContainerColor = Color(0xFF2E4F57),
-                                    activeContentColor = Color(0xFFFFFFFF),
+                                    activeContainerColor = MaterialTheme.colorScheme.primary,
+                                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
                                     activeBorderColor = MaterialTheme.colorScheme.outline,
-                                    inactiveContainerColor = Color(0xFF7799A4),
-                                    inactiveContentColor = Color(0xFFFFFFFF),
+                                    inactiveContainerColor = MaterialTheme.colorScheme.secondary,
+                                    inactiveContentColor = MaterialTheme.colorScheme.onSecondary,
                                     inactiveBorderColor = MaterialTheme.colorScheme.outline,
                                     disabledActiveContainerColor =
                                         MaterialTheme.colorScheme.surfaceDim,
@@ -618,8 +598,8 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         },
                         colors =
                             SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFFFFF),
-                                checkedTrackColor = Color(0xFF2E4F57),
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
                                 // uncheckedThumbColor = Color(0xFF27567D),
                                 // uncheckedTrackColor = Color(0xFFD0D7DB),
                                 // uncheckedBorderColor = Color(0xFF27567D),
@@ -640,8 +620,8 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                         },
                         colors =
                             SwitchDefaults.colors(
-                                checkedThumbColor = Color(0xFFFFFFFF),
-                                checkedTrackColor = Color(0xFF2E4F57),
+                                checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
+                                checkedTrackColor = MaterialTheme.colorScheme.primary,
                             )
                     )
                 }
@@ -671,11 +651,11 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                     },
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2E4F57),
-                            focusedLabelColor = Color(0xFF2E4F57),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            cursorColor = Color.Black
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
                         ),
                     placeholder = { Text("HH:MM") },
                     // input requirements, must be a digit and must be of correct length
@@ -731,11 +711,11 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                             .weight(1f),
                     colors =
                         OutlinedTextFieldDefaults.colors(
-                            focusedBorderColor = Color(0xFF2E4F57),
-                            focusedLabelColor = Color(0xFF2E4F57),
-                            focusedTextColor = Color.Black,
-                            unfocusedTextColor = Color.Black,
-                            cursorColor = Color.Black
+                            focusedBorderColor = MaterialTheme.colorScheme.primary,
+                            focusedLabelColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
                         ),
                 )
             }
@@ -755,11 +735,11 @@ fun DueDateAndNotifications(modifier: Modifier = Modifier) {
                             label = { Text(label) },
                             colors =
                                 SegmentedButtonColors(
-                                    activeContainerColor = Color(0xFF2E4F57),
-                                    activeContentColor = Color(0xFFFFFFFF),
+                                    activeContainerColor = MaterialTheme.colorScheme.primary,
+                                    activeContentColor = MaterialTheme.colorScheme.onPrimary,
                                     activeBorderColor = MaterialTheme.colorScheme.outline,
-                                    inactiveContainerColor = Color(0xFF7799A4),
-                                    inactiveContentColor = Color(0xFFFFFFFF),
+                                    inactiveContainerColor = MaterialTheme.colorScheme.secondary,
+                                    inactiveContentColor = MaterialTheme.colorScheme.onSecondary,
                                     inactiveBorderColor = MaterialTheme.colorScheme.outline,
                                     disabledActiveContainerColor =
                                         MaterialTheme.colorScheme.surfaceDim,
@@ -900,11 +880,11 @@ fun CategoryAndPriorityCard(modifier: Modifier = Modifier) {
                         },
                         colors =
                             ExposedDropdownMenuDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = Color(0xFF2E4F57),
-                                focusedLabelColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
+                                focusedBorderColor = MaterialTheme.colorScheme.primary,
+                                focusedLabelColor = MaterialTheme.colorScheme.primary,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                cursorColor = MaterialTheme.colorScheme.primary
                             ),
                         modifier =
                             Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
@@ -951,11 +931,11 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
                 label = { Text(label) },
                 colors =
                     SegmentedButtonColors(
-                        activeContainerColor = Color(0xFF2E4F57),
-                        activeContentColor = Color(0xFFFFFFFF),
+                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeContentColor = MaterialTheme.colorScheme.onPrimary,
                         activeBorderColor = MaterialTheme.colorScheme.outline,
-                        inactiveContainerColor = Color(0xFF7799A4),
-                        inactiveContentColor = Color(0xFFFFFFFF),
+                        inactiveContainerColor = MaterialTheme.colorScheme.secondary,
+                        inactiveContentColor = MaterialTheme.colorScheme.onSecondary,
                         inactiveBorderColor = MaterialTheme.colorScheme.outline,
                         disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
@@ -966,5 +946,42 @@ fun PrioritySelectButton(modifier: Modifier = Modifier) {
                     )
             )
         }
+    }
+}
+
+// Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
+@Preview
+@Composable
+private fun TaskCreationScreenForestPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.FOREST) {
+        TaskCreationScreenGen(
+            onAction = {},
+            state = TaskCreationUIState(category = Category.HYGIENE),
+            isDateFieldEnabled = true
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TaskCreationScreenBeachPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.BEACH) {
+        TaskCreationScreenGen(
+            onAction = {},
+            state = TaskCreationUIState(category = Category.HYGIENE),
+            isDateFieldEnabled = true
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TaskCreationScreenDarkPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.DARK) {
+        TaskCreationScreenGen(
+            onAction = {},
+            state = TaskCreationUIState(category = Category.HYGIENE),
+            isDateFieldEnabled = true
+        )
     }
 }
