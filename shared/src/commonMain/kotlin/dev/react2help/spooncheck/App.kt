@@ -1,3 +1,7 @@
+@file:Suppress(
+    "LongMethod",
+)
+
 package dev.react2help.spooncheck
 
 import androidx.compose.runtime.*
