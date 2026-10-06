@@ -6,8 +6,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class InMemoryTaskRepository : TaskRepository {
-    private val _tasks = MutableStateFlow<List<Task>>(emptyList())
+class InMemoryTaskRepository(initialTasks: List<Task> = emptyList()) : TaskRepository {
+    private val _tasks = MutableStateFlow(initialTasks)
 
     override val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
 

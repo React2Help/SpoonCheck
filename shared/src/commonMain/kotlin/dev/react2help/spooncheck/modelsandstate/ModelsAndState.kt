@@ -8,15 +8,34 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlinx.datetime.todayIn
 
+const val DefaultDailySpoons = 10
+
 data class DashboardUIState(
-    val total_spoons: Int,
-    val consumed_spoons: Int,
-    val user_name: String,
-    val num_checkins: Int,
-    val num_restdays: Int,
-    val num_notifications:
-        Int // meant for the badge on the top right Profile icon on the Dashboard screen
-)
+    val userName: String = "",
+    val totalSpoons: Int = DefaultDailySpoons,
+    val consumedSpoons: Int = 0,
+    val importantTasks: List<Task> = emptyList(),
+    val numCheckins: Int = 0,
+    val numRestDays: Int = 0,
+    val numNotifications: Int =
+        0 // meant for the badge on the top right Profile icon on the Dashboard screen
+) {
+    val spoonProgress: Float
+        get() =
+            if (totalSpoons > 0) (consumedSpoons.toFloat() / totalSpoons).coerceIn(0f, 1f) else 0f
+}
+
+sealed interface DashboardActions {
+    data class OnTaskCompletionChanged(val taskId: Long, val isDone: Boolean) : DashboardActions
+
+    data class OnTaskClick(val taskId: Long) : DashboardActions
+
+    data object OnViewTasks : DashboardActions
+
+    data object OnFabClick : DashboardActions
+
+    data class OnDestinationSelect(val route: String) : DashboardActions
+}
 
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
