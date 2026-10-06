@@ -1,3 +1,7 @@
+@file:Suppress(
+    "LongMethod",
+)
+
 package dev.react2help.spooncheck
 
 import androidx.compose.runtime.Composable
@@ -48,7 +52,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
             entryDecorators = listOf(rememberViewModelStoreNavEntryDecorator()),
             entryProvider =
                 entryProvider {
-                    entry<Dashboard> { DashboardRoute() }
+                    entry<Dashboard> { DashboardRoute(taskRepository = taskRepository) }
 
                     entry<TaskList> {
                         TaskListRoute(
