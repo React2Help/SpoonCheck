@@ -19,6 +19,12 @@ val MutedInk = Color(0xFF5D6665)
 val OutlineGray = Color(0xFF87918F)
 val DividerGray = Color(0xFFD8D8D8)
 
+// Dashboard-specific tokens
+val DashboardTextTeal = Color(0xFF254A50)
+val CaptionSlateTeal = Color(0xFF7799A4)
+val PriorityVeryHighBg = Color(0xFFFEDAB8)
+val PriorityHighBg = Color(0xFFFEF2DC)
+
 // Dark-theme approximations until dedicated dark-mode tokens exist.
 val DarkBackground = Color(0xFF111614)
 val DarkSurface = Color(0xFF191F1D)
