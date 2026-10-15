@@ -3,35 +3,22 @@ package dev.react2help.spooncheck.viewmodels
 import androidx.lifecycle.ViewModel
 import dev.react2help.spooncheck.modelsandstate.SettingsActions
 import dev.react2help.spooncheck.modelsandstate.SettingsUIState
-import dev.react2help.spooncheck.repositories.ThemeRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class SettingsViewModel(private val themeRepository: ThemeRepository) : ViewModel() {
+class SettingsViewModel : ViewModel() {
 
-    // start with saved theme selected
-    private val _uiState =
-        MutableStateFlow(SettingsUIState(selectedTheme = themeRepository.theme.value))
+    private val _uiState = MutableStateFlow(SettingsUIState())
     val uiState: StateFlow<SettingsUIState> = _uiState.asStateFlow()
 
     fun onAction(action: SettingsActions) {
         when (action) {
-            is SettingsActions.OnSave -> {
-                // update theme for all screens to use
-                themeRepository.saveTheme(_uiState.value.selectedTheme)
+            is SettingsActions.OnSave ->
                 _uiState.update { it.copy(wasSaved = true, hasUnsavedChanges = false) }
-            }
             is SettingsActions.OnCancel ->
-                // change not saved, do not update theme
-                _uiState.update {
-                    it.copy(
-                        selectedTheme = themeRepository.theme.value,
-                        wasCancelled = true,
-                        hasUnsavedChanges = false
-                    )
-                }
+                _uiState.update { it.copy(wasCancelled = true, hasUnsavedChanges = false) }
             is SettingsActions.OnNotificationsChanged ->
                 _uiState.update {
                     it.copy(notificationsEnabled = action.enabled, hasUnsavedChanges = true)

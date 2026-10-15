@@ -21,7 +21,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -59,8 +58,6 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
@@ -83,13 +80,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import dev.react2help.spooncheck.modelsandstate.Category
+import dev.react2help.spooncheck.modelsandstate.MaxSpoons
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.Task
-import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
-import dev.react2help.spooncheck.modelsandstate.max_spoons
+import dev.react2help.spooncheck.theme.ThemedBackground
 import dev.react2help.spooncheck.utils.TextToDate
 import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
+import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
@@ -102,7 +101,6 @@ import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GR
 import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
-import kotlin.time.Clock
 
 // true if 4 digit entry is a valid HH:MM time
 fun isValidTime(raw: String): Boolean {
@@ -129,25 +127,22 @@ fun isValidDate(raw: String): Boolean {
 fun TaskCreationScreenGen(
     viewModel: TaskCreationViewModel,
     isDateFieldEnabled: Boolean = false,
-) { // function that houses all UI on this screen.
+) {
     val uiState by viewModel.uiState.collectAsState()
-    // error flags when save is pressed with invalid input
 
     MaterialTheme {
         Scaffold(
-            topBar = { // define the Header
+            topBar = {
                 TopAppBar(
                     title = { Text("Create Task", fontWeight = FontWeight.Bold) },
                     subtitle = { Text("") },
                     titleHorizontalAlignment = Alignment.CenterHorizontally
                 )
             },
-            bottomBar = { // define the two buttons on the bottom of the screen
+            bottomBar = {
                 BottomAppBar(
                     actions = {
-                        IconButton(
-                            onClick = { viewModel.onAction(TaskCreationActions.Cancel) }
-                        ) { // todo add a callback function here
+                        IconButton(onClick = { viewModel.onAction(TaskCreationActions.Cancel) }) {
                             Icon(
                                 painter =
                                     painterResource(
@@ -158,18 +153,17 @@ fun TaskCreationScreenGen(
                             )
                         }
                     },
-                    floatingActionButton = { // RHS button with the special styling
+                    floatingActionButton = {
                         FloatingActionButton(
                             onClick = {
-                                /*
-                                TODO validate time. Deleted old validation logic because it didn't fit with the new composable.
-                                 */
-                                // validate all fields before saving
                                 val isTitleOk = uiState.titleFieldState.text.isNotBlank()
+
                                 val dateCheck = isValidDate(uiState.dateFieldState.text.toString())
+
                                 val isDateOk = !isDateFieldEnabled || dateCheck
 
                                 viewModel.onAction(TaskCreationActions.SetTitleError(!isTitleOk))
+
                                 viewModel.onAction(
                                     TaskCreationActions.SetDateError(
                                         isDateFieldEnabled && !isDateOk
@@ -179,7 +173,7 @@ fun TaskCreationScreenGen(
                                 if (isTitleOk && isDateOk) {
                                     val task =
                                         Task(
-                                            id = 0, // TODO: Create function for making IDs
+                                            id = 0,
                                             title = uiState.titleFieldState.text.toString(),
                                             description =
                                                 uiState.descriptionFieldState.text.toString(),
@@ -187,17 +181,19 @@ fun TaskCreationScreenGen(
                                             category = uiState.category,
                                             dueDate =
                                                 TextToDate(uiState.dateFieldState.text.toString()),
-                                            dueTime = LocalTime(
-                                                hour = uiState.timePickerState.hour,
-                                                minute = uiState.timePickerState.minute
-                                            ),
+                                            dueTime =
+                                                LocalTime(
+                                                    hour = uiState.timePickerState.hour,
+                                                    minute = uiState.timePickerState.minute
+                                                ),
                                             spoons = uiState.spoons
                                         )
+
                                     viewModel.onAction(TaskCreationActions.Save(task))
                                 }
                             },
-                            containerColor = Color(0xFF7799A4), // todo extract out to theme
-                            contentColor = Color(0xFFFFFFFF),
+                            containerColor = Color(0xFF7799A4),
+                            contentColor = Color(0xFFFFFFFF)
                         ) {
                             Icon(
                                 painter =
@@ -212,132 +208,38 @@ fun TaskCreationScreenGen(
                 )
             }
         ) { paddingValues ->
-            Box( // use a box so the fields are stacked on top of the image
-            ) {
-                Image(
-                    painter = painterResource(Res.drawable.pine_tree_background),
-                    contentDescription = "Background Image of a grove of pine trees.",
-                    contentScale = ContentScale.Crop, // scale the image so it fills the screen and
-                    // the parts that overflow off the screen are clipped
-                    modifier = Modifier.fillMaxHeight()
-                )
-                Column( // arrange all the fields in a column
-                    verticalArrangement =
-                        Arrangement.spacedBy(8.dp), // control how the elements are
-                    // placed on the Vertical axis (now set for scrolling).
+            Box {
+                ThemedBackground()
+
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier =
                         Modifier.fillMaxSize()
                             .verticalScroll(rememberScrollState())
                             .padding(paddingValues)
                 ) {
-                    TextField(
-                        state = uiState.titleFieldState,
-                        placeholder = { Text("Title") },
-                        isError = uiState.titleError,
-                        supportingText = {
-                            if (uiState.titleError)
-                                Text(
-                                    "Title cannot be empty",
-                                    // color = Color(0xFF531E1E),
-                                    modifier =
-                                        Modifier.background(Color(0xFFFFFFFF))
-                                            .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear title",
-                                modifier =
-                                    Modifier.size(18.dp).clickable {
-                                        uiState.titleFieldState.clearText()
-                                        viewModel.onAction(TaskCreationActions.SetTitleError(false))
-                                    },
-                            )
-                        },
-                        modifier =
-                            Modifier.fillMaxWidth().onFocusChanged {
-                                if (it.isFocused)
-                                    viewModel.onAction(TaskCreationActions.SetTitleError(false))
-                            },
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
-                            )
+                    Image(
+                        painter = painterResource(Res.drawable.pine_tree_background),
+                        contentDescription = "Background Image of a grove of pine trees.",
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier.fillMaxHeight()
                     )
-                    TextField(
-                        state = uiState.descriptionFieldState,
-                        placeholder = { Text("Description") },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear description",
-                                modifier =
-                                    Modifier.size(14.dp).clickable {
-                                        uiState.descriptionFieldState.clearText()
-                                    }
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = Color(0xFF2E4F57),
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color.Black,
-                                cursorColor = Color.Black
-                            ),
-                    )
-                    DueDateAndNotifications(
-                        onNotificationsToggle = { notificationsOn: Boolean ->
-                            viewModel.onAction(
-                                TaskCreationActions.OnNotificationsChanged(notificationsOn)
-                            )
-                        },
-                        onDoesTaskRecurToggle = { doesTaskRecur ->
-                            viewModel.onAction(TaskCreationActions.OnRecursChanged(doesTaskRecur))
-                        },
-                        notifySwitchIsChecked = uiState.notificationsOn,
-                        recurringSwitchIsChecked = uiState.isRecurring,
-                        dateFieldState = uiState.dateFieldState,
-                        dateError = uiState.dateError,
 
-                        onClearDateError = {
-                            viewModel.onAction(TaskCreationActions.ClearDateError)
-                        },
-                        isDateFieldEnabled = isDateFieldEnabled,
-                        onConfirmTime = {newTime -> viewModel.onAction(TaskCreationActions.OnTimeChange(newTime))},
-                        timePickerState = uiState.timePickerState,
-                    )
-                    SpoonSelectionCard(
-                        uiState.spoons,
-                        { spoons ->
-                            viewModel.onAction(TaskCreationActions.OnSpoonSelectedChanged(spoons))
-                        }
-                    )
-                    CategoryAndPriorityCard(
-                        onCategoryChanged = { category ->
-                            viewModel.onAction(TaskCreationActions.OnCategoryChanged(category))
-                        },
-                        selectedCategory = uiState.category,
-                        priority = uiState.priority,
-                        onPriorityChanged = { priority ->
-                            viewModel.onAction(TaskCreationActions.OnPriorityChanged(priority))
-                        }
-                    )
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                        modifier =
+                            Modifier.fillMaxSize()
+                                .verticalScroll(rememberScrollState())
+                                .padding(paddingValues)
+                    ) {
+                        // Your TextFields and other composables go here
+                    }
                 }
             }
         }
     }
 }
+
 /*
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Preview
@@ -357,16 +259,14 @@ private fun PreviewTaskCreationScreenGen() { // function that houses all UI on t
 fun DueDateAndNotifications(
     onNotificationsToggle: (Boolean) -> Unit,
     onDoesTaskRecurToggle: (Boolean) -> Unit,
-    onClearDateError: () -> Unit = {},
     onConfirmTime: (TimePickerState) -> Unit,
     notifySwitchIsChecked: Boolean,
     recurringSwitchIsChecked: Boolean,
     timePickerState: TimePickerState,
     dateFieldState: TextFieldState,
     modifier: Modifier = Modifier,
-
+    onClearDateError: () -> Unit = {},
     dateError: Boolean = false,
-
     isDateFieldEnabled: Boolean = true,
 ) {
     Card(modifier = Modifier) {
@@ -414,7 +314,7 @@ fun DueDateAndNotifications(
             ) {
                 // time field, digits only, max 4 chars: 10:30. No AM/PM
                 Wrapper(
-                    onConfirm = {timePickerState -> onConfirmTime(timePickerState)},
+                    onConfirm = { timePickerState -> onConfirmTime(timePickerState) },
                     modifier = Modifier.weight(1f)
                 )
                 // date field, chars only, 6 digits max
@@ -461,7 +361,6 @@ fun DueDateAndNotifications(
                         modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearDateError() }
                 )
             }
-
         }
     }
 }
@@ -671,7 +570,6 @@ fun PreviewDueDateAndNotifications(
     }
 }
 
-
 @Composable
 fun SpoonSelectionCard(
     selectedSpoon: Int,
@@ -694,7 +592,7 @@ fun SpoonSelectionCard(
                 horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
                 verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
             ) {
-                for (i in 1..max_spoons) { // a for loop creates icons programmatically instead
+                for (i in 1..MaxSpoons) { // a for loop creates icons programmatically instead
                     // of specifying 5 Icons
                     if (i <= selectedSpoon) {
                         Icon(
@@ -728,10 +626,10 @@ private fun PreviewSpoonSelectionCard(){
 @Composable
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 fun CategoryAndPriorityCard(
-    onCategoryChanged: (Category) -> Unit,
+    onCategoryChange: (Category) -> Unit,
     selectedCategory: Category,
     priority: Priority,
-    onPriorityChanged: (Priority) -> Unit
+    onPriorityChange: (Priority) -> Unit
 ) {
     // change to reference category enum
 
@@ -775,7 +673,7 @@ fun CategoryAndPriorityCard(
                             DropdownMenuItem(
                                 text = { Text(category.name) },
                                 onClick = {
-                                    onCategoryChanged(category)
+                                    onCategoryChange(category)
                                     expanded = false
                                 }
                             )
@@ -785,7 +683,7 @@ fun CategoryAndPriorityCard(
             }
             Column(modifier = Modifier.padding(16.dp)) {
                 Text("Priority Level")
-                PrioritySelectButton(priority = priority, onPriorityChanged = onPriorityChanged)
+                PrioritySelectButton(priority = priority, onPriorityChange = onPriorityChange)
             }
         }
     }
@@ -808,13 +706,13 @@ selectedCategory = selectedCategory
 */
 
 @Composable
-fun PrioritySelectButton(priority: Priority, onPriorityChanged: (Priority) -> Unit) {
+fun PrioritySelectButton(priority: Priority, onPriorityChange: (Priority) -> Unit) {
     SingleChoiceSegmentedButtonRow {
         Priority.entries.forEachIndexed { index, option ->
             SegmentedButton(
                 shape =
                     SegmentedButtonDefaults.itemShape(index = index, count = Priority.entries.size),
-                onClick = { onPriorityChanged(option) },
+                onClick = { onPriorityChange(option) },
                 selected = option == priority,
                 label = { Text(option.name.lowercase()) },
                 colors =
@@ -839,44 +737,65 @@ fun PrioritySelectButton(priority: Priority, onPriorityChanged: (Priority) -> Un
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TimePickerDialog(onConfirm: () -> Unit, onDismiss: () -> Unit, content: @Composable () -> Unit){
+fun TimePickerDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit,
+    content: @Composable () -> Unit
+) {
 
     Dialog(
         onDismissRequest = { onDismiss() },
         properties = DialogProperties(usePlatformDefaultWidth = false)
-    ){
-        Surface(shape = MaterialTheme.shapes.extraLarge, tonalElevation = 6.dp, modifier = Modifier.width(
-            IntrinsicSize.Min).height(IntrinsicSize.Min).background(shape = MaterialTheme.shapes.extraLarge, color = MaterialTheme.colorScheme.surface)) {
-            Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally){
+    ) {
+        Surface(
+            shape = MaterialTheme.shapes.extraLarge,
+            tonalElevation = 6.dp,
+            modifier =
+                Modifier.width(IntrinsicSize.Min)
+                    .height(IntrinsicSize.Min)
+                    .background(
+                        shape = MaterialTheme.shapes.extraLarge,
+                        color = MaterialTheme.colorScheme.surface
+                    )
+        ) {
+            Column(
+                modifier = Modifier.padding(24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
                 content()
-                Row(
-                    modifier = Modifier.height(40.dp).fillMaxWidth()
-                ){
-                    TextButton(onClick = onDismiss){Text("Cancel")}
-                    TextButton(onClick = {
-                                    onConfirm()
-                                    onDismiss()
-                                    },
-                    ){Text("Ok")}
+                Row(modifier = Modifier.height(40.dp).fillMaxWidth()) {
+                    TextButton(onClick = onDismiss) { Text("Cancel") }
+                    TextButton(
+                        onClick = {
+                            onConfirm()
+                            onDismiss()
+                        },
+                    ) {
+                        Text("Ok")
+                    }
                 }
             }
-
         }
     }
 }
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Wrapper(onConfirm: (TimePickerState) -> Unit, modifier: Modifier = Modifier){
+fun Wrapper(onConfirm: (TimePickerState) -> Unit, modifier: Modifier = Modifier) {
     val currentTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time
-    val timePickerState = rememberTimePickerState(
-        initialHour = currentTime.hour,
-        initialMinute = currentTime.minute,
-        is24Hour = false
-    )
-    var showDialog by remember {mutableStateOf(false)}
-    Box(modifier){
-        ElevatedButton(onClick = {showDialog = true}){
-            Text("${timePickerState.hour}:${timePickerState.minute} ${if (timePickerState.isPm) "PM" else "AM"}", style = MaterialTheme.typography.bodyLarge)
+    val timePickerState =
+        rememberTimePickerState(
+            initialHour = currentTime.hour,
+            initialMinute = currentTime.minute,
+            is24Hour = false
+        )
+    var showDialog by remember { mutableStateOf(false) }
+    Box(modifier) {
+        ElevatedButton(onClick = { showDialog = true }) {
+            Text(
+                "${timePickerState.hour}:${timePickerState.minute} ${if (timePickerState.isPm) "PM" else "AM"}",
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
         if (showDialog) {
             TimePickerDialog(
@@ -884,19 +803,13 @@ fun Wrapper(onConfirm: (TimePickerState) -> Unit, modifier: Modifier = Modifier)
                 onDismiss = { showDialog = false },
                 content = { TimePicker(state = timePickerState) }
             )
-
         }
     }
 }
+
 @Preview
 @Composable
 @OptIn(ExperimentalMaterial3Api::class)
-private fun PreviewWrapper(){
-    Card{
-        Wrapper({})
-    }
-
-
+private fun PreviewWrapper() {
+    Card { Wrapper({}) }
 }
-
-

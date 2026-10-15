@@ -3,7 +3,6 @@ package dev.react2help.spooncheck.viewmodels
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
-import androidx.compose.material3.rememberTimePickerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.react2help.spooncheck.modelsandstate.Category
@@ -11,15 +10,14 @@ import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.repositories.TaskRepository
+import kotlin.time.Clock
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import kotlin.time.Clock
 
 class TaskCreationViewModel(
     @Suppress("UnusedPrivateProperty") private val repository: TaskRepository
@@ -40,11 +38,15 @@ class TaskCreationViewModel(
                 dateFieldState = TextFieldState(),
                 titleError = false,
                 dateError = false,
-                timePickerState = TimePickerState(
-                    Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour,
-                    initialMinute = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).minute,
-                    is24Hour = false
-                )
+                timePickerState =
+                    TimePickerState(
+                        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).hour,
+                        initialMinute =
+                            Clock.System.now()
+                                .toLocalDateTime(TimeZone.currentSystemDefault())
+                                .minute,
+                        is24Hour = false
+                    )
             )
         )
     val uiState: StateFlow<TaskCreationUIState> = _uiState.asStateFlow()
@@ -93,8 +95,10 @@ class TaskCreationViewModel(
                 _uiState.update { currentState ->
                     currentState.copy(selectedSpoons = action.newSpoonCount)
                 }
-
-            is TaskCreationActions.OnTimeChange -> _uiState.update { currentState -> currentState.copy(timePickerState = action.newTime) }
+            is TaskCreationActions.OnTimeChange ->
+                _uiState.update { currentState ->
+                    currentState.copy(timePickerState = action.newTime)
+                }
         }
     }
 

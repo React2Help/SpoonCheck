@@ -9,7 +9,6 @@
 
 package dev.react2help.spooncheck.ui
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
@@ -63,37 +62,30 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.dropShadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.shadow.Shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.Task
-import dev.react2help.spooncheck.theme.LocalAppTheme
-import dev.react2help.spooncheck.theme.SpoonCheckTheme
-import dev.react2help.spooncheck.theme.ThemedBackground
-import dev.react2help.spooncheck.theme.fourth
 import dev.react2help.spooncheck.modelsandstate.TaskListActions
 import dev.react2help.spooncheck.modelsandstate.TaskListFilterOptions
+import dev.react2help.spooncheck.theme.LocalAppTheme
+import dev.react2help.spooncheck.theme.fourth
 import dev.react2help.spooncheck.ui.components.EmptyTaskListComponent
 import dev.react2help.spooncheck.viewmodels.TaskListViewModel
 import kotlin.math.roundToInt
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
-import kotlinx.datetime.TimeZone
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.imageResource
-import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -517,6 +509,9 @@ private fun priorityColor(priority: Priority): Color {
 }
 
 // Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
+// By Ryan: Because they don't run app.kt they don't receive their dependencies. Commenting them out
+// until we can figure out a decent way to wire in a viewmodel.
+/*
 @Preview
 @Composable
 private fun TaskListForestPreview() {
@@ -534,6 +529,8 @@ private fun TaskListBeachPreview() {
 private fun TaskListDarkPreview() {
     SpoonCheckTheme(appTheme = AppTheme.DARK) { TaskListScreen() }
 }
+
+ */
 
 /*
 @Preview
