@@ -5,7 +5,7 @@ import androidx.compose.material3.TimePickerState
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
-public const val max_spoons = 5
+public const val MaxSpoons = 5
 
 data class DashboardUIState(
     val total_spoons: Int,
@@ -106,9 +106,7 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
     // specified as objects
     data class Save(val task: Task) : TaskCreationActions
 
-
     data object ClearDateError : TaskCreationActions
-
 
     data class SetDateError(val value: Boolean) : TaskCreationActions
 
@@ -131,7 +129,8 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
     data class OnSelectedCategoryChange(val selectedCategory: Int) : TaskCreationActions
 
     data class OnSelectedSpoonsChanged(val newSpoonCount: Int) : TaskCreationActions
-    data class OnTimeChange(val newTime: TimePickerState): TaskCreationActions
+
+    data class OnTimeChange(val newTime: TimePickerState) : TaskCreationActions
 }
 
 data class Task( // todo add other fields

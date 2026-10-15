@@ -807,13 +807,14 @@ style:
 
 Compose:
   active: true
+  CompositionLocalAllowlist:
+    active: true
+    allowedCompositionLocals:
+      - LocalAppTheme
   ComposableNaming:
     active: true
   ComposableParamOrder:
     active: true
-  CompositionLocalAllowlist:
-    active: true
-    allowedCompositionLocals: LocalAppTheme
   ModifierMissing:
     active: true
   PreviewAnnotationNaming:
