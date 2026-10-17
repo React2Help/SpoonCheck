@@ -19,7 +19,7 @@ data class DashboardUIState(
 
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
-    val tasks: List<Task> = emptyList(),
+    val tasks: List<dev.react2help.spooncheck.database.Task> = emptyList(),
     val listFilterOption: TaskListFilterOptions = TaskListFilterOptions.Todo,
     val spoonBudget: Int = 1,
     val shouldNavigateToDashboard: Boolean = false,
@@ -104,7 +104,7 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
     // must satisfy this contract
     data object Cancel : TaskCreationActions // since these actions don't need arguments, they are
     // specified as objects
-    data class Save(val task: Task) : TaskCreationActions
+    data class Save(val task: dev.react2help.spooncheck.database.Task) : TaskCreationActions
 
     data object ClearDateError : TaskCreationActions
 

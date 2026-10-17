@@ -1,14 +1,16 @@
 package dev.react2help.spooncheck
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
+import dev.react2help.spooncheck.repositories.TaskRepository
 import dev.react2help.spooncheck.ui.SettingsScreenGen
 import dev.react2help.spooncheck.ui.TaskCreationScreenGen
 import dev.react2help.spooncheck.ui.TaskListScreen
@@ -17,11 +19,11 @@ import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
 import dev.react2help.spooncheck.viewmodels.TaskListViewModel
 
 @Composable
-@Preview
-fun App() {
+fun App(taskRepository: TaskRepository) {
     MaterialTheme {
         val navController = rememberNavController()
-        val taskRepository = InMemoryTaskRepository()
+
+
         NavHost(navController = navController, startDestination = "taskList") {
             composable("settings") {
                 val viewModel = viewModel { SettingsViewModel() }
