@@ -105,3 +105,4 @@ tasks.register("detektBaselineAll") {
         rootProject.file("config/detekt/baseline.xml").writeText(mergedBaseline)
     }
 }
+

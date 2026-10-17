@@ -1,6 +1,6 @@
 package dev.react2help.spooncheck.ui.components
 
-import dev.react2help.spooncheck.modelsandstate.Task
+import dev.react2help.spooncheck.database.Task
 
 data class SectionData(val sectionTitle: String, val sectionItems: List<Task>)
 /*

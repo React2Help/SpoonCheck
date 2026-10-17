@@ -2,4 +2,4 @@ package dev.react2help.spooncheck
 
 import androidx.compose.ui.window.ComposeUIViewController
 
-fun MainViewController() = ComposeUIViewController { App() }
+fun MainViewController() = ComposeUIViewController { App(IosAppContainer.taskRepository) }

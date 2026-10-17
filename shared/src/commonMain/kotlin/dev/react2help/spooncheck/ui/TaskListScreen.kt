@@ -72,7 +72,6 @@ import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
-import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskListActions
 import dev.react2help.spooncheck.modelsandstate.TaskListFilterOptions
 import dev.react2help.spooncheck.theme.LocalAppTheme
@@ -98,7 +97,14 @@ import spooncheck.shared.generated.resources.spoon
 import spooncheck.shared.generated.resources.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 
 @Composable
-fun TaskListScreen(viewModel: TaskListViewModel) {
+fun TaskListScreen(
+    viewModel: TaskListViewModel,
+    onNavigateToTaskCreationDateEnable: () -> Unit,
+    onNavigateToPatterns: () -> Unit,
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToAccount: () -> Unit,
+    onNavigateToTaskDetails: () -> Unit
+) {
     val uiState by viewModel.uiState.collectAsState()
     var selected by remember { mutableStateOf(false) }
     Scaffold(
@@ -119,7 +125,7 @@ fun TaskListScreen(viewModel: TaskListViewModel) {
                         } // todo extract number to viewModel
                     )
                     IconButton( // account button
-                        onClick = { viewModel.OnAction(TaskListActions.NavigateToAccount) }
+                        onClick = { onNavigateToAccount() }
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.logo), // todo figure out why
@@ -134,19 +140,19 @@ fun TaskListScreen(viewModel: TaskListViewModel) {
             NavigationBar { // todo extract state of selected
                 NavigationBarItem(
                     selected = false,
-                    onClick = { viewModel.OnAction(TaskListActions.NavigateToDashboard) },
+                    onClick = { onNavigateToDashboard() },
                     icon = {},
                     label = { Text("Dashboard") }
                 )
                 NavigationBarItem(
                     selected = false,
-                    onClick = { viewModel.OnAction(TaskListActions.NavigateToTaskList) },
+                    onClick = { /*NO-OP*/},
                     icon = {},
                     label = { Text("Tasks") }
                 )
                 NavigationBarItem(
                     selected = true,
-                    onClick = { viewModel.OnAction(TaskListActions.NavigateToPatterns) },
+                    onClick = { onNavigateToPatterns() },
                     icon = {},
                     label = { Text("Patterns") }
                 )
@@ -155,7 +161,7 @@ fun TaskListScreen(viewModel: TaskListViewModel) {
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
             IconButton(
-                onClick = { viewModel.OnAction(TaskListActions.NavigateToTaskCreation) },
+                onClick = { onNavigateToTaskCreationDateEnable() },
                 shapes = IconButtonDefaults.shapes()
             ) {
                 Icon(painter = painterResource(Res.drawable.logo), contentDescription = "Logo")
@@ -208,11 +214,7 @@ fun TaskListScreen(viewModel: TaskListViewModel) {
                             onSwipeRight = { taskId ->
                                 viewModel.OnAction(TaskListActions.CompletionChanged(taskId, true))
                             },
-                            { taskId ->
-                                viewModel.OnAction(
-                                    TaskListActions.NavigateToTaskDetails(taskId = taskId)
-                                )
-                            }
+                            { taskId -> onNavigateToTaskDetails() }
                         )
                     }
                 }
@@ -365,7 +367,7 @@ fun SectionHeader(
 
 @Composable
 fun SectionItem(
-    task: Task,
+    task: dev.react2help.spooncheck.database.Task,
     onCardClick: (Long) -> Unit,
     onSwipeLeft: (Long) -> Unit,
     onSwipeRight: (Long) -> Unit,
@@ -574,4 +576,7 @@ fun TaskList(tasks :List<Task> = List(8) { i ->
 }
  */
 
-data class SectionData(val header: String, val tasks: List<Task>)
+data class SectionData(
+    val header: String,
+    val tasks: List<dev.react2help.spooncheck.database.Task>
+)
