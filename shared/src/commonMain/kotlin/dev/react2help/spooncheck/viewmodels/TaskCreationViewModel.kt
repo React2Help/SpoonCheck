@@ -5,8 +5,9 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.TimePickerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import dev.react2help.spooncheck.database.Task
 import dev.react2help.spooncheck.modelsandstate.Category
-import dev.react2help.spooncheck.modelsandstate.Task
+import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.repositories.TaskRepository
@@ -16,6 +17,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
@@ -62,7 +65,16 @@ class TaskCreationViewModel(
         just accept the boilerplate.
         */
         when (action) {
-            is TaskCreationActions.Save -> saveTask(task = action.task)
+            is TaskCreationActions.Save ->
+                saveTask(
+                    action.title,
+                    action.description,
+                    action.priority,
+                    action.category,
+                    action.dueDate,
+                    action.dueTime,
+                    action.spoons
+                )
             is TaskCreationActions.Cancel -> cancelTask()
             is TaskCreationActions.OnCategoryChanged -> {
                 _uiState.update { currentState -> currentState.copy(category = action.category) }
@@ -102,7 +114,8 @@ class TaskCreationViewModel(
         }
     }
 
-    private fun cancelTask() { // todo
+    private fun cancelTask() { // todo deprecate this function. The app should simply navigate the
+        // user away to task list screen.
         /*
         What needs to be done:
         1. figure out which what pressing the cancel button should do.
@@ -126,23 +139,31 @@ class TaskCreationViewModel(
     }
     */
 
-    private fun saveTask(task: Task) { // todo
+    private fun saveTask(
+        title: String,
+        description: String,
+        priority: Priority,
+        category: Category,
+        dueDate: LocalDate,
+        dueTime: LocalTime,
+        spoons: Int
+    ) {
         /*
-        What is already completed:
-        1. The function triggers navigation back to the task list screen.
-            wasSaved is listened on by a coroutine defined in App.kt
-            wasSaved == true -> navigate(taskListScreen)
-        What needs to be done:
-        1. This function needs to trigger persisting the task by the data layer.
-            // DONE
-        2. This function needs to relay success and error messages from the data layer
-            // TODO: error messages need to be relayed
-        3. This function needs to accept a task as a parameter and return success or failure to UI
-            // DONE
+        TODO:
+        - implement error handling and relevant retry mechanisms
          */
-        // validation is handled in the UI before this is called.  Then save and navigate
 
         viewModelScope.launch {
+            val task =
+                Task(
+                    title = title,
+                    description = description,
+                    priority = priority,
+                    category = category,
+                    dueDate = dueDate,
+                    dueTime = dueTime,
+                    spoons = spoons
+                )
             val saveStatus = repository.save(task)
 
             if (saveStatus.isSuccess) {

@@ -1,14 +1,14 @@
 package dev.react2help.spooncheck.repositories
 
-import dev.react2help.spooncheck.modelsandstate.Task
-import kotlinx.coroutines.flow.StateFlow
+import dev.react2help.spooncheck.database.Task
+import kotlinx.coroutines.flow.Flow
 
 interface TaskRepository {
-    val tasks: StateFlow<List<Task>>
+    val tasks: Flow<List<Task>>
 
     suspend fun save(task: Task): Result<Unit>
 
-    suspend fun deleteOne(taskId: Long): Result<Unit>
+    suspend fun deleteById(taskId: Long): Result<Unit>
 
     suspend fun setCompleted(taskId: Long, isDone: Boolean)
 }

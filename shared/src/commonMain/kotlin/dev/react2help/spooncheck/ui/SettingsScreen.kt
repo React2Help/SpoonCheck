@@ -360,7 +360,12 @@ fun UnsavedChangesCard(modifier: Modifier = Modifier) {
 // main screen production version
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
-fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIState) {
+fun SettingsScreenGen(
+    onAction: (SettingsActions) -> Unit,
+    state: SettingsUIState,
+    onNavigateToTaskCreationDateEnable: () -> () -> Unit,
+    onNavigateToTaskCreationDateDisable: () -> () -> Unit
+) {
     MaterialTheme {
         Scaffold(
             topBar = {
@@ -373,7 +378,7 @@ fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIStat
             bottomBar = {
                 BottomAppBar(
                     actions = {
-                        IconButton(onClick = { onAction(SettingsActions.OnCancel) }) {
+                        IconButton(onClick = { onNavigateToTaskCreationDateEnable() }) {
                             Icon(
                                 painter =
                                     painterResource(
@@ -386,7 +391,7 @@ fun SettingsScreenGen(onAction: (SettingsActions) -> Unit, state: SettingsUIStat
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = { onAction(SettingsActions.OnSave) },
+                            onClick = { onNavigateToTaskCreationDateDisable() },
                             containerColor = Color(0xFF7799A4),
                             contentColor = Color(0xFFFFFFFF),
                         ) {

@@ -5,6 +5,13 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+
+    id("com.google.devtools.ksp") version "2.3.12"
+    id("androidx.room3") version "3.1.0-alpha01"
+}
+
+room3{
+    schemaDirectory("$projectDir/schemas")
 }
 
 kotlin {
@@ -17,7 +24,9 @@ kotlin {
             isStatic = true
         }
     }
-    
+    compilerOptions{
+        freeCompilerArgs.add("-Xexpect-actual-classes")
+    }
     androidLibrary {
        namespace = "dev.react2help.spooncheck.shared"
        compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -37,6 +46,7 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             implementation(libs.compose.uiToolingPreview)
+            implementation(libs.androidx.room3.sqlite.wrapper)
         }
         commonMain.dependencies {
             implementation(libs.compose.runtime)
@@ -51,6 +61,9 @@ kotlin {
             implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
             implementation(libs.vico.compose.m3)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
+            api(libs.androidx.room3.runtime)
+            implementation(libs.androidx.sqlite.bundled)
+            implementation(libs.kotlinx.coroutines.core)
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
@@ -60,4 +73,7 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.uiTooling)
+    add("kspAndroid", libs.androidx.room3.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room3.compiler)
+    add("kspIosArm64", libs.androidx.room3.compiler)
 }

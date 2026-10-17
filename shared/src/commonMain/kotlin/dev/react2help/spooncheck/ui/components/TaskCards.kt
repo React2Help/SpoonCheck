@@ -27,9 +27,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.database.Task
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
-import dev.react2help.spooncheck.modelsandstate.Task
 import kotlin.math.roundToInt
 import kotlin.random.Random
 import kotlin.time.Clock

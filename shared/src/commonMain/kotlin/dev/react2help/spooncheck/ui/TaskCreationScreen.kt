@@ -9,7 +9,6 @@
 
 package dev.react2help.spooncheck.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,10 +16,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -58,13 +57,14 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TimePicker
 import androidx.compose.material3.TimePickerState
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.isPm
 import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -74,7 +74,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -83,11 +82,10 @@ import androidx.compose.ui.window.DialogProperties
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.MaxSpoons
 import dev.react2help.spooncheck.modelsandstate.Priority
-import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
+import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.theme.ThemedBackground
 import dev.react2help.spooncheck.utils.TextToDate
-import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
 import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -98,7 +96,6 @@ import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-import spooncheck.shared.generated.resources.pine_tree_background
 import spooncheck.shared.generated.resources.spoon_filled
 import spooncheck.shared.generated.resources.spoon_unfilled
 
@@ -125,11 +122,11 @@ fun isValidDate(raw: String): Boolean {
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun TaskCreationScreenGen(
-    viewModel: TaskCreationViewModel,
+    uiState: TaskCreationUIState,
+    onAction: (TaskCreationActions) -> Unit,
     isDateFieldEnabled: Boolean = false,
+    onNavigateToTaskList: () -> Unit,
 ) {
-    val uiState by viewModel.uiState.collectAsState()
-
     MaterialTheme {
         Scaffold(
             topBar = {
@@ -142,7 +139,7 @@ fun TaskCreationScreenGen(
             bottomBar = {
                 BottomAppBar(
                     actions = {
-                        IconButton(onClick = { viewModel.onAction(TaskCreationActions.Cancel) }) {
+                        IconButton(onClick = { onNavigateToTaskList() }) {
                             Icon(
                                 painter =
                                     painterResource(
@@ -155,41 +152,40 @@ fun TaskCreationScreenGen(
                     },
                     floatingActionButton = {
                         FloatingActionButton(
-                            onClick = {
+                            onClick = { // verify, save, navigate
                                 val isTitleOk = uiState.titleFieldState.text.isNotBlank()
 
                                 val dateCheck = isValidDate(uiState.dateFieldState.text.toString())
 
                                 val isDateOk = !isDateFieldEnabled || dateCheck
 
-                                viewModel.onAction(TaskCreationActions.SetTitleError(!isTitleOk))
+                                onAction(TaskCreationActions.SetTitleError(!isTitleOk))
 
-                                viewModel.onAction(
+                                onAction(
                                     TaskCreationActions.SetDateError(
                                         isDateFieldEnabled && !isDateOk
                                     )
                                 )
 
-                                if (isTitleOk && isDateOk) {
-                                    val task =
-                                        Task(
-                                            id = 0,
-                                            title = uiState.titleFieldState.text.toString(),
-                                            description =
-                                                uiState.descriptionFieldState.text.toString(),
-                                            priority = uiState.priority,
-                                            category = uiState.category,
-                                            dueDate =
-                                                TextToDate(uiState.dateFieldState.text.toString()),
-                                            dueTime =
-                                                LocalTime(
-                                                    hour = uiState.timePickerState.hour,
-                                                    minute = uiState.timePickerState.minute
-                                                ),
-                                            spoons = uiState.spoons
+                                if (
+                                    isTitleOk && isDateOk
+                                ) { // todo: Change Save() to accept all fields and be responsible
+                                    // for creating its own instance of task and saving it.
+                                    onAction(
+                                        TaskCreationActions.Save(
+                                            uiState.titleFieldState.text.toString(),
+                                            uiState.descriptionFieldState.text.toString(),
+                                            uiState.priority,
+                                            uiState.category,
+                                            TextToDate(uiState.dateFieldState.text.toString()),
+                                            LocalTime(
+                                                hour = uiState.timePickerState.hour,
+                                                minute = uiState.timePickerState.minute
+                                            ),
+                                            uiState.spoons
                                         )
-
-                                    viewModel.onAction(TaskCreationActions.Save(task))
+                                    )
+                                    onNavigateToTaskList()
                                 }
                             },
                             containerColor = Color(0xFF7799A4),
@@ -210,7 +206,6 @@ fun TaskCreationScreenGen(
         ) { paddingValues ->
             Box {
                 ThemedBackground()
-
                 Column(
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                     modifier =
@@ -218,22 +213,106 @@ fun TaskCreationScreenGen(
                             .verticalScroll(rememberScrollState())
                             .padding(paddingValues)
                 ) {
-                    Image(
-                        painter = painterResource(Res.drawable.pine_tree_background),
-                        contentDescription = "Background Image of a grove of pine trees.",
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier.fillMaxHeight()
-                    )
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp),
+                    // Your TextFields and other composables go here
+                    TextField(
+                        uiState.titleFieldState,
+                        placeholder = { Text("Title") },
+                        isError = uiState.titleError,
+                        supportingText = {
+                            if (uiState.titleError) {
+                                Text(
+                                    "Title cannot be empty",
+                                    modifier =
+                                        Modifier.background(MaterialTheme.colorScheme.surface)
+                                            .padding(horizontal = 4.dp, vertical = 2.dp)
+                                )
+                            }
+                        },
+                        trailingIcon = {
+                            Icon(
+                                painter =
+                                    painterResource(
+                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Clear Title",
+                                modifier =
+                                    Modifier.size(18.dp).clickable {
+                                        uiState.titleFieldState.clearText()
+                                        onAction(TaskCreationActions.SetTitleError(false))
+                                    }
+                            )
+                        },
                         modifier =
-                            Modifier.fillMaxSize()
-                                .verticalScroll(rememberScrollState())
-                                .padding(paddingValues)
-                    ) {
-                        // Your TextFields and other composables go here
-                    }
+                            Modifier.fillMaxWidth().onFocusChanged {
+                                if (it.isFocused) onAction(TaskCreationActions.SetTitleError(false))
+                            },
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                cursorColor = MaterialTheme.colorScheme.primary
+                            )
+                    )
+                    TextField(
+                        uiState.descriptionFieldState,
+                        placeholder = { Text("Description") },
+                        trailingIcon = {
+                            Icon(
+                                painter =
+                                    painterResource(
+                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Clear Description",
+                                modifier =
+                                    Modifier.size(18.dp).clickable {
+                                        uiState.titleFieldState.clearText()
+                                    }
+                            )
+                        },
+                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                                cursorColor = MaterialTheme.colorScheme.primary
+                            )
+                    )
+                    DueDateAndNotifications(
+                        onNotificationsToggle = { value ->
+                            onAction(TaskCreationActions.OnNotificationsChanged(value))
+                        },
+                        onDoesTaskRecurToggle = { action ->
+                            onAction(TaskCreationActions.OnRecursChanged(action))
+                        },
+                        onConfirmTime = { newState ->
+                            onAction(TaskCreationActions.OnTimeChange(newState))
+                        },
+                        notifySwitchIsChecked = uiState.notificationsOn,
+                        recurringSwitchIsChecked = uiState.isRecurring,
+                        timePickerState = uiState.timePickerState,
+                        dateFieldState = uiState.dateFieldState,
+                        onClearDateError = { onAction(TaskCreationActions.ClearDateError) },
+                        dateError = uiState.dateError,
+                        isDateFieldEnabled = isDateFieldEnabled
+                    )
+                    SpoonSelectionCard(
+                        selectedSpoon = uiState.spoons,
+                        onSpoonChange = { newSpoons ->
+                            onAction(TaskCreationActions.OnSpoonSelectedChanged(newSpoons))
+                        }
+                    )
+                    CategoryAndPriorityCard(
+                        onCategoryChange = { newCategory ->
+                            onAction(TaskCreationActions.OnCategoryChanged(newCategory))
+                        },
+                        selectedCategory = uiState.category,
+                        priority = uiState.priority,
+                        onPriorityChange = { newPriority ->
+                            onAction(TaskCreationActions.OnPriorityChanged(newPriority))
+                        }
+                    )
                 }
             }
         }

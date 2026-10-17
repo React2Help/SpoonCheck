@@ -1,47 +1,39 @@
 package dev.react2help.spooncheck
 
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
-import dev.react2help.spooncheck.ui.SettingsScreenGen
-import dev.react2help.spooncheck.ui.TaskCreationScreenGen
-import dev.react2help.spooncheck.ui.TaskListScreen
-import dev.react2help.spooncheck.viewmodels.SettingsViewModel
+import dev.react2help.spooncheck.repositories.TaskRepository
+import dev.react2help.spooncheck.routes.SettingsRoute
+import dev.react2help.spooncheck.routes.TaskCreationRoute
+import dev.react2help.spooncheck.routes.TaskListRoute
 import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
-import dev.react2help.spooncheck.viewmodels.TaskListViewModel
 
+@Suppress("LongMethod")
 @Composable
-@Preview
-fun App() {
+fun App(taskRepository: TaskRepository) {
     MaterialTheme {
         val navController = rememberNavController()
-        val taskRepository = InMemoryTaskRepository()
-        NavHost(navController = navController, startDestination = "taskList") {
-            composable("settings") {
-                val viewModel = viewModel { SettingsViewModel() }
-                val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                // temp for demonstration. Eventually navigate from home page/setup day screen
-                LaunchedEffect(state.wasCancelled) {
-                    if (state.wasCancelled) navController.navigate("taskCreationDateDisabled")
-                }
-
-                LaunchedEffect(state.wasSaved) {
-                    if (state.wasSaved) navController.navigate("taskCreationDateEnabled")
-                }
-
-                SettingsScreenGen(
-                    onAction = { action -> viewModel.onAction(action) },
-                    state = state
+        NavHost(
+            navController = navController,
+            startDestination = "taskList"
+        ) { // todo migrate to NavGraph (Navigation3)
+            composable("settings") { // viewmodel and state are managed by settings route
+                SettingsRoute(
+                    onNavigateToTaskCreationDateEnable = {
+                        navController.navigate("taskCreationDateEnabled")
+                    },
+                    onNavigateToTaskCreationDateDisable = {
+                        navController.navigate("taskCreationDateDisabled")
+                    }
                 )
             }
-
             composable("taskCreationDateDisabled") {
                 val viewModel = viewModel { TaskCreationViewModel(taskRepository) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -54,9 +46,12 @@ fun App() {
                     if (state.wasSaved) navController.navigate("taskList")
                 }
 
-                TaskCreationScreenGen(viewModel = viewModel, isDateFieldEnabled = false)
+                TaskCreationRoute(
+                    taskRepository = taskRepository,
+                    isDateFieldEnabled = false,
+                    onNavigateToTaskList = { navController.navigate("taskList") }
+                )
             }
-
             composable("taskCreationDateEnabled") {
                 val viewModel = viewModel { TaskCreationViewModel(taskRepository) }
                 val state by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,21 +64,22 @@ fun App() {
                     if (state.wasSaved) navController.navigate("taskList")
                 }
 
-                TaskCreationScreenGen(viewModel = viewModel, isDateFieldEnabled = true)
+                TaskCreationRoute(
+                    taskRepository,
+                    true,
+                    onNavigateToTaskList = { navController.navigate("taskList") }
+                )
             }
 
             composable("taskList") {
-                val viewModel = viewModel { TaskListViewModel(taskRepository) }
-                val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                LaunchedEffect(state.shouldNavigateToTaskCreation) {
-                    if (state.shouldNavigateToTaskCreation)
-                        navController.navigate("taskCreationDateEnabled")
-                }
-                /*
-                TODO: implement navigation to other screens
-                 */
-                TaskListScreen(viewModel = viewModel)
+                TaskListRoute(
+                    taskRepository,
+                    { navController.navigate("taskCreationDateEnabled") },
+                    onNavigateToPatterns = { TODO() },
+                    onNavigateToDashboard = { TODO() },
+                    onNavigateToAccount = { TODO() },
+                    onNavigateToTaskDetails = { TODO() }
+                )
             }
         }
     }
