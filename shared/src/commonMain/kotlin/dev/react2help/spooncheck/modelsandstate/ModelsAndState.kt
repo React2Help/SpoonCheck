@@ -19,7 +19,7 @@ data class DashboardUIState(
 
 data class TaskListUIState( // what the screen displays
     val isLoading: Boolean = false,
-    val tasks: List<Task> = emptyList(),
+    val tasks: List<dev.react2help.spooncheck.database.Task> = emptyList(),
     val listFilterOption: TaskListFilterOptions = TaskListFilterOptions.Todo,
     val spoonBudget: Int = 1,
     val shouldNavigateToDashboard: Boolean = false,
@@ -104,7 +104,15 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
     // must satisfy this contract
     data object Cancel : TaskCreationActions // since these actions don't need arguments, they are
     // specified as objects
-    data class Save(val task: Task) : TaskCreationActions
+    data class Save(
+        val title: String,
+        val description: String,
+        val priority: Priority,
+        val category: Category,
+        val dueDate: LocalDate,
+        val dueTime: LocalTime,
+        val spoons: Int
+    ) : TaskCreationActions
 
     data object ClearDateError : TaskCreationActions
 
@@ -132,27 +140,6 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
 
     data class OnTimeChange(val newTime: TimePickerState) : TaskCreationActions
 }
-
-data class Task( // todo add other fields
-    /*
-       date and time are nullable because I believe the user should be able to create tasks with no
-       due date or time.
-
-       spoons default value is zero because I believe we should always encourage the user to think
-       about how much effort a task consumes.
-
-
-    */
-    var id: Long,
-    val title: String,
-    val description: String,
-    val spoons: Int = 0,
-    val priority: Priority,
-    val category: Category,
-    val dueDate: LocalDate?,
-    val dueTime: LocalTime?,
-    val isDone: Boolean = false
-)
 
 enum class Category {
     HYGIENE,
