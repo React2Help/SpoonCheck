@@ -6,14 +6,18 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
+import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+        val spoonCheckApplication = application as SpoonCheckApplication
 
         setContent {
-            App()
+            App(
+                taskRepository = spoonCheckApplication.taskRepository
+            )
         }
     }
 }
@@ -21,5 +25,5 @@ class MainActivity : ComponentActivity() {
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App()
+    App(taskRepository = InMemoryTaskRepository())
 }

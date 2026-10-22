@@ -6,7 +6,6 @@ import androidx.compose.material3.TimePickerState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dev.react2help.spooncheck.modelsandstate.Category
-import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.repositories.TaskRepository
@@ -126,21 +125,11 @@ class TaskCreationViewModel(
     }
     */
 
-    private fun saveTask(task: Task) { // todo
+    private fun saveTask(task: dev.react2help.spooncheck.database.Task) {
         /*
-        What is already completed:
-        1. The function triggers navigation back to the task list screen.
-            wasSaved is listened on by a coroutine defined in App.kt
-            wasSaved == true -> navigate(taskListScreen)
-        What needs to be done:
-        1. This function needs to trigger persisting the task by the data layer.
-            // DONE
-        2. This function needs to relay success and error messages from the data layer
-            // TODO: error messages need to be relayed
-        3. This function needs to accept a task as a parameter and return success or failure to UI
-            // DONE
+        TODO:
+        - implement error handling and relevant retry mechanisms
          */
-        // validation is handled in the UI before this is called.  Then save and navigate
 
         viewModelScope.launch {
             val saveStatus = repository.save(task)

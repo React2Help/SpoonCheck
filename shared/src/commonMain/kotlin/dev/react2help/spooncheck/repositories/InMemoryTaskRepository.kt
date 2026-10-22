@@ -4,16 +4,17 @@ import dev.react2help.spooncheck.DeletionError
 import dev.react2help.spooncheck.DeletionException
 import dev.react2help.spooncheck.SaveError
 import dev.react2help.spooncheck.SaveException
-import dev.react2help.spooncheck.modelsandstate.Task
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-
+import dev.react2help.spooncheck.database.Task
 class InMemoryTaskRepository : TaskRepository {
     private val _tasks = MutableStateFlow<List<Task>>(emptyList())
 
     override val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
+
+
     private var nextID: Long = 0
 
     @Suppress(
@@ -26,8 +27,7 @@ class InMemoryTaskRepository : TaskRepository {
         if (task.title.isBlank()) {
             return Result.failure(SaveException(SaveError.INVALID_TASK))
         }
-        task.id = (nextID++) % Long.MAX_VALUE // autoincrement id, prevent overflow
-        _tasks.update { currentTasks -> currentTasks + task }
+
         return Result.success(Unit)
     }
 
