@@ -28,9 +28,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.database.Task
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
-import dev.react2help.spooncheck.modelsandstate.Task
 import dev.react2help.spooncheck.ui.components.SwipeableTruncatedTaskCard
 import dev.react2help.spooncheck.utils.generateRandomFutureDate
 import dev.react2help.spooncheck.utils.plusHoursSimple
@@ -192,7 +192,7 @@ private fun PreviewScreen() {
                 priority = Priority.entries[i % Priority.entries.size],
                 category = Category.entries[i % Category.entries.size],
                 dueDate =
-                    if (i % 2 == 0) generateRandomFutureDate()
+                    if (i % 2 == 0) generateRandomFutureDate()!!
                     else Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
                 dueTime =
                     Clock.System.now()

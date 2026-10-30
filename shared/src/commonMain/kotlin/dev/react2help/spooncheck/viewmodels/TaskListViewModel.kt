@@ -8,8 +8,10 @@ import dev.react2help.spooncheck.modelsandstate.TaskListUIState
 import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
 import dev.react2help.spooncheck.repositories.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -20,77 +22,56 @@ What needs to be done:
  */
 class TaskListViewModel(
     private val taskRepository: TaskRepository = InMemoryTaskRepository() // Dependency Inversion
-) : ViewModel() { // todo
-    private val _uiState = MutableStateFlow(TaskListUIState())
-    val uiState: StateFlow<TaskListUIState> = _uiState.asStateFlow()
-
-    init {
-        /*
-        obtain the list of tasks from the repository when the viewmodel is created.
-        happens immediately, before the UI is drawn, so the tasks are ready hopefully by the time
-        the UI is cooked
-        */
-        viewModelScope.launch {
-            taskRepository.tasks.collect { tasks ->
-                var filteredTasks =
+) : ViewModel() {
+    private val selectedFilter = MutableStateFlow(TaskListFilterOptions.Todo)
+    private val screenState = MutableStateFlow(TaskListUIState())
+    val uiState: StateFlow<TaskListUIState> =
+        combine(taskRepository.tasks, selectedFilter, screenState) {
+                tasks,
+                filter,
+                currentScreenState ->
+                val filteredTasks =
                     tasks.filter { task ->
-                        when (_uiState.value.listFilterOption) {
+                        when (filter) {
                             TaskListFilterOptions.ALL_TASKS -> true
                             TaskListFilterOptions.Todo -> !task.isDone
                             TaskListFilterOptions.Done -> task.isDone
                         }
                     }
-                _uiState.update { currentState -> currentState.copy(tasks = filteredTasks) }
+                currentScreenState.copy(tasks = filteredTasks, listFilterOption = filter)
             }
-        }
-    }
+            .stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(5_000),
+                initialValue = TaskListUIState()
+            )
 
     fun OnAction(action: TaskListActions) {
         when (action) {
             is TaskListActions.CompletionChanged ->
                 viewModelScope.launch { taskRepository.setCompleted(action.taskId, action.isDone) }
-            is TaskListActions.onFilterOptionChange ->
-                _uiState.update { currentState ->
-                    viewModelScope.launch { // recalculate what tasks to show with the new filiter
-                        taskRepository.tasks.collect { tasks ->
-                            var filteredTasks =
-                                tasks.filter { task ->
-                                    when (action.filterOption) {
-                                        TaskListFilterOptions.ALL_TASKS -> true
-                                        TaskListFilterOptions.Todo -> !task.isDone
-                                        TaskListFilterOptions.Done -> task.isDone
-                                    }
-                                }
-                            _uiState.update { currentState ->
-                                currentState.copy(tasks = filteredTasks)
-                            }
-                        }
-                    }
-                    currentState.copy(listFilterOption = action.filterOption)
-                }
+            is TaskListActions.onFilterOptionChange -> selectedFilter.value = action.filterOption
             TaskListActions.NavigateToDashboard ->
-                _uiState.update { currentState ->
+                screenState.update { currentState ->
                     currentState.copy(shouldNavigateToDashboard = true)
                 }
             TaskListActions.NavigateToPatterns ->
-                _uiState.update { currentState ->
+                screenState.update { currentState ->
                     currentState.copy(shouldNavigateToPatterns = true)
                 }
             TaskListActions.NavigateToTaskCreation ->
-                _uiState.update { currentState ->
+                screenState.update { currentState ->
                     currentState.copy(shouldNavigateToTaskCreation = true)
                 }
-            TaskListActions.NavigateToTaskList -> {
-                /* purposely a noop. We are already on the task list screen.*/
-            }
+            TaskListActions.NavigateToTaskList -> Unit
             is TaskListActions.OnDelete ->
-                viewModelScope.launch { taskRepository.deleteOne(action.taskId) }
+                viewModelScope.launch { taskRepository.deleteById(action.taskId) }
             TaskListActions.NavigateToAccount ->
-                _uiState.update { currentState ->
+                screenState.update { currentState ->
                     currentState.copy(shouldNavigateToAccount = true)
                 }
             is TaskListActions.onSpoonBudgetChange ->
-                _uiState.update { currentState ->
+                screenState.update { currentState ->
                     currentState.copy(spoonBudget = action.newSpoonBudget)
                 }
             is TaskListActions.NavigateToTaskDetails -> TODO()
