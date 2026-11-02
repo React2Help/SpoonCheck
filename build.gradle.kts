@@ -32,7 +32,10 @@ subprojects {
             xml.required.set(true)
             sarif.required.set(true)
         }
-        exclude("**/build/**", "**/generated/**")
+        exclude { it.file.invariantSeparatorsPath.contains("/build/") }
+    }
+    tasks.withType<io.gitlab.arturbosch.detekt.DetektCreateBaselineTask>().configureEach {
+        exclude { it.file.invariantSeparatorsPath.contains("/build/") }
     }
 }
 
