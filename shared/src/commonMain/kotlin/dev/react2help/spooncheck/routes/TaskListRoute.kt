@@ -13,7 +13,7 @@ fun TaskListRoute(
     onNavigateToTaskCreationDateEnable: () -> Unit,
     onNavigateToPatterns: () -> Unit,
     onNavigateToDashboard: () -> Unit,
-    onNavigateToAccount: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     onNavigateToTaskDetails: () -> Unit
 ) {
     val viewModel: TaskListViewModel = viewModel { TaskListViewModel(taskRepository) }
@@ -22,7 +22,7 @@ fun TaskListRoute(
         onNavigateToTaskCreationDateEnable = onNavigateToTaskCreationDateEnable,
         onNavigateToPatterns = onNavigateToPatterns,
         onNavigateToDashboard = onNavigateToDashboard,
-        onNavigateToAccount = onNavigateToAccount,
+        onNavigateToSettings = onNavigateToSettings,
         onNavigateToTaskDetails = onNavigateToTaskDetails
     )
 }

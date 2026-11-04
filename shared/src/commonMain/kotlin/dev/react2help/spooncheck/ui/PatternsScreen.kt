@@ -48,10 +48,16 @@ import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.logo
 import spooncheck.shared.generated.resources.spoon
 
+@Suppress("ModifierMissing")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
-@Preview
 @Composable
-fun PatternsScreen() {
+fun PatternsScreen(
+    onNavigateToPatterns: () -> Unit,
+    onNavigateToTaskCreationDateEnable: () -> Unit,
+    onNavigateToDashboard: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToTaskList: () -> Unit
+) {
 
     PatternsTheme {
         Scaffold(
@@ -61,7 +67,7 @@ fun PatternsScreen() {
                     title = { Text("Patterns") },
                     actions = {
                         IconButton(
-                            onClick = { println() },
+                            onClick = { onNavigateToSettings() },
                             shape = RectangleShape,
                             content = {
                                 Icon(
@@ -77,19 +83,19 @@ fun PatternsScreen() {
                 NavigationBar {
                     NavigationBarItem(
                         selected = false,
-                        onClick = { println() },
+                        onClick = { onNavigateToDashboard() },
                         icon = {},
                         label = { Text("Dashboard") }
                     )
                     NavigationBarItem(
                         selected = false,
-                        onClick = {},
+                        onClick = { onNavigateToTaskList() },
                         icon = {},
                         label = { Text("Tasks") }
                     )
                     NavigationBarItem(
                         selected = true,
-                        onClick = {},
+                        onClick = { onNavigateToPatterns() },
                         icon = {},
                         label = { Text("Patterns") }
                     )
@@ -97,7 +103,7 @@ fun PatternsScreen() {
             },
             floatingActionButton = {
                 FloatingActionButton(
-                    onClick = {},
+                    onClick = { onNavigateToTaskCreationDateEnable() },
                     modifier = Modifier.size(64.dp),
                     shape = CircleShape
                 ) {

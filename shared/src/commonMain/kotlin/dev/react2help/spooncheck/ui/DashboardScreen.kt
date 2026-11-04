@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProgressIndicatorDefaults
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +41,17 @@ import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.spoon
 
 // TODO SOMEONE TAKE THIS OVER Placeholder until dashboard UI is implemented.
+
+@Suppress("ModifierMissing")
+@Composable
+fun DashboardScreenStub() {
+    Scaffold { paddingValues ->
+        Column(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+            Card { Text("Coming Soon!") }
+        }
+    }
+}
+
 @Preview
 @Composable
 private fun DashboardScreenPreview(modifier: Modifier = Modifier) {
