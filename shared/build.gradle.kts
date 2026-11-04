@@ -5,7 +5,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
-
+    alias(libs.plugins.kotlinSerialization)
     id("com.google.devtools.ksp") version "2.3.12"
     id("androidx.room3") version "3.1.0-alpha01"
 }
@@ -57,9 +57,11 @@ kotlin {
             implementation(libs.compose.uiToolingPreview)
             implementation(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.androidx.lifecycle.viewmodel.compose)
-            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
-            implementation("org.jetbrains.androidx.navigation:navigation-compose:2.9.2")
+            implementation(libs.jetbrains.navigation3.ui)
+            implementation(libs.jetbrains.lifecycle.viewmodelNavigation3)
+            implementation(libs.jetbrains.material3.adaptiveNavigation3)
             implementation(libs.vico.compose.m3)
+            implementation(libs.kotlinx.serialization.core)
             implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.8.0")
             api(libs.androidx.room3.runtime)
             implementation(libs.androidx.sqlite.bundled)
