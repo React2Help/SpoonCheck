@@ -2,85 +2,103 @@ package dev.react2help.spooncheck
 
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.NavKey
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.serialization.SavedStateConfiguration
 import dev.react2help.spooncheck.repositories.TaskRepository
+import dev.react2help.spooncheck.routes.DashboardRoute
+import dev.react2help.spooncheck.routes.PatternsRoute
 import dev.react2help.spooncheck.routes.SettingsRoute
 import dev.react2help.spooncheck.routes.TaskCreationRoute
 import dev.react2help.spooncheck.routes.TaskListRoute
-import dev.react2help.spooncheck.viewmodels.TaskCreationViewModel
+import dev.react2help.spooncheck.routes.ViewTaskRoute
+import kotlinx.serialization.ExperimentalSerializationApi
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 
 @Suppress("LongMethod")
 @Composable
 fun App(taskRepository: TaskRepository) {
-    MaterialTheme {
-        val navController = rememberNavController()
-        NavHost(
-            navController = navController,
-            startDestination = "taskList"
-        ) { // todo migrate to NavGraph (Navigation3)
-            composable("settings") { // viewmodel and state are managed by settings route
-                SettingsRoute(
-                    onNavigateToTaskCreationDateEnable = {
-                        navController.navigate("taskCreationDateEnabled")
-                    },
-                    onNavigateToTaskCreationDateDisable = {
-                        navController.navigate("taskCreationDateDisabled")
-                    }
-                )
-            }
-            composable("taskCreationDateDisabled") {
-                val viewModel = viewModel { TaskCreationViewModel(taskRepository) }
-                val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                LaunchedEffect(state.wasCancelled) {
-                    if (state.wasCancelled) navController.navigate("taskList")
-                }
-
-                LaunchedEffect(state.wasSaved) {
-                    if (state.wasSaved) navController.navigate("taskList")
-                }
-
-                TaskCreationRoute(
-                    taskRepository = taskRepository,
-                    isDateFieldEnabled = false,
-                    onNavigateToTaskList = { navController.navigate("taskList") }
-                )
-            }
-            composable("taskCreationDateEnabled") {
-                val viewModel = viewModel { TaskCreationViewModel(taskRepository) }
-                val state by viewModel.uiState.collectAsStateWithLifecycle()
-
-                LaunchedEffect(state.wasCancelled) {
-                    if (state.wasCancelled) navController.navigate("taskList")
-                }
-
-                LaunchedEffect(state.wasSaved) {
-                    if (state.wasSaved) navController.navigate("taskList")
-                }
-
-                TaskCreationRoute(
-                    taskRepository,
-                    true,
-                    onNavigateToTaskList = { navController.navigate("taskList") }
-                )
-            }
-
-            composable("taskList") {
-                TaskListRoute(
-                    taskRepository,
-                    { navController.navigate("taskCreationDateEnabled") },
-                    onNavigateToPatterns = { TODO() },
-                    onNavigateToDashboard = { TODO() },
-                    onNavigateToAccount = { TODO() },
-                    onNavigateToTaskDetails = { TODO() }
-                )
-            }
+    @OptIn(ExperimentalSerializationApi::class)
+    val config = SavedStateConfiguration {
+        serializersModule = SerializersModule {
+            polymorphic(NavKey::class) { subclassesOfSealed<Destination>() }
         }
     }
+    val backstack = rememberNavBackStack(config, TaskList)
+
+    MaterialTheme {
+        NavDisplay(
+            backStack = backstack,
+            onBack = { backstack.removeLastOrNull() },
+            entryProvider =
+                entryProvider {
+                    entry<Dashboard> { DashboardRoute() }
+
+                    entry<TaskList> {
+                        TaskListRoute(
+                            taskRepository = taskRepository,
+                            onNavigateToTaskCreationDateEnable = {
+                                backstack.add(CreateTaskDateEnabled)
+                            },
+                            onNavigateToPatterns = { backstack.add(Patterns) },
+                            onNavigateToDashboard = { backstack.add(Dashboard) },
+                            onNavigateToSettings = { backstack.add(Settings) },
+                            onNavigateToTaskDetails = { backstack.add(ViewTask) }
+                        )
+                    }
+                    entry<Patterns> {
+                        PatternsRoute(
+                            onNavigateToTaskCreationDateEnable = {
+                                backstack.add(CreateTaskDateEnabled)
+                            },
+                            onNavigateToPatterns = { backstack.add(Patterns) },
+                            onNavigateToDashboard = { backstack.add(Dashboard) },
+                            onNavigateToSettings = { backstack.add(Settings) },
+                            onNavigateToTaskList = { backstack.add(TaskList) }
+                        )
+                    }
+
+                    entry<CreateTaskDateEnabled> {
+                        TaskCreationRoute(
+                            taskRepository = taskRepository,
+                            isDateFieldEnabled = true,
+                            onNavigateToTaskList = { backstack.add(TaskList) }
+                        )
+                    }
+                    entry<Settings> {
+                        SettingsRoute(
+                            onNavigateToTaskCreationDateEnable = {
+                                backstack.add(CreateTaskDateEnabled)
+                            },
+                            onNavigateToTaskCreationDateDisable = {
+                                backstack.add(CreateTaskDateDisabled)
+                            },
+                        )
+                    }
+                    entry<ViewTask> { ViewTaskRoute() }
+                },
+        )
+    }
 }
+
+@Serializable sealed interface Destination : NavKey
+
+@Serializable data object Dashboard : Destination
+
+@Serializable data object TaskList : Destination
+
+@Serializable data object Patterns : Destination
+
+@Serializable data object ViewTask : Destination
+
+@Serializable data object Account : Destination
+
+@Serializable data object Settings : Destination
+
+@Serializable data object CreateTaskDateEnabled : Destination
+
+@Serializable data object CreateTaskDateDisabled : Destination

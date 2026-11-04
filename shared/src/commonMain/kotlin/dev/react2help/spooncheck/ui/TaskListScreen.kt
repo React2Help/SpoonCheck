@@ -104,7 +104,7 @@ fun TaskListScreen(
     onNavigateToTaskCreationDateEnable: () -> Unit,
     onNavigateToPatterns: () -> Unit,
     onNavigateToDashboard: () -> Unit,
-    onNavigateToAccount: () -> Unit,
+    onNavigateToSettings: () -> Unit,
     onNavigateToTaskDetails: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
@@ -127,7 +127,7 @@ fun TaskListScreen(
                         } // todo extract number to viewModel
                     )
                     IconButton( // account button
-                        onClick = { onNavigateToAccount() }
+                        onClick = { onNavigateToSettings() }
                     ) {
                         Icon(
                             painter = painterResource(Res.drawable.logo), // todo figure out why
