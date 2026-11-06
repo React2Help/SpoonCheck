@@ -73,7 +73,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,6 +83,8 @@ import dev.react2help.spooncheck.modelsandstate.MaxSpoons
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
+import dev.react2help.spooncheck.modelsandstate.AppTheme
+import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import dev.react2help.spooncheck.theme.ThemedBackground
 import dev.react2help.spooncheck.utils.TextToDate
 import kotlin.time.Clock
@@ -127,193 +128,191 @@ fun TaskCreationScreenGen(
     isDateFieldEnabled: Boolean = false,
     onNavigateToTaskList: () -> Unit,
 ) {
-    MaterialTheme {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Create Task", fontWeight = FontWeight.Bold) },
-                    subtitle = { Text("") },
-                    titleHorizontalAlignment = Alignment.CenterHorizontally
-                )
-            },
-            bottomBar = {
-                BottomAppBar(
-                    actions = {
-                        IconButton(onClick = { onNavigateToTaskList() }) {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Delete Icon",
-                                modifier = Modifier.size(32.dp)
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("Create Task", fontWeight = FontWeight.Bold) },
+                subtitle = { Text("") },
+                titleHorizontalAlignment = Alignment.CenterHorizontally
+            )
+        },
+        bottomBar = {
+            BottomAppBar(
+                actions = {
+                    IconButton(onClick = { onNavigateToTaskList() }) {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.delete_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Delete Icon",
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = { // verify, save, navigate
+                            val isTitleOk = uiState.titleFieldState.text.isNotBlank()
+
+                            val dateCheck = isValidDate(uiState.dateFieldState.text.toString())
+
+                            val isDateOk = !isDateFieldEnabled || dateCheck
+
+                            onAction(TaskCreationActions.SetTitleError(!isTitleOk))
+
+                            onAction(
+                                TaskCreationActions.SetDateError(
+                                    isDateFieldEnabled && !isDateOk
+                                )
+                            )
+
+                            if (
+                                isTitleOk && isDateOk
+                            ) { // todo: Change Save() to accept all fields and be responsible
+                                // for creating its own instance of task and saving it.
+                                onAction(
+                                    TaskCreationActions.Save(
+                                        uiState.titleFieldState.text.toString(),
+                                        uiState.descriptionFieldState.text.toString(),
+                                        uiState.priority,
+                                        uiState.category,
+                                        TextToDate(uiState.dateFieldState.text.toString()),
+                                        LocalTime(
+                                            hour = uiState.timePickerState.hour,
+                                            minute = uiState.timePickerState.minute
+                                        ),
+                                        uiState.spoons
+                                    )
+                                )
+                                onNavigateToTaskList()
+                            }
+                        },
+                        containerColor = MaterialTheme.colorScheme.secondary,
+                        contentColor = MaterialTheme.colorScheme.onSecondary
+                    ) {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Save Task",
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                }
+            )
+        }
+    ) { paddingValues ->
+        Box {
+            ThemedBackground()
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                modifier =
+                    Modifier.fillMaxSize()
+                        .verticalScroll(rememberScrollState())
+                        .padding(paddingValues)
+            ) {
+                // Your TextFields and other composables go here
+                TextField(
+                    uiState.titleFieldState,
+                    placeholder = { Text("Title") },
+                    isError = uiState.titleError,
+                    supportingText = {
+                        if (uiState.titleError) {
+                            Text(
+                                "Title cannot be empty",
+                                modifier =
+                                    Modifier.background(MaterialTheme.colorScheme.surface)
+                                        .padding(horizontal = 4.dp, vertical = 2.dp)
                             )
                         }
                     },
-                    floatingActionButton = {
-                        FloatingActionButton(
-                            onClick = { // verify, save, navigate
-                                val isTitleOk = uiState.titleFieldState.text.isNotBlank()
-
-                                val dateCheck = isValidDate(uiState.dateFieldState.text.toString())
-
-                                val isDateOk = !isDateFieldEnabled || dateCheck
-
-                                onAction(TaskCreationActions.SetTitleError(!isTitleOk))
-
-                                onAction(
-                                    TaskCreationActions.SetDateError(
-                                        isDateFieldEnabled && !isDateOk
-                                    )
-                                )
-
-                                if (
-                                    isTitleOk && isDateOk
-                                ) { // todo: Change Save() to accept all fields and be responsible
-                                    // for creating its own instance of task and saving it.
-                                    onAction(
-                                        TaskCreationActions.Save(
-                                            uiState.titleFieldState.text.toString(),
-                                            uiState.descriptionFieldState.text.toString(),
-                                            uiState.priority,
-                                            uiState.category,
-                                            TextToDate(uiState.dateFieldState.text.toString()),
-                                            LocalTime(
-                                                hour = uiState.timePickerState.hour,
-                                                minute = uiState.timePickerState.minute
-                                            ),
-                                            uiState.spoons
-                                        )
-                                    )
-                                    onNavigateToTaskList()
+                    trailingIcon = {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Clear Title",
+                            modifier =
+                                Modifier.size(18.dp).clickable {
+                                    uiState.titleFieldState.clearText()
+                                    onAction(TaskCreationActions.SetTitleError(false))
                                 }
-                            },
-                            containerColor = Color(0xFF7799A4),
-                            contentColor = Color(0xFFFFFFFF)
-                        ) {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Save Task",
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
+                        )
+                    },
+                    modifier =
+                        Modifier.fillMaxWidth().onFocusChanged {
+                            if (it.isFocused) onAction(TaskCreationActions.SetTitleError(false))
+                        },
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        )
+                )
+                TextField(
+                    uiState.descriptionFieldState,
+                    placeholder = { Text("Description") },
+                    trailingIcon = {
+                        Icon(
+                            painter =
+                                painterResource(
+                                    Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                ),
+                            contentDescription = "Clear Description",
+                            modifier =
+                                Modifier.size(18.dp).clickable {
+                                    uiState.titleFieldState.clearText()
+                                }
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
+                    colors =
+                        TextFieldDefaults.colors(
+                            focusedIndicatorColor = MaterialTheme.colorScheme.primary,
+                            focusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
+                            cursorColor = MaterialTheme.colorScheme.primary
+                        )
+                )
+                DueDateAndNotifications(
+                    onNotificationsToggle = { value ->
+                        onAction(TaskCreationActions.OnNotificationsChanged(value))
+                    },
+                    onDoesTaskRecurToggle = { action ->
+                        onAction(TaskCreationActions.OnRecursChanged(action))
+                    },
+                    onConfirmTime = { newState ->
+                        onAction(TaskCreationActions.OnTimeChange(newState))
+                    },
+                    notifySwitchIsChecked = uiState.notificationsOn,
+                    recurringSwitchIsChecked = uiState.isRecurring,
+                    timePickerState = uiState.timePickerState,
+                    dateFieldState = uiState.dateFieldState,
+                    onClearDateError = { onAction(TaskCreationActions.ClearDateError) },
+                    dateError = uiState.dateError,
+                    isDateFieldEnabled = isDateFieldEnabled
+                )
+                SpoonSelectionCard(
+                    selectedSpoon = uiState.spoons,
+                    onSpoonChange = { newSpoons ->
+                        onAction(TaskCreationActions.OnSpoonSelectedChanged(newSpoons))
                     }
                 )
-            }
-        ) { paddingValues ->
-            Box {
-                ThemedBackground()
-                Column(
-                    verticalArrangement = Arrangement.spacedBy(8.dp),
-                    modifier =
-                        Modifier.fillMaxSize()
-                            .verticalScroll(rememberScrollState())
-                            .padding(paddingValues)
-                ) {
-                    // Your TextFields and other composables go here
-                    TextField(
-                        uiState.titleFieldState,
-                        placeholder = { Text("Title") },
-                        isError = uiState.titleError,
-                        supportingText = {
-                            if (uiState.titleError) {
-                                Text(
-                                    "Title cannot be empty",
-                                    modifier =
-                                        Modifier.background(MaterialTheme.colorScheme.surface)
-                                            .padding(horizontal = 4.dp, vertical = 2.dp)
-                                )
-                            }
-                        },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear Title",
-                                modifier =
-                                    Modifier.size(18.dp).clickable {
-                                        uiState.titleFieldState.clearText()
-                                        onAction(TaskCreationActions.SetTitleError(false))
-                                    }
-                            )
-                        },
-                        modifier =
-                            Modifier.fillMaxWidth().onFocusChanged {
-                                if (it.isFocused) onAction(TaskCreationActions.SetTitleError(false))
-                            },
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                cursorColor = MaterialTheme.colorScheme.primary
-                            )
-                    )
-                    TextField(
-                        uiState.descriptionFieldState,
-                        placeholder = { Text("Description") },
-                        trailingIcon = {
-                            Icon(
-                                painter =
-                                    painterResource(
-                                        Res.drawable.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                                    ),
-                                contentDescription = "Clear Description",
-                                modifier =
-                                    Modifier.size(18.dp).clickable {
-                                        uiState.titleFieldState.clearText()
-                                    }
-                            )
-                        },
-                        modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
-                        colors =
-                            TextFieldDefaults.colors(
-                                focusedIndicatorColor = MaterialTheme.colorScheme.primary,
-                                focusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                cursorColor = MaterialTheme.colorScheme.primary
-                            )
-                    )
-                    DueDateAndNotifications(
-                        onNotificationsToggle = { value ->
-                            onAction(TaskCreationActions.OnNotificationsChanged(value))
-                        },
-                        onDoesTaskRecurToggle = { action ->
-                            onAction(TaskCreationActions.OnRecursChanged(action))
-                        },
-                        onConfirmTime = { newState ->
-                            onAction(TaskCreationActions.OnTimeChange(newState))
-                        },
-                        notifySwitchIsChecked = uiState.notificationsOn,
-                        recurringSwitchIsChecked = uiState.isRecurring,
-                        timePickerState = uiState.timePickerState,
-                        dateFieldState = uiState.dateFieldState,
-                        onClearDateError = { onAction(TaskCreationActions.ClearDateError) },
-                        dateError = uiState.dateError,
-                        isDateFieldEnabled = isDateFieldEnabled
-                    )
-                    SpoonSelectionCard(
-                        selectedSpoon = uiState.spoons,
-                        onSpoonChange = { newSpoons ->
-                            onAction(TaskCreationActions.OnSpoonSelectedChanged(newSpoons))
-                        }
-                    )
-                    CategoryAndPriorityCard(
-                        onCategoryChange = { newCategory ->
-                            onAction(TaskCreationActions.OnCategoryChanged(newCategory))
-                        },
-                        selectedCategory = uiState.category,
-                        priority = uiState.priority,
-                        onPriorityChange = { newPriority ->
-                            onAction(TaskCreationActions.OnPriorityChanged(newPriority))
-                        }
-                    )
-                }
+                CategoryAndPriorityCard(
+                    onCategoryChange = { newCategory ->
+                        onAction(TaskCreationActions.OnCategoryChanged(newCategory))
+                    },
+                    selectedCategory = uiState.category,
+                    priority = uiState.priority,
+                    onPriorityChange = { newPriority ->
+                        onAction(TaskCreationActions.OnPriorityChanged(newPriority))
+                    }
+                )
             }
         }
     }
@@ -891,4 +890,57 @@ fun Wrapper(onConfirm: (TimePickerState) -> Unit, modifier: Modifier = Modifier)
 @OptIn(ExperimentalMaterial3Api::class)
 private fun PreviewWrapper() {
     Card { Wrapper({}) }
+}
+
+// Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun rememberPreviewTaskCreationState(): TaskCreationUIState =
+    TaskCreationUIState(
+        titleFieldState = rememberTextFieldState(),
+        descriptionFieldState = rememberTextFieldState(),
+        dateFieldState = rememberTextFieldState(),
+        timePickerState = rememberTimePickerState(),
+        titleError = false,
+        dateError = false,
+        category = Category.HYGIENE
+    )
+
+@Preview
+@Composable
+private fun TaskCreationScreenForestPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.FOREST) {
+        TaskCreationScreenGen(
+            uiState = rememberPreviewTaskCreationState(),
+            onAction = {},
+            isDateFieldEnabled = true,
+            onNavigateToTaskList = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TaskCreationScreenBeachPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.BEACH) {
+        TaskCreationScreenGen(
+            uiState = rememberPreviewTaskCreationState(),
+            onAction = {},
+            isDateFieldEnabled = true,
+            onNavigateToTaskList = {}
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun TaskCreationScreenDarkPreview() {
+    SpoonCheckTheme(appTheme = AppTheme.DARK) {
+        TaskCreationScreenGen(
+            uiState = rememberPreviewTaskCreationState(),
+            onAction = {},
+            isDateFieldEnabled = true,
+            onNavigateToTaskList = {}
+        )
+    }
 }
