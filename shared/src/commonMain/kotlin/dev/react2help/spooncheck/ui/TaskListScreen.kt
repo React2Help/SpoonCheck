@@ -9,7 +9,6 @@
 
 package dev.react2help.spooncheck.ui
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -63,10 +62,10 @@ import androidx.compose.runtime.toMutableStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toLowerCase
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.modelsandstate.AppTheme
@@ -74,6 +73,11 @@ import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.TaskListActions
 import dev.react2help.spooncheck.modelsandstate.TaskListFilterOptions
+import dev.react2help.spooncheck.repositories.TaskRepository
+import dev.react2help.spooncheck.theme.SpoonCheckTheme
+import dev.react2help.spooncheck.theme.ThemedBackground
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import dev.react2help.spooncheck.theme.LocalAppTheme
 import dev.react2help.spooncheck.theme.fourth
 import dev.react2help.spooncheck.ui.components.EmptyTaskListComponent
@@ -84,14 +88,12 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import org.jetbrains.compose.resources.imageResource
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.calendar_month_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.logo
-import spooncheck.shared.generated.resources.ocean_view
 import spooncheck.shared.generated.resources.schedule_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.spoon
 import spooncheck.shared.generated.resources.stat_2_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
@@ -170,13 +172,7 @@ fun TaskListScreen(
     ) { paddingValues ->
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             val boxWithConstraintsScope = this
-            Image(
-                imageResource(Res.drawable.ocean_view),
-                contentDescription = "Background image",
-                contentScale = ContentScale.Crop, // scale the image so it fills the screen and
-                // the parts that overflow off the screen are clipped
-                modifier = Modifier.fillMaxHeight()
-            )
+            ThemedBackground() // pine trees / ocean / solid dark, depending on the theme
             if (uiState.tasks.isNotEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxSize().padding(paddingValues),
@@ -190,7 +186,7 @@ fun TaskListScreen(
                     ) // todo expose fields to view model and set OnAction
                     Spacer(modifier = Modifier.size(8.dp))
                     Card(
-                        colors = CardDefaults.elevatedCardColors(containerColor = Color.White),
+                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
                         elevation = CardDefaults.cardElevation(8.dp),
                         modifier =
                             Modifier.widthIn(max = boxWithConstraintsScope.maxWidth * 0.9f)
@@ -263,11 +259,11 @@ fun TaskStatusFilter(
                 },
                 colors =
                     SegmentedButtonColors(
-                        activeContainerColor = Color(0xFF27567D),
-                        activeContentColor = Color(0xFFD0D7DB),
+                        activeContainerColor = MaterialTheme.colorScheme.primary,
+                        activeContentColor = MaterialTheme.colorScheme.tertiary,
                         activeBorderColor = MaterialTheme.colorScheme.outline,
-                        inactiveContainerColor = Color(0xFFD0D7DB),
-                        inactiveContentColor = Color(0xFF27567D),
+                        inactiveContainerColor = MaterialTheme.colorScheme.tertiary,
+                        inactiveContentColor = MaterialTheme.colorScheme.onTertiary,
                         inactiveBorderColor = MaterialTheme.colorScheme.outline,
                         disabledActiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledActiveContentColor = MaterialTheme.colorScheme.surfaceDim,
@@ -310,7 +306,7 @@ fun ExpandableList(
             sections.indices.map { index -> index to true }.toMutableStateMap()
         }
 
-    LazyColumn(modifier = Modifier.padding(8.dp).background(Color.White)) {
+    LazyColumn(modifier = Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
         sections.forEachIndexed { index, sectionData ->
             Section(
                 sectionData = sectionData,
@@ -333,7 +329,7 @@ fun SectionHeader(
     // A Component. A Horizontal element with a "dropdown" chevron, a label, and a plus icon
 
     Row(
-        Modifier.fillMaxWidth().background(Color.White),
+        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
         verticalAlignment = Alignment.CenterVertically
     ) {
         IconButton( // drop down icon
@@ -341,7 +337,7 @@ fun SectionHeader(
             colors =
                 IconButtonDefaults.iconButtonColors(
                     containerColor = Color.Transparent,
-                    contentColor = Color(0xFF5D82A2),
+                    contentColor = MaterialTheme.colorScheme.secondary,
                     disabledContentColor = Color.Unspecified,
                     disabledContainerColor = Color.Unspecified
                 ),
@@ -360,7 +356,11 @@ fun SectionHeader(
                 modifier = Modifier.size(24.dp)
             )
         }
-        Text(text = text, color = Color(0xFF5D82A2), style = MaterialTheme.typography.labelMedium)
+        Text(
+            text = text,
+            color = MaterialTheme.colorScheme.secondary,
+            style = MaterialTheme.typography.labelMedium
+        )
         Spacer(Modifier.size(50.dp))
     }
 }
@@ -379,7 +379,7 @@ fun SectionItem(
         onClick = { onCardClick(task.id) },
         modifier =
             Modifier.offset { IntOffset(offsetX.roundToInt(), 0) }
-                .background(Color(0xFFf6feff))
+                .background(MaterialTheme.colorScheme.fourth)
                 .height(80.dp)
                 .fillMaxWidth()
                 .draggable(
@@ -511,28 +511,63 @@ private fun priorityColor(priority: Priority): Color {
 }
 
 // Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
-// By Ryan: Because they don't run app.kt they don't receive their dependencies. Commenting them out
-// until we can figure out a decent way to wire in a viewmodel.
-/*
+// They also don't get a real repository, so they use a small fake one filled with sample tasks.
+private class PreviewTaskRepository : TaskRepository {
+    override val tasks: StateFlow<List<dev.react2help.spooncheck.database.Task>> =
+        MutableStateFlow(
+            List(8) { i ->
+                dev.react2help.spooncheck.database.Task(
+                    id = i.toLong(),
+                    title = "Task $i",
+                    description = "description $i",
+                    spoons = i % 5 + 1,
+                    priority = Priority.entries[i % Priority.entries.size],
+                    category = Category.entries[i % Category.entries.size],
+                    dueDate = LocalDate(2026, 11, 6),
+                    dueTime = LocalTime(12, 30)
+                )
+            }
+        )
+
+    override suspend fun save(task: dev.react2help.spooncheck.database.Task) = Result.success(Unit)
+
+    override suspend fun deleteById(taskId: Long) = Result.success(Unit)
+
+    override suspend fun setCompleted(taskId: Long, isDone: Boolean) = Unit
+}
+
+@Composable
+private fun TaskListThemePreview(appTheme: AppTheme) {
+    val viewModel = remember { TaskListViewModel(PreviewTaskRepository()) }
+    SpoonCheckTheme(appTheme = appTheme) {
+        TaskListScreen(
+            viewModel = viewModel,
+            onNavigateToTaskCreationDateEnable = {},
+            onNavigateToPatterns = {},
+            onNavigateToDashboard = {},
+            onNavigateToAccount = {},
+            onNavigateToTaskDetails = {}
+        )
+    }
+}
+
 @Preview
 @Composable
 private fun TaskListForestPreview() {
-    SpoonCheckTheme(appTheme = AppTheme.FOREST) { TaskListScreen() }
+    TaskListThemePreview(AppTheme.FOREST)
 }
 
 @Preview
 @Composable
 private fun TaskListBeachPreview() {
-    SpoonCheckTheme(appTheme = AppTheme.BEACH) { TaskListScreen() }
+    TaskListThemePreview(AppTheme.BEACH)
 }
 
 @Preview
 @Composable
 private fun TaskListDarkPreview() {
-    SpoonCheckTheme(appTheme = AppTheme.DARK) { TaskListScreen() }
+    TaskListThemePreview(AppTheme.DARK)
 }
-
- */
 
 /*
 @Preview
