@@ -74,15 +74,15 @@ import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.TaskListActions
 import dev.react2help.spooncheck.modelsandstate.TaskListFilterOptions
 import dev.react2help.spooncheck.repositories.TaskRepository
+import dev.react2help.spooncheck.theme.LocalAppTheme
 import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import dev.react2help.spooncheck.theme.ThemedBackground
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import dev.react2help.spooncheck.theme.LocalAppTheme
 import dev.react2help.spooncheck.theme.fourth
 import dev.react2help.spooncheck.ui.components.EmptyTaskListComponent
 import dev.react2help.spooncheck.viewmodels.TaskListViewModel
 import kotlin.math.roundToInt
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
@@ -186,7 +186,10 @@ fun TaskListScreen(
                     ) // todo expose fields to view model and set OnAction
                     Spacer(modifier = Modifier.size(8.dp))
                     Card(
-                        colors = CardDefaults.elevatedCardColors(containerColor = MaterialTheme.colorScheme.surface),
+                        colors =
+                            CardDefaults.elevatedCardColors(
+                                containerColor = MaterialTheme.colorScheme.surface
+                            ),
                         elevation = CardDefaults.cardElevation(8.dp),
                         modifier =
                             Modifier.widthIn(max = boxWithConstraintsScope.maxWidth * 0.9f)

@@ -78,12 +78,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.MaxSpoons
 import dev.react2help.spooncheck.modelsandstate.Priority
 import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
-import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import dev.react2help.spooncheck.theme.ThemedBackground
 import dev.react2help.spooncheck.utils.TextToDate
@@ -162,9 +162,7 @@ fun TaskCreationScreenGen(
                             onAction(TaskCreationActions.SetTitleError(!isTitleOk))
 
                             onAction(
-                                TaskCreationActions.SetDateError(
-                                    isDateFieldEnabled && !isDateOk
-                                )
+                                TaskCreationActions.SetDateError(isDateFieldEnabled && !isDateOk)
                             )
 
                             if (
