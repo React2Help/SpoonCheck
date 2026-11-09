@@ -815,10 +815,6 @@ Compose:
     active: true
   ComposableParamOrder:
     active: true
-  CompositionLocalAllowlist:
-    active: true
-    allowedCompositionLocals:
-      - LocalAppTheme
   ModifierMissing:
     active: true
   PreviewAnnotationNaming:
