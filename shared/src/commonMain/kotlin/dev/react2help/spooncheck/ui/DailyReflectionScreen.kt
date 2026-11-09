@@ -60,14 +60,14 @@ import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GR
 @Composable
 fun DailyReflectionScreen(variant: DailyReflectionVariant) {
     Scaffold(
-        topBar = { //define the header
+        topBar = { // define the header
             TopAppBar(
                 title = { Text("Evening Check-in", fontWeight = FontWeight.Bold) },
                 subtitle = { Text("") },
                 titleHorizontalAlignment = Alignment.CenterHorizontally
             )
         },
-        bottomBar = { //define the two buttons at the bottom of the screen
+        bottomBar = { // define the two buttons at the bottom of the screen
             BottomAppBar {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -98,8 +98,7 @@ fun DailyReflectionScreen(variant: DailyReflectionVariant) {
             }
         }
     ) { paddingValues ->
-        Box(
-        ) {
+        Box() {
             ThemedBackground()
             Row(
                 modifier =
