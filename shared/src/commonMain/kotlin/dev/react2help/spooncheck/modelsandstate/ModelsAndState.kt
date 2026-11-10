@@ -2,6 +2,8 @@ package dev.react2help.spooncheck.modelsandstate
 
 import androidx.compose.foundation.text.input.TextFieldState
 import androidx.compose.material3.TimePickerState
+import dev.react2help.spooncheck.ui.components.DailyCompletion
+import dev.react2help.spooncheck.ui.components.SpoonEconomyPoint
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -218,3 +220,23 @@ sealed interface DailyReflectionActions {
 
     data object OnSubmit : DailyReflectionActions
 }
+
+@Suppress("EmptyClassBlock") sealed interface PatternsScreenActions {}
+
+data class PatternsScreenUIState(
+    val completedEvents: Int = 0,
+    val completedTasks: Int = 0,
+    val completions: List<DailyCompletion> = emptyList(),
+    val spoonEconomy: List<SpoonEconomyPoint> = emptyList(),
+    val completionsRange: DayRange = DayRange.SEVEN_DAYS,
+    val spoonEconomyRange: DayRange = DayRange.TWO_WEEKS,
+    val insightsText: String = DefaultInsightsText
+)
+
+@Suppress("MagicNumber")
+enum class DayRange(val span: Int) {
+    SEVEN_DAYS(7),
+    TWO_WEEKS(14),
+    THIRTY_DAYS(30)
+}
+const val DefaultInsightsText = "We're crunching the numbers and reading between the lines. Stay tuned!"

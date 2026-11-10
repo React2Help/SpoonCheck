@@ -18,4 +18,4 @@ data class Task(
     val dueDate: LocalDate,
     val dueTime: LocalTime,
     val isDone: Boolean = false
-)
+) : SuperOfAllEntities

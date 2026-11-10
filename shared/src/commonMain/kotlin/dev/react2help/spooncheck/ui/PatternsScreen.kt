@@ -9,8 +9,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
@@ -26,6 +29,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.patrykandpatrick.vico.compose.cartesian.CartesianChartHost
@@ -38,11 +43,11 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
+import dev.react2help.spooncheck.modelsandstate.DefaultInsightsText
+import dev.react2help.spooncheck.modelsandstate.PatternsScreenUIState
 import dev.react2help.spooncheck.theme.PatternsTheme
 import dev.react2help.spooncheck.ui.components.BaselineSpoonEconomyChart
 import dev.react2help.spooncheck.ui.components.CompletedLastSevenDaysChart
-import dev.react2help.spooncheck.ui.components.DailyCompletion
-import dev.react2help.spooncheck.ui.components.SpoonEconomyPoint
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.logo
@@ -56,8 +61,10 @@ fun PatternsScreen(
     onNavigateToTaskCreationDateEnable: () -> Unit,
     onNavigateToDashboard: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToTaskList: () -> Unit
+    onNavigateToTaskList: () -> Unit,
+    uiState: PatternsScreenUIState
 ) {
+    val scrollState = rememberScrollState()
 
     PatternsTheme {
         Scaffold(
@@ -114,48 +121,24 @@ fun PatternsScreen(
                 }
             }
         ) { paddingValues ->
-            val completions =
-                listOf(
-                    DailyCompletion("M", 12, 8),
-                    DailyCompletion("Tu", 14, 10),
-                    DailyCompletion("We", 10, 7),
-                    DailyCompletion("Th", 13, 9),
-                    DailyCompletion("F", 11, 7),
-                    DailyCompletion("S", 7, 4),
-                    DailyCompletion("Su", 6, 3),
-                )
-            val economy =
-                listOf(10, 14, 19, 16, 22, 25, 17, 15, 13, 11, 20, 28, 21, 16).mapIndexed {
-                    index,
-                    value ->
-                    SpoonEconomyPoint(
-                        listOf("M", "Tu", "We", "Th", "F", "S", "Su")[index % 7],
-                        value.toDouble()
-                    )
-                }
             Column(
                 modifier =
                     Modifier.padding(paddingValues)
                         .padding(horizontal = 20.dp, vertical = 12.dp)
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .verticalScroll(scrollState),
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 CompletedLastSevenDaysChart(
-                    data = completions,
+                    data = uiState.completions,
                     modifier = Modifier.fillMaxWidth().height(190.dp),
                 )
-
                 BaselineSpoonEconomyChart(
-                    points = economy,
+                    points = uiState.spoonEconomy,
                     modifier = Modifier.fillMaxWidth().height(150.dp),
                 )
-
                 InsightsCard(
-                    content =
-                        "Hey There!\n\nNice work this week. You exceeded your goal! However, i believe " +
-                            "getting started earlier would lead to many improvements. Additionally, I've " +
-                            "noticed you have been forgetting to take the trash out on Tuesdys, see if you " +
-                            "can make that a priority this week. Keep at it!",
+                    content = uiState.insightsText,
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
@@ -186,10 +169,15 @@ fun InsightsCard(
     content: String,
     modifier: Modifier = Modifier
 ) { // copy and paste the code, and wire in the UI state
-    Card(modifier = modifier) {
+    Card(modifier = modifier, elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)) {
         Column(modifier = Modifier.padding(15.dp)) {
             Text("Insights")
-            Text(content)
+            if(content == DefaultInsightsText){
+                Text(content, fontStyle = FontStyle.Italic)
+            }else {
+                Text(content)
+            }
+
         }
     }
 }

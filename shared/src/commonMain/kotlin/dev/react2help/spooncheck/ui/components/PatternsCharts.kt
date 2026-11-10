@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,70 +63,88 @@ fun CompletedLastSevenDaysChart(
     data: List<DailyCompletion>,
     modifier: Modifier = Modifier,
 ) {
-    val modelProducer = remember { CartesianChartModelProducer() }
-
-    LaunchedEffect(data) {
-        modelProducer.runTransaction {
-            columnModel {
-                series(y = data.map { it.completedTasks })
-                series(y = data.map { it.completedEvents })
-            }
-        }
-    }
-
-    val dayFormatter =
-        remember(data) {
-            CartesianValueFormatter { _, value, _ -> data.getOrNull(value.toInt())?.day.orEmpty() }
-        }
-    val taskColumn = rememberLineComponent(Fill(ChartBlue), thickness = 5.dp, shape = CircleShape)
-    val eventColumn =
-        rememberLineComponent(Fill(ChartDarkBlue), thickness = 5.dp, shape = CircleShape)
-    val totalTasks = data.sumOf { it.completedTasks }
-    val totalEvents = data.sumOf { it.completedEvents }
-
-    ChartCard(modifier = modifier) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.Top,
-        ) {
-            Text(
-                text = "Completed in the Last 7 Days",
-                style = MaterialTheme.typography.labelMedium,
-                color = ChartDarkBlue,
-            )
-            Column {
-                Text("$totalTasks Task\nSpoons", color = ChartBlue, fontSize = 10.sp)
+    if(data.isEmpty()){
+        ChartCard {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+               verticalAlignment = Alignment.Top,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ){
                 Text(
-                    text = "$totalEvents Event\nSpoons",
-                    modifier = Modifier.padding(top = 8.dp),
+                    text = "Completed in the Last 7 Days",
+                    style = MaterialTheme.typography.labelMedium,
                     color = ChartDarkBlue,
-                    fontSize = 10.sp,
                 )
             }
+            Text("Complete tasks to view insights into how you typically complete work.", fontStyle = FontStyle.Italic)
+        }
+    }else {
+        val modelProducer = remember { CartesianChartModelProducer() }
+
+        LaunchedEffect(data) {
+            modelProducer.runTransaction {
+                columnModel {
+                    series(y = data.map { it.completedTasks })
+                    series(y = data.map { it.completedEvents })
+                }
+            }
         }
 
-        CartesianChartHost(
-            modifier = Modifier.fillMaxWidth().height(90.dp),
-            modelProducer = modelProducer,
-            chart =
-                rememberCartesianChart(
-                    rememberColumnCartesianLayer(
-                        columnProvider =
-                            ColumnCartesianLayer.ColumnProvider.series(taskColumn, eventColumn),
-                        mergeMode = { ColumnCartesianLayer.MergeMode.Grouped(2.dp) },
-                    ),
-                    startAxis = VerticalAxis.rememberStart(),
-                    bottomAxis =
-                        HorizontalAxis.rememberBottom(
-                            valueFormatter = dayFormatter,
-                            itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
-                            guideline = null
+        val dayFormatter =
+            remember(data) {
+                CartesianValueFormatter { _, value, _ -> data.getOrNull(value.toInt())?.day.orEmpty() }
+            }
+        val taskColumn = rememberLineComponent(Fill(ChartBlue), thickness = 5.dp, shape = CircleShape)
+        val eventColumn =
+            rememberLineComponent(Fill(ChartDarkBlue), thickness = 5.dp, shape = CircleShape)
+        val totalTasks = data.sumOf { it.completedTasks }
+        val totalEvents = data.sumOf { it.completedEvents }
+
+        ChartCard(modifier = modifier) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top,
+            ) {
+                Text(
+                    text = "Completed in the Last 7 Days",
+                    style = MaterialTheme.typography.labelMedium,
+                    color = ChartDarkBlue,
+                )
+                Column {
+                    Text("$totalTasks Task\nSpoons", color = ChartBlue, fontSize = 10.sp)
+                    Text(
+                        text = "$totalEvents Event\nSpoons",
+                        modifier = Modifier.padding(top = 8.dp),
+                        color = ChartDarkBlue,
+                        fontSize = 10.sp,
+                    )
+                }
+            }
+
+            CartesianChartHost(
+                modifier = Modifier.fillMaxWidth().height(90.dp),
+                modelProducer = modelProducer,
+                chart =
+                    rememberCartesianChart(
+                        rememberColumnCartesianLayer(
+                            columnProvider =
+                                ColumnCartesianLayer.ColumnProvider.series(taskColumn, eventColumn),
+                            mergeMode = { ColumnCartesianLayer.MergeMode.Grouped(2.dp) },
                         ),
-                ),
-            scrollState = rememberVicoScrollState(scrollEnabled = true)
-        )
+                        startAxis = VerticalAxis.rememberStart(),
+                        bottomAxis =
+                            HorizontalAxis.rememberBottom(
+                                valueFormatter = dayFormatter,
+                                itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
+                                guideline = null
+                            ),
+                    ),
+                scrollState = rememberVicoScrollState(scrollEnabled = true)
+            )
+        }
     }
+
 }
 
 @Composable
@@ -133,59 +152,66 @@ fun BaselineSpoonEconomyChart(
     points: List<SpoonEconomyPoint>,
     modifier: Modifier = Modifier,
 ) {
-    val modelProducer = remember { CartesianChartModelProducer() }
+    if(points.isEmpty()){
+        ChartCard {
+            Text("Complete tasks to see insights into your performance.")
+        }
+    }else {
+        val modelProducer = remember { CartesianChartModelProducer() }
 
-    LaunchedEffect(points) {
-        modelProducer.runTransaction {
-            lineModel {
-                series(
-                    x = points.indices.map { it.toDouble() },
-                    y = points.map { it.spoons },
-                )
+        LaunchedEffect(points) {
+            modelProducer.runTransaction {
+                lineModel {
+                    series(
+                        x = points.indices.map { it.toDouble() },
+                        y = points.map { it.spoons },
+                    )
+                }
             }
         }
-    }
 
-    val dayFormatter =
-        remember(points) {
-            CartesianValueFormatter { _, value, _ ->
-                points.getOrNull(value.toInt())?.day.orEmpty()
+        val dayFormatter =
+            remember(points) {
+                CartesianValueFormatter { _, value, _ ->
+                    points.getOrNull(value.toInt())?.day.orEmpty()
+                }
             }
+        val point = remember {
+            LineCartesianLayer.Point(component = ShapeComponent(shape = CircleShape), size = 4.dp)
         }
-    val point = remember {
-        LineCartesianLayer.Point(component = ShapeComponent(shape = CircleShape), size = 4.dp)
-    }
-    val line =
-        LineCartesianLayer.rememberLine(
-            fill = LineCartesianLayer.LineFill.single(Fill(Color(0xAA6F9BAA))),
-            pointProvider = LineCartesianLayer.PointProvider.single(point),
-        )
+        val line =
+            LineCartesianLayer.rememberLine(
+                fill = LineCartesianLayer.LineFill.single(Fill(Color(0xAA6F9BAA))),
+                pointProvider = LineCartesianLayer.PointProvider.single(point),
+            )
 
-    ChartCard(modifier = modifier) {
-        Text(
-            text = "Baseline Spoon Economy",
-            style = MaterialTheme.typography.labelMedium,
-            color = ChartDarkBlue,
-        )
-        CartesianChartHost(
-            modifier = Modifier.fillMaxWidth().height(130.dp),
-            modelProducer = modelProducer,
-            chart =
-                rememberCartesianChart(
-                    rememberLineCartesianLayer(
-                        lineProvider = LineCartesianLayer.LineProvider.series(line),
-                    ),
-                    startAxis = VerticalAxis.rememberStart(),
-                    bottomAxis =
-                        HorizontalAxis.rememberBottom(
-                            valueFormatter = dayFormatter,
-                            itemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
-                            guideline = null
+        ChartCard(modifier = modifier) {
+            Text(
+                text = "Baseline Spoon Economy",
+                style = MaterialTheme.typography.labelMedium,
+                color = ChartDarkBlue,
+            )
+            CartesianChartHost(
+                modifier = Modifier.fillMaxWidth().height(130.dp),
+                modelProducer = modelProducer,
+                chart =
+                    rememberCartesianChart(
+                        rememberLineCartesianLayer(
+                            lineProvider = LineCartesianLayer.LineProvider.series(line),
                         ),
-                ),
-            scrollState = rememberVicoScrollState(scrollEnabled = false)
-        )
+                        startAxis = VerticalAxis.rememberStart(),
+                        bottomAxis =
+                            HorizontalAxis.rememberBottom(
+                                valueFormatter = dayFormatter,
+                                itemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
+                                guideline = null
+                            ),
+                    ),
+                scrollState = rememberVicoScrollState(scrollEnabled = false)
+            )
+        }
     }
+
 }
 
 @Composable
@@ -237,4 +263,10 @@ private fun PatternChartsPreview() {
         CompletedLastSevenDaysChart(completions, Modifier.fillMaxWidth().height(150.dp))
         BaselineSpoonEconomyChart(economy, Modifier.fillMaxWidth().height(190.dp))
     }
+}
+
+@Preview
+@Composable
+private fun EmptyPatternChartsPreview(){
+    CompletedLastSevenDaysChart(emptyList(), Modifier.fillMaxWidth().height(150.dp))
 }
