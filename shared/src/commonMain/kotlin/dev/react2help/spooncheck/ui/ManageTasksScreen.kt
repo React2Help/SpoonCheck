@@ -204,16 +204,12 @@ private fun PreviewScreen() {
 
     val rightList =
         tasks.filter { task ->
-            task.dueDate?.equals(
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-            ) == true
+            task.dueDate == Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         }
     val leftList =
         tasks.filter { task -> // todo change logic. Make this function take future
             // todo not future + past
-            task.dueDate?.equals(
-                Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-            ) != true
+            task.dueDate != Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
         }
 
     ManageTasksScreen(leftList, rightList)

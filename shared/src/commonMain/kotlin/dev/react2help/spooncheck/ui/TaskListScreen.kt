@@ -448,7 +448,7 @@ fun SectionItem(
                             char(' ')
                             amPmMarker("AM", "PM")
                         }
-                    Text(task.dueTime?.format(twelveHourFormat) ?: "--:--")
+                    Text(task.dueTime.format(twelveHourFormat))
                 }
                 Row {
                     Icon(
@@ -467,7 +467,7 @@ fun SectionItem(
                             char('/')
                             year()
                         }
-                    Text(task.dueDate?.format(dateFormat) ?: "--/--/--")
+                    Text(task.dueDate.format(dateFormat))
                 }
             }
         }
