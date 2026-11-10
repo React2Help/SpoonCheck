@@ -68,6 +68,7 @@ import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.react2help.spooncheck.database.Task
 import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
@@ -370,7 +371,7 @@ fun SectionHeader(
 
 @Composable
 fun SectionItem(
-    task: dev.react2help.spooncheck.database.Task,
+    task: Task,
     onCardClick: (Long) -> Unit,
     onSwipeLeft: (Long) -> Unit,
     onSwipeRight: (Long) -> Unit,
@@ -516,10 +517,10 @@ private fun priorityColor(priority: Priority): Color {
 // Previews don't run App.kt, so they wrap the screen in SpoonCheckTheme themselves.
 // They also don't get a real repository, so they use a small fake one filled with sample tasks.
 private class PreviewTaskRepository : TaskRepository {
-    override val tasks: StateFlow<List<dev.react2help.spooncheck.database.Task>> =
+    override val tasks: StateFlow<List<Task>> =
         MutableStateFlow(
             List(8) { i ->
-                dev.react2help.spooncheck.database.Task(
+                Task(
                     id = i.toLong(),
                     title = "Task $i",
                     description = "description $i",
@@ -532,7 +533,7 @@ private class PreviewTaskRepository : TaskRepository {
             }
         )
 
-    override suspend fun save(task: dev.react2help.spooncheck.database.Task) = Result.success(Unit)
+    override suspend fun save(task: Task) = Result.success(Unit)
 
     override suspend fun deleteById(taskId: Long) = Result.success(Unit)
 
@@ -548,8 +549,8 @@ private fun TaskListThemePreview(appTheme: AppTheme) {
             onNavigateToTaskCreationDateEnable = {},
             onNavigateToPatterns = {},
             onNavigateToDashboard = {},
-            onNavigateToAccount = {},
-            onNavigateToTaskDetails = {}
+            onNavigateToSettings = {},
+            onNavigateToTaskDetails = {},
         )
     }
 }
@@ -614,7 +615,4 @@ fun TaskList(tasks :List<Task> = List(8) { i ->
 }
  */
 
-data class SectionData(
-    val header: String,
-    val tasks: List<dev.react2help.spooncheck.database.Task>
-)
+data class SectionData(val header: String, val tasks: List<Task>)

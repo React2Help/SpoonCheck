@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.androidMultiplatformLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    id("io.kotest") version "6.2.6"
     alias(libs.plugins.kotlinSerialization)
     id("com.google.devtools.ksp") version "2.3.12"
     id("androidx.room3") version "3.1.0-alpha01"
@@ -13,7 +14,9 @@ plugins {
 room3{
     schemaDirectory("$projectDir/schemas")
 }
-
+tasks.withType<Test>().configureEach {
+    useJUnitPlatform()
+}
 kotlin {
     listOf(
         iosArm64(),
@@ -27,20 +30,23 @@ kotlin {
     compilerOptions{
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
-    androidLibrary {
-       namespace = "dev.react2help.spooncheck.shared"
-       compileSdk = libs.versions.android.compileSdk.get().toInt()
-       minSdk = libs.versions.android.minSdk.get().toInt()
-    
-       compilerOptions {
-           jvmTarget = JvmTarget.JVM_11
-       }
-       androidResources {
-           enable = true
-       }
-       withHostTest {
-           isIncludeAndroidResources = true
-       }
+    jvm()
+    android {
+        withDeviceTest {
+            instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        }
+        namespace = "dev.react2help.spooncheck.shared"
+        compileSdk = libs.versions.android.compileSdk.get().toInt()
+        minSdk = libs.versions.android.minSdk.get().toInt()
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+        }
+        androidResources {
+            enable = true
+        }
+        withHostTest {
+            isIncludeAndroidResources = true
+        }
     }
     
     sourceSets {
@@ -70,6 +76,26 @@ kotlin {
         }
         commonTest.dependencies {
             implementation(libs.kotlin.test)
+            implementation("io.kotest:kotest-framework-engine:6.2.6")
+            implementation("io.kotest:kotest-assertions-core:6.2.6")
+        }
+        val jvmTest by getting {
+            dependencies {
+                implementation("io.kotest:kotest-runner-junit5:6.2.6")
+            }
+        }
+
+        val androidHostTest by getting {
+            dependencies {
+                implementation("io.kotest:kotest-runner-junit5:6.2.6")
+            }
+        }
+
+        val androidDeviceTest by getting {
+            dependencies {
+                implementation(libs.androidx.testExt.junit)
+                implementation(libs.androidx.espresso.core)
+            }
         }
     }
 }
