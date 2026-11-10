@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import dev.react2help.spooncheck.modelsandstate.TaskListActions
 import dev.react2help.spooncheck.modelsandstate.TaskListFilterOptions
 import dev.react2help.spooncheck.modelsandstate.TaskListUIState
-import dev.react2help.spooncheck.repositories.InMemoryTaskRepository
 import dev.react2help.spooncheck.repositories.TaskRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -21,7 +20,7 @@ What needs to be done:
 
  */
 class TaskListViewModel(
-    private val taskRepository: TaskRepository = InMemoryTaskRepository() // Dependency Inversion
+    private val taskRepository: TaskRepository // Dependency Inversion
 ) : ViewModel() {
     private val selectedFilter = MutableStateFlow(TaskListFilterOptions.Todo)
     private val screenState = MutableStateFlow(TaskListUIState())
