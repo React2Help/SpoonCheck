@@ -9,6 +9,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import dev.react2help.spooncheck.repositories.EventRepository
 import dev.react2help.spooncheck.repositories.SettingsThemeRepository
 import dev.react2help.spooncheck.repositories.TaskRepository
 import dev.react2help.spooncheck.routes.DashboardRoute
@@ -25,7 +26,7 @@ import kotlinx.serialization.modules.polymorphic
 
 @Suppress("LongMethod")
 @Composable
-fun App(taskRepository: TaskRepository) {
+fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
     @OptIn(ExperimentalSerializationApi::class)
     val config = SavedStateConfiguration {
         serializersModule = SerializersModule {
@@ -67,7 +68,9 @@ fun App(taskRepository: TaskRepository) {
                             onNavigateToPatterns = { backstack.add(Patterns) },
                             onNavigateToDashboard = { backstack.add(Dashboard) },
                             onNavigateToSettings = { backstack.add(Settings) },
-                            onNavigateToTaskList = { backstack.add(TaskList) }
+                            onNavigateToTaskList = { backstack.add(TaskList) },
+                            eventRepository = eventRepository,
+                            taskRepository = taskRepository
                         )
                     }
 

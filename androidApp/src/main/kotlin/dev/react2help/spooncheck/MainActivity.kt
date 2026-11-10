@@ -16,14 +16,17 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             App(
-                taskRepository = spoonCheckApplication.taskRepository
+                taskRepository = spoonCheckApplication.taskRepository,
+                eventRepository = spoonCheckApplication.eventRepository
             )
         }
     }
 }
 
+/*
 @Preview
 @Composable
 fun AppAndroidPreview() {
-    App(taskRepository = InMemoryTaskRepository())
+    App(taskRepository = InMemoryTaskRepository(), Unit)
 }
+ */
