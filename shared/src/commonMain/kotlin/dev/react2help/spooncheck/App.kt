@@ -1,12 +1,15 @@
 package dev.react2help.spooncheck
 
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.serialization.SavedStateConfiguration
+import dev.react2help.spooncheck.repositories.SettingsThemeRepository
 import dev.react2help.spooncheck.repositories.TaskRepository
 import dev.react2help.spooncheck.routes.DashboardRoute
 import dev.react2help.spooncheck.routes.PatternsRoute
@@ -14,6 +17,7 @@ import dev.react2help.spooncheck.routes.SettingsRoute
 import dev.react2help.spooncheck.routes.TaskCreationRoute
 import dev.react2help.spooncheck.routes.TaskListRoute
 import dev.react2help.spooncheck.routes.ViewTaskRoute
+import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.modules.SerializersModule
@@ -30,7 +34,12 @@ fun App(taskRepository: TaskRepository) {
     }
     val backstack = rememberNavBackStack(config, TaskList)
 
-    MaterialTheme {
+    // one shared theme repository for the whole app. Loads the saved theme from the device
+
+    val themeRepository = remember { SettingsThemeRepository() }
+    val savedTheme by themeRepository.theme.collectAsStateWithLifecycle()
+
+    SpoonCheckTheme(appTheme = savedTheme) {
         NavDisplay(
             backStack = backstack,
             onBack = { backstack.removeLastOrNull() },
@@ -71,6 +80,7 @@ fun App(taskRepository: TaskRepository) {
                     }
                     entry<Settings> {
                         SettingsRoute(
+                            themeRepository = themeRepository,
                             onNavigateToTaskCreationDateEnable = {
                                 backstack.add(CreateTaskDateEnabled)
                             },
