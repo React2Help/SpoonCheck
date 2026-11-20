@@ -31,4 +31,8 @@ class PersistentTaskRepository(private val taskDao: TaskDao) : TaskRepository {
     override suspend fun setCompleted(taskId: Long, isDone: Boolean) {
         taskDao.setCompleted(taskId, isDone)
     }
+
+    override suspend fun getTaskById(taskId: Long): Task {
+        return taskDao.getById(taskId)
+    }
 }

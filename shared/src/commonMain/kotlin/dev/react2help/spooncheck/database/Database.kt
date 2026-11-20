@@ -23,7 +23,12 @@ private const val SECOND_VERSION = 2
     version = SECOND_VERSION,
     autoMigrations = [AutoMigration(from = FIRST_VERSION, to = SECOND_VERSION)]
 )
-@ColumnTypeConverters(LocalDateConverter::class, LocalTimeConverter::class)
+@ColumnTypeConverters(
+    LocalDateConverter::class,
+    LocalTimeConverter::class,
+    PriorityConverter::class,
+    CategoryConverter::class
+)
 @ConstructedBy(AppDatabaseConstructor::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getTaskDao(): TaskDao

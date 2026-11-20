@@ -1,6 +1,8 @@
 package dev.react2help.spooncheck.database
 
 import androidx.room3.ColumnTypeConverter
+import dev.react2help.spooncheck.modelsandstate.Category
+import dev.react2help.spooncheck.modelsandstate.Priority
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 
@@ -25,5 +27,37 @@ class LocalTimeConverter {
     @ColumnTypeConverter
     fun toString(value: LocalTime?): String? {
         return value?.toString()
+    }
+}
+
+class PriorityConverter {
+    @ColumnTypeConverter
+    fun fromPriority(priority: Priority): String {
+        return priority.name
+    }
+
+    @ColumnTypeConverter
+    fun toPriority(value: String): Priority {
+        return try {
+            Priority.valueOf(value.uppercase())
+        } catch (e: IllegalArgumentException) {
+            Priority.Low // Fallback default if an unknown value exists
+        }
+    }
+}
+
+class CategoryConverter {
+    @ColumnTypeConverter
+    fun fromCategory(category: Category): String {
+        return category.name
+    }
+
+    @ColumnTypeConverter
+    fun toCategory(value: String): Category {
+        return try {
+            Category.valueOf(value.uppercase())
+        } catch (e: IllegalArgumentException) {
+            Category.Work
+        }
     }
 }

@@ -87,7 +87,7 @@ data class TaskCreationUIState(
     val timePickerState: TimePickerState,
     val titleError: Boolean,
     val dateError: Boolean,
-    val priority: Priority = Priority.medium,
+    val priority: Priority = Priority.Medium,
     val spoons: Int = 0,
     val notificationsOn: Boolean = false,
     val isRecurring: Boolean = false,
@@ -98,7 +98,7 @@ data class TaskCreationUIState(
     val wasCancelled: Boolean = false,
 
     // fields to support components in the form
-    val selectedCategory: Int = Category.HYGIENE.ordinal, // supports the CategoryAndPriority card
+    val selectedCategory: Int = Category.Hygiene.ordinal, // supports the CategoryAndPriority card
     val selectedSpoons: Int = 1
 )
 
@@ -144,17 +144,17 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
 }
 
 enum class Category {
-    HYGIENE,
-    WORK,
-    SCHOOL
+    Hygiene,
+    Work,
+    School
 }
 
 enum class Priority {
 
-    low,
-    medium,
-    high,
-    critical
+    Low,
+    Medium,
+    High,
+    Critical
 }
 
 enum class AppTheme {
@@ -242,3 +242,24 @@ enum class DayRange(val span: Int) {
 
 const val DefaultInsightsText =
     "We're crunching the numbers and reading between the lines. Stay tuned!"
+
+sealed interface ViewTaskUIState {
+    data class Loading(val theme: AppTheme) : ViewTaskUIState
+
+    data class Content(
+        val isLoading: Boolean,
+        val title: String,
+        val description: String,
+        val priority: Priority,
+        val category: Category,
+        val dueDate: LocalDate,
+        val dueTime: LocalTime,
+        val isRecurring: Boolean,
+        val notificationsOn: Boolean,
+        val theme: AppTheme
+    ) : ViewTaskUIState
+
+    data class NotFound(val theme: AppTheme) : ViewTaskUIState
+
+    data class Error(val message: String, val theme: AppTheme) : ViewTaskUIState
+}

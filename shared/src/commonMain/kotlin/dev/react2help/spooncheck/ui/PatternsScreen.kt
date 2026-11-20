@@ -2,6 +2,7 @@
 
 package dev.react2help.spooncheck.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -18,7 +19,6 @@ import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -78,7 +78,7 @@ fun PatternsScreen(
                             onClick = { onNavigateToSettings() },
                             shape = RectangleShape,
                             content = {
-                                Icon(
+                                Image(
                                     painter = painterResource(Res.drawable.spoon),
                                     contentDescription = "Account Button"
                                 )
@@ -115,7 +115,7 @@ fun PatternsScreen(
                     modifier = Modifier.size(64.dp),
                     shape = CircleShape
                 ) {
-                    Icon( // todo figure out why the logo is not rendering
+                    Image( // todo figure out why the logo is not rendering
                         painterResource(Res.drawable.logo),
                         contentDescription = "FAB"
                     )

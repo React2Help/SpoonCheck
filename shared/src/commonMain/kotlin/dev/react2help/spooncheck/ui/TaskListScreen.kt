@@ -9,6 +9,7 @@
 
 package dev.react2help.spooncheck.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
@@ -106,7 +107,7 @@ fun TaskListScreen(
     onNavigateToPatterns: () -> Unit,
     onNavigateToDashboard: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToTaskDetails: () -> Unit
+    onNavigateToTaskDetails: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selected by remember { mutableStateOf(false) }
@@ -130,7 +131,7 @@ fun TaskListScreen(
                     IconButton( // account button
                         onClick = { onNavigateToSettings() }
                     ) {
-                        Icon(
+                        Image(
                             painter = painterResource(Res.drawable.logo), // todo figure out why
                             // todo it does not render
                             contentDescription = "Logo"
@@ -167,7 +168,7 @@ fun TaskListScreen(
                 onClick = { onNavigateToTaskCreationDateEnable() },
                 shapes = IconButtonDefaults.shapes()
             ) {
-                Icon(painter = painterResource(Res.drawable.logo), contentDescription = "Logo")
+                Image(painter = painterResource(Res.drawable.logo), contentDescription = "Logo")
             }
         }
     ) { paddingValues ->
@@ -214,7 +215,7 @@ fun TaskListScreen(
                             onSwipeRight = { taskId ->
                                 viewModel.OnAction(TaskListActions.CompletionChanged(taskId, true))
                             },
-                            { taskId -> onNavigateToTaskDetails() }
+                            { taskId -> onNavigateToTaskDetails(taskId) }
                         )
                     }
                 }
@@ -507,10 +508,10 @@ fun LazyListScope.Section(
 private fun priorityColor(priority: Priority): Color {
     val isDark = LocalAppTheme.current == AppTheme.DARK
     return when (priority) {
-        Priority.critical -> if (isDark) Color(0xFF2F4A50) else Color(0xFFD4E2E3)
-        Priority.high -> if (isDark) Color(0xFF5A4632) else Color(0xFFEAD3B6)
-        Priority.medium,
-        Priority.low -> if (isDark) Color(0xFF4A4232) else Color(0xFFFEF2DC)
+        Priority.Critical -> if (isDark) Color(0xFF2F4A50) else Color(0xFFD4E2E3)
+        Priority.High -> if (isDark) Color(0xFF5A4632) else Color(0xFFEAD3B6)
+        Priority.Medium,
+        Priority.Low -> if (isDark) Color(0xFF4A4232) else Color(0xFFFEF2DC)
     }
 }
 
@@ -538,6 +539,10 @@ private class PreviewTaskRepository : TaskRepository {
     override suspend fun deleteById(taskId: Long) = Result.success(Unit)
 
     override suspend fun setCompleted(taskId: Long, isDone: Boolean) = Unit
+
+    override suspend fun getTaskById(taskId: Long): Task {
+        TODO("Not yet implemented")
+    }
 }
 
 @Composable

@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
@@ -44,6 +45,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
         NavDisplay(
             backStack = backstack,
             onBack = { backstack.removeLastOrNull() },
+            entryDecorators = listOf(rememberViewModelStoreNavEntryDecorator()),
             entryProvider =
                 entryProvider {
                     entry<Dashboard> { DashboardRoute() }
@@ -52,17 +54,25 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                         TaskListRoute(
                             taskRepository = taskRepository,
                             onNavigateToTaskCreationDateEnable = {
+                                backstack.removeAll {
+                                    it is CreateTaskDateEnabled || it is CreateTaskDateDisabled
+                                }
                                 backstack.add(CreateTaskDateEnabled)
                             },
                             onNavigateToPatterns = { backstack.add(Patterns) },
                             onNavigateToDashboard = { backstack.add(Dashboard) },
                             onNavigateToSettings = { backstack.add(Settings) },
-                            onNavigateToTaskDetails = { backstack.add(ViewTask) }
+                            onNavigateToTaskDetails = { taskId ->
+                                backstack.add(ViewTask(taskId))
+                            } // figure out how to feed the lambda through
                         )
                     }
                     entry<Patterns> {
                         PatternsRoute(
                             onNavigateToTaskCreationDateEnable = {
+                                backstack.removeAll {
+                                    it is CreateTaskDateEnabled || it is CreateTaskDateDisabled
+                                }
                                 backstack.add(CreateTaskDateEnabled)
                             },
                             onNavigateToPatterns = { backstack.add(Patterns) },
@@ -85,6 +95,9 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                         SettingsRoute(
                             themeRepository = themeRepository,
                             onNavigateToTaskCreationDateEnable = {
+                                backstack.removeAll {
+                                    it is CreateTaskDateEnabled || it is CreateTaskDateDisabled
+                                }
                                 backstack.add(CreateTaskDateEnabled)
                             },
                             onNavigateToTaskCreationDateDisable = {
@@ -92,7 +105,16 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                             },
                         )
                     }
-                    entry<ViewTask> { ViewTaskRoute() }
+                    entry<ViewTask> { destination ->
+                        ViewTaskRoute(
+                            { backstack.removeLastOrNull() },
+                            destination
+                                .taskId, // TODO always zero? Or ViewModel's UI state is never
+                                         // updated?
+                            taskRepository,
+                            themeRepository
+                        )
+                    }
                 },
         )
     }
@@ -106,7 +128,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
 
 @Serializable data object Patterns : Destination
 
-@Serializable data object ViewTask : Destination
+@Serializable data class ViewTask(val taskId: Long) : Destination
 
 @Serializable data object Account : Destination
 
