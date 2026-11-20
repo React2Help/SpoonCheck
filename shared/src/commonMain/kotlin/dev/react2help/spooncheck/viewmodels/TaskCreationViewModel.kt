@@ -35,7 +35,7 @@ class TaskCreationViewModel(
     private val _uiState =
         MutableStateFlow(
             TaskCreationUIState(
-                category = Category.HYGIENE,
+                category = Category.Hygiene,
                 titleFieldState = TextFieldState(),
                 descriptionFieldState = TextFieldState(),
                 dateFieldState = TextFieldState(),

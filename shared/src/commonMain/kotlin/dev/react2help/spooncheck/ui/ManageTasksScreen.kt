@@ -29,11 +29,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.react2help.spooncheck.database.Task
+import dev.react2help.spooncheck.generateRandomFutureDate
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.Priority
+import dev.react2help.spooncheck.plusHoursSimple
 import dev.react2help.spooncheck.ui.components.SwipeableTruncatedTaskCard
-import dev.react2help.spooncheck.utils.generateRandomFutureDate
-import dev.react2help.spooncheck.utils.plusHoursSimple
 import kotlin.math.abs
 import kotlin.time.Clock
 import kotlin.uuid.Uuid

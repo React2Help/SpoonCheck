@@ -14,7 +14,7 @@ fun TaskListRoute(
     onNavigateToPatterns: () -> Unit,
     onNavigateToDashboard: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToTaskDetails: () -> Unit
+    onNavigateToTaskDetails: (Long) -> Unit
 ) {
     val viewModel: TaskListViewModel = viewModel { TaskListViewModel(taskRepository) }
     TaskListScreen(

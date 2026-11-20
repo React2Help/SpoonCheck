@@ -60,10 +60,10 @@ fun SwipeableTruncatedTaskCard(
 
     val color: Color =
         when (task.priority) { // todo define these colors
-            Priority.low -> Color.Gray
-            Priority.medium -> Color.White
-            Priority.high -> Color.Cyan
-            Priority.critical -> Color.Red
+            Priority.Low -> Color.Gray
+            Priority.Medium -> Color.White
+            Priority.High -> Color.Cyan
+            Priority.Critical -> Color.Red
         }
     var offsetX by remember { mutableFloatStateOf(0f) }
     val dragThreshold = 120f
@@ -127,10 +127,10 @@ fun TruncatedTaskCard(task: Task, modifier: Modifier = Modifier) {
      */
     val color: Color =
         when (task.priority) { // todo define these colors
-            Priority.low -> Color.Gray
-            Priority.medium -> Color.White
-            Priority.high -> Color.Cyan
-            Priority.critical -> Color.Red
+            Priority.Low -> Color.Gray
+            Priority.Medium -> Color.White
+            Priority.High -> Color.Cyan
+            Priority.Critical -> Color.Red
         }
 
     Card(modifier = modifier) {
@@ -169,8 +169,8 @@ private fun PreviewAll() {
         title = "Task Title",
         description = "A Description with enough words to be a description. Wow",
         spoons = 2,
-        priority = Priority.high,
-        category = Category.HYGIENE,
+        priority = Priority.High,
+        category = Category.Hygiene,
         dueDate = dueDate,
         dueTime = dueTime,
         isDone = false

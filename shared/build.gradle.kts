@@ -1,4 +1,5 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -30,6 +31,7 @@ kotlin {
     compilerOptions{
         freeCompilerArgs.add("-Xexpect-actual-classes")
     }
+    applyDefaultHierarchyTemplate()
     jvm()
     android {
         withDeviceTest {
@@ -90,7 +92,12 @@ kotlin {
                 implementation("io.kotest:kotest-runner-junit5:6.2.6")
             }
         }
-
+        val jvmAndAndroidMain by creating {
+            dependsOn(commonMain.get() )
+        }
+        val jvmMain by getting {
+            dependsOn(jvmAndAndroidMain)
+        }
         val androidDeviceTest by getting {
             dependencies {
                 implementation(libs.androidx.testExt.junit)
