@@ -11,4 +11,6 @@ interface TaskRepository {
     suspend fun deleteById(taskId: Long): Result<Unit>
 
     suspend fun setCompleted(taskId: Long, isDone: Boolean)
+
+    suspend fun getTaskById(taskId: Long): Task
 }

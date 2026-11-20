@@ -18,4 +18,6 @@ interface TaskDao {
     suspend fun setCompleted(taskId: Long, isDone: Boolean)
 
     @Delete suspend fun delete(task: Task)
+
+    @Query("SELECT * FROM tasks WHERE id = :taskId") suspend fun getById(taskId: Long): Task
 }

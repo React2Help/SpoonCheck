@@ -78,6 +78,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import dev.react2help.spooncheck.TextToDate
 import dev.react2help.spooncheck.modelsandstate.AppTheme
 import dev.react2help.spooncheck.modelsandstate.Category
 import dev.react2help.spooncheck.modelsandstate.MaxSpoons
@@ -86,7 +87,6 @@ import dev.react2help.spooncheck.modelsandstate.TaskCreationActions
 import dev.react2help.spooncheck.modelsandstate.TaskCreationUIState
 import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import dev.react2help.spooncheck.theme.ThemedBackground
-import dev.react2help.spooncheck.utils.TextToDate
 import kotlin.time.Clock
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
@@ -901,7 +901,7 @@ private fun rememberPreviewTaskCreationState(): TaskCreationUIState =
         timePickerState = rememberTimePickerState(),
         titleError = false,
         dateError = false,
-        category = Category.HYGIENE
+        category = Category.Hygiene
     )
 
 @Preview
