@@ -103,6 +103,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                             onNavigateToTaskCreationDateDisable = {
                                 backstack.add(CreateTaskDateDisabled)
                             },
+                            onNavigateBack = { backstack.removeLastOrNull() }
                         )
                     }
                     entry<ViewTask> { destination ->
