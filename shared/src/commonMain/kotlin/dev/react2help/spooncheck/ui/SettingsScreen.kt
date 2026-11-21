@@ -71,6 +71,7 @@ import dev.react2help.spooncheck.theme.SpoonCheckTheme
 import dev.react2help.spooncheck.theme.ThemedBackground
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
+import spooncheck.shared.generated.resources.arrow_back_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.cancel_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.check_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
 import spooncheck.shared.generated.resources.pine_tree_background
@@ -368,7 +369,8 @@ fun SettingsScreenGen(
     onAction: (SettingsActions) -> Unit,
     state: SettingsUIState,
     onNavigateToTaskCreationDateEnable: () -> () -> Unit,
-    onNavigateToTaskCreationDateDisable: () -> () -> Unit
+    onNavigateToTaskCreationDateDisable: () -> () -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     // selectedTheme here used for demonstration, use savedTheme on all other pages
     SpoonCheckTheme(appTheme = state.selectedTheme) {
@@ -377,6 +379,19 @@ fun SettingsScreenGen(
                 TopAppBar(
                     title = { Text("Settings", fontWeight = FontWeight.Bold) },
                     subtitle = { Text("") },
+                    navigationIcon = {
+                        IconButton(onClick = { onNavigateBack() }) {
+                            Icon(
+                                modifier = Modifier.size(32.dp),
+                                painter =
+                                    painterResource(
+                                        Res.drawable
+                                            .arrow_back_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                                    ),
+                                contentDescription = "Navigate Backwards"
+                            )
+                        }
+                    },
                     titleHorizontalAlignment = Alignment.CenterHorizontally
                 )
             },
@@ -747,7 +762,8 @@ private fun SettingsScreenForestPreview() {
         onAction = {},
         state = SettingsUIState(selectedTheme = AppTheme.FOREST),
         onNavigateToTaskCreationDateEnable = { {} },
-        onNavigateToTaskCreationDateDisable = { {} }
+        onNavigateToTaskCreationDateDisable = { {} },
+        {}
     )
 }
 
@@ -758,7 +774,8 @@ private fun SettingsScreenBeachPreview() {
         onAction = {},
         state = SettingsUIState(selectedTheme = AppTheme.BEACH),
         onNavigateToTaskCreationDateEnable = { {} },
-        onNavigateToTaskCreationDateDisable = { {} }
+        onNavigateToTaskCreationDateDisable = { {} },
+        {}
     )
 }
 
@@ -769,6 +786,7 @@ private fun SettingsScreenDarkPreview() {
         onAction = {},
         state = SettingsUIState(selectedTheme = AppTheme.DARK),
         onNavigateToTaskCreationDateEnable = { {} },
-        onNavigateToTaskCreationDateDisable = { {} }
+        onNavigateToTaskCreationDateDisable = { {} },
+        {}
     )
 }
