@@ -93,19 +93,19 @@ fun PatternsScreen(
                         selected = false,
                         onClick = { onNavigateToDashboard() },
                         icon = {},
-                        label = { Text("Dashboard") }
+                        label = { Text("Dashboard", style = MaterialTheme.typography.labelMedium) }
                     )
                     NavigationBarItem(
                         selected = false,
                         onClick = { onNavigateToTaskList() },
                         icon = {},
-                        label = { Text("Tasks") }
+                        label = { Text("Tasks", style = MaterialTheme.typography.labelMedium) }
                     )
                     NavigationBarItem(
                         selected = true,
                         onClick = { onNavigateToPatterns() },
                         icon = {},
-                        label = { Text("Patterns") }
+                        label = { Text("Patterns", style = MaterialTheme.typography.labelMedium) }
                     )
                 }
             },

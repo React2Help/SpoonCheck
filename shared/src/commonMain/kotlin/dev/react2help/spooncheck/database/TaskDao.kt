@@ -3,6 +3,7 @@ package dev.react2help.spooncheck.database
 import androidx.room3.Dao
 import androidx.room3.Delete
 import androidx.room3.Insert
+import androidx.room3.OnConflictStrategy.Companion.REPLACE
 import androidx.room3.Query
 import kotlinx.coroutines.flow.Flow
 
@@ -20,4 +21,6 @@ interface TaskDao {
     @Delete suspend fun delete(task: Task)
 
     @Query("SELECT * FROM tasks WHERE id = :taskId") suspend fun getById(taskId: Long): Task
+
+    @Insert(onConflict = REPLACE) suspend fun insertAll(list: List<Task>)
 }

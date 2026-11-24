@@ -41,7 +41,7 @@ class PriorityConverter {
     @ColumnTypeConverter
     fun toPriority(value: String): Priority {
         return try {
-            Priority.valueOf(value.uppercase())
+            Priority.valueOf(value)
         } catch (e: IllegalArgumentException) {
             Priority.Low // Fallback default if an unknown value exists
         }
@@ -57,7 +57,7 @@ class CategoryConverter {
     @ColumnTypeConverter
     fun toCategory(value: String): Category {
         return try {
-            Category.valueOf(value.uppercase())
+            Category.valueOf(value)
         } catch (e: IllegalArgumentException) {
             Category.Work
         }

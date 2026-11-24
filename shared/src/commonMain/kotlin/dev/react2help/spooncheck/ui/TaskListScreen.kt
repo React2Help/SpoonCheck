@@ -23,22 +23,21 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.InputChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -64,8 +63,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.intl.Locale
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -124,16 +121,13 @@ fun TaskListScreen(
                             // Pressed Action passed in
                         },
                         shape = CircleShape,
-                        label = {
-                            Text("${uiState.spoonBudget} spoons")
-                        } // todo extract number to viewModel
+                        label = { Text("${uiState.spoonBudget} spoons") }
                     )
                     IconButton( // account button
                         onClick = { onNavigateToSettings() }
                     ) {
                         Image(
-                            painter = painterResource(Res.drawable.logo), // todo figure out why
-                            // todo it does not render
+                            painter = painterResource(Res.drawable.logo),
                             contentDescription = "Logo"
                         )
                     }
@@ -141,7 +135,7 @@ fun TaskListScreen(
             )
         },
         bottomBar = {
-            NavigationBar { // todo extract state of selected
+            NavigationBar {
                 NavigationBarItem(
                     selected = false,
                     onClick = { onNavigateToDashboard() },
@@ -149,13 +143,13 @@ fun TaskListScreen(
                     label = { Text("Dashboard") }
                 )
                 NavigationBarItem(
-                    selected = false,
+                    selected = true,
                     onClick = { /*NO-OP*/},
                     icon = {},
                     label = { Text("Tasks") }
                 )
                 NavigationBarItem(
-                    selected = true,
+                    selected = false,
                     onClick = { onNavigateToPatterns() },
                     icon = {},
                     label = { Text("Patterns") }
@@ -164,16 +158,16 @@ fun TaskListScreen(
         },
         floatingActionButtonPosition = FabPosition.Center,
         floatingActionButton = {
-            IconButton(
+            FloatingActionButton(
                 onClick = { onNavigateToTaskCreationDateEnable() },
-                shapes = IconButtonDefaults.shapes()
+                modifier = Modifier.size(64.dp),
+                shape = CircleShape
             ) {
-                Image(painter = painterResource(Res.drawable.logo), contentDescription = "Logo")
+                Image(painterResource(Res.drawable.logo), contentDescription = "FAB")
             }
         }
     ) { paddingValues ->
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-            val boxWithConstraintsScope = this
             ThemedBackground() // pine trees / ocean / solid dark, depending on the theme
             if (uiState.tasks.isNotEmpty()) {
                 Column(
@@ -187,44 +181,33 @@ fun TaskListScreen(
                         }
                     ) // todo expose fields to view model and set OnAction
                     Spacer(modifier = Modifier.size(8.dp))
-                    Card(
-                        colors =
-                            CardDefaults.elevatedCardColors(
-                                containerColor = MaterialTheme.colorScheme.surface
-                            ),
-                        elevation = CardDefaults.cardElevation(8.dp),
-                        modifier =
-                            Modifier.widthIn(max = boxWithConstraintsScope.maxWidth * 0.9f)
-                                .heightIn(min = boxWithConstraintsScope.maxHeight * 0.25f)
-                    ) {
-                        val sectionDatii =
-                            List(Category.entries.size) { i ->
-                                SectionData(
-                                    header = Category.entries[i].name,
-                                    tasks =
-                                        uiState.tasks.filter { task ->
-                                            task.category == Category.entries[i]
-                                        }
-                                )
-                            }
-                        ExpandableList(
-                            sectionDatii,
-                            onSwipeLeft = { taskId ->
-                                viewModel.OnAction(TaskListActions.OnDelete(taskId))
-                            },
-                            onSwipeRight = { taskId ->
-                                viewModel.OnAction(TaskListActions.CompletionChanged(taskId, true))
-                            },
-                            { taskId -> onNavigateToTaskDetails(taskId) }
-                        )
-                    }
+                    val sectionDatii =
+                        List(Category.entries.size) { i ->
+                            SectionData(
+                                header = Category.entries[i].name,
+                                tasks =
+                                    uiState.tasks.filter { task ->
+                                        task.category == Category.entries[i]
+                                    }
+                            )
+                        }
+                    ExpandableList(
+                        sectionDatii,
+                        onSwipeLeft = { taskId ->
+                            viewModel.OnAction(TaskListActions.OnDelete(taskId))
+                        },
+                        onSwipeRight = { taskId ->
+                            viewModel.OnAction(TaskListActions.CompletionChanged(taskId, true))
+                        },
+                        { taskId -> onNavigateToTaskDetails(taskId) }
+                    )
                 }
             } else {
 
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxSize()
+                    verticalArrangement = Arrangement.Top,
+                    modifier = Modifier.padding(paddingValues).fillMaxSize()
                 ) {
                     TaskStatusFilter(
                         uiState.listFilterOption,
@@ -248,20 +231,17 @@ fun TaskStatusFilter(
     selectedFilter: TaskListFilterOptions,
     onFilterOptionChange: (TaskListFilterOptions) -> Unit
 ) {
-    val options = listOf("All Tasks", "Todo", "Done")
     SingleChoiceSegmentedButtonRow {
         TaskListFilterOptions.entries.forEachIndexed { index, option ->
             SegmentedButton(
-                shape = SegmentedButtonDefaults.itemShape(index = index, count = options.size),
+                shape =
+                    SegmentedButtonDefaults.itemShape(
+                        index = index,
+                        count = TaskListFilterOptions.entries.size
+                    ),
                 onClick = { onFilterOptionChange(TaskListFilterOptions.entries[index]) },
                 selected = index == selectedFilter.ordinal,
-                label = {
-                    Text(
-                        option.name.toLowerCase(Locale.current).replaceFirstChar { ch ->
-                            ch.uppercase()
-                        }
-                    )
-                },
+                label = { Text(option.name.replace("_", " ")) },
                 colors =
                     SegmentedButtonColors(
                         activeContainerColor = MaterialTheme.colorScheme.primary,
@@ -311,7 +291,7 @@ fun ExpandableList(
             sections.indices.map { index -> index to true }.toMutableStateMap()
         }
 
-    LazyColumn(modifier = Modifier.padding(8.dp).background(MaterialTheme.colorScheme.surface)) {
+    LazyColumn(modifier = Modifier.padding(8.dp).background(Color.Transparent)) {
         sections.forEachIndexed { index, sectionData ->
             Section(
                 sectionData = sectionData,
@@ -333,40 +313,34 @@ fun SectionHeader(
 ) {
     // A Component. A Horizontal element with a "dropdown" chevron, a label, and a plus icon
 
-    Row(
-        Modifier.fillMaxWidth().background(MaterialTheme.colorScheme.surface),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        IconButton( // drop down icon
-            onClick = { onHeaderClick() },
-            colors =
-                IconButtonDefaults.iconButtonColors(
-                    containerColor = Color.Transparent,
-                    contentColor = MaterialTheme.colorScheme.secondary,
-                    disabledContentColor = Color.Unspecified,
-                    disabledContainerColor = Color.Unspecified
-                ),
-        ) {
-            Icon(
-                painter =
-                    if (isExpanded)
-                        painterResource(
-                            Res.drawable.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                        )
-                    else
-                        painterResource(
-                            Res.drawable.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
-                        ),
-                contentDescription = if (isExpanded) "drop down icon" else "drop up icon",
-                modifier = Modifier.size(24.dp)
+    FilledTonalButton( // drop down icon
+        onClick = { onHeaderClick() },
+        colors =
+            ButtonColors(
+                containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
+                disabledContentColor = MaterialTheme.colorScheme.onSurface
             )
-        }
+    ) {
+        Icon(
+            painter =
+                if (isExpanded)
+                    painterResource(
+                        Res.drawable.arrow_drop_down_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                    )
+                else
+                    painterResource(
+                        Res.drawable.arrow_drop_up_24dp_E3E3E3_FILL0_wght400_GRAD0_opsz24
+                    ),
+            contentDescription = if (isExpanded) "drop down icon" else "drop up icon",
+            modifier = Modifier.size(24.dp)
+        )
         Text(
             text = text,
-            color = MaterialTheme.colorScheme.secondary,
+            color = MaterialTheme.colorScheme.onSecondaryFixedVariant,
             style = MaterialTheme.typography.labelMedium
         )
-        Spacer(Modifier.size(50.dp))
     }
 }
 
@@ -384,7 +358,6 @@ fun SectionItem(
         onClick = { onCardClick(task.id) },
         modifier =
             Modifier.offset { IntOffset(offsetX.roundToInt(), 0) }
-                .background(MaterialTheme.colorScheme.fourth)
                 .height(80.dp)
                 .fillMaxWidth()
                 .draggable(
@@ -499,6 +472,7 @@ fun LazyListScope.Section(
                 onSwipeLeft = onSwipeLeft,
                 onSwipeRight = onSwipeRight
             )
+            Spacer(Modifier.size(4.dp))
         }
     }
 }
