@@ -116,3 +116,7 @@ fun generateRandomFutureDate(): LocalDate {
     val day = Random.nextInt(1, yearMonth.numberOfDays)
     return LocalDate(year = year, month = month, day = day)
 }
+
+fun generateRandomFutureTime(): LocalTime {
+    return LocalTime(hour = Random.nextInt(13), minute = Random.nextInt(60))
+}

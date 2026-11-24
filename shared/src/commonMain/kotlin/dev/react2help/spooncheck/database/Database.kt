@@ -12,8 +12,11 @@ import androidx.room3.migration.Migration
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import androidx.sqlite.execSQL
+import dev.react2help.spooncheck.database.seeding.DaoSeedCallback
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
+import kotlinx.coroutines.SupervisorJob
 
 private const val FIRST_VERSION = 1
 private const val SECOND_VERSION = 2
@@ -63,6 +66,16 @@ expect object AppDatabaseConstructor : RoomDatabaseConstructor<AppDatabase> {
     override fun initialize(): AppDatabase
 }
 
-fun getRoomDatabase(builder: RoomDatabase.Builder<AppDatabase>): AppDatabase {
-    return builder.setDriver(BundledSQLiteDriver()).setQueryCoroutineContext(Dispatchers.IO).build()
+fun getRoomDatabase(
+    builder: RoomDatabase.Builder<AppDatabase>,
+    scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+): AppDatabase {
+    lateinit var db: AppDatabase
+    db =
+        builder
+            .setDriver(BundledSQLiteDriver())
+            .addCallback(DaoSeedCallback({ db }, scope))
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
+    return db
 }

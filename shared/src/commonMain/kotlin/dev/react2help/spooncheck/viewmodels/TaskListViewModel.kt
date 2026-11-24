@@ -32,7 +32,7 @@ class TaskListViewModel(
                 val filteredTasks =
                     tasks.filter { task ->
                         when (filter) {
-                            TaskListFilterOptions.ALL_TASKS -> true
+                            TaskListFilterOptions.All_Tasks -> true
                             TaskListFilterOptions.Todo -> !task.isDone
                             TaskListFilterOptions.Done -> task.isDone
                         }

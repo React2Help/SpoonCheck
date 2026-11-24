@@ -64,7 +64,7 @@ sealed interface TaskListActions {
 }
 
 enum class TaskListFilterOptions {
-    ALL_TASKS,
+    All_Tasks,
     Todo,
     Done
 }
