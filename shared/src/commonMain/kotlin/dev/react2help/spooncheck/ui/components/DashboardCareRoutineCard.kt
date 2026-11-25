@@ -56,6 +56,7 @@ private const val PreviewRestDays = 1
  */
 @Composable
 fun DashboardCareRoutineCard(
+    onPlusRestDay: () -> Unit,
     checkedInDays: Int,
     modifier: Modifier = Modifier,
     restDays: Int = 0,
@@ -71,7 +72,7 @@ fun DashboardCareRoutineCard(
             modifier = Modifier.padding(CardPadding),
             verticalArrangement = Arrangement.spacedBy(SectionSpacing),
         ) {
-            CareRoutineHeader()
+            CareRoutineHeader(onPlusRestDay)
             Text(
                 text = checkInHeadline(checkedInDays),
                 style = MaterialTheme.typography.headlineSmall,
@@ -92,7 +93,7 @@ fun DashboardCareRoutineCard(
 }
 
 @Composable
-private fun CareRoutineHeader() {
+private fun CareRoutineHeader(onAddRestDay: () -> Unit) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
@@ -102,9 +103,9 @@ private fun CareRoutineHeader() {
             text = "Care Routine",
             style = MaterialTheme.typography.titleMedium,
         )
-        FilterChip(
+        FilterChip( // TODO: Figure out what this is supposed to do when the user clicks it
             selected = true,
-            onClick = {},
+            onClick = { onAddRestDay() },
             label = { Text("+1 Rest Day") },
             colors =
                 FilterChipDefaults.filterChipColors(
@@ -151,5 +152,6 @@ private fun DashboardCareRoutineCardPreview() {
         checkedInDays = PreviewCheckedInDays,
         restDays = PreviewRestDays,
         totalDays = DefaultTotalDays,
+        onPlusRestDay = {},
     )
 }

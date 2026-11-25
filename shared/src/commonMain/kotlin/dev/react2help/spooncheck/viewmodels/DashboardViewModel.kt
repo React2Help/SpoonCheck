@@ -41,6 +41,7 @@ class DashboardViewModel(private val taskRepository: TaskRepository) : ViewModel
             DashboardActions.OnViewTasks,
             DashboardActions.OnFabClick,
             is DashboardActions.OnDestinationSelect -> Unit
+            is DashboardActions.OnAddRestDay -> Unit
         }
     }
 

@@ -8,10 +8,24 @@ import dev.react2help.spooncheck.ui.DashboardScreen
 import dev.react2help.spooncheck.viewmodels.DashboardViewModel
 
 @Composable
-fun DashboardRoute(taskRepository: TaskRepository) {
+@Suppress("ViewModelInjection")
+fun DashboardRoute(
+    onNavigateToTasks: () -> Unit,
+    onNavigateToPatterns: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToTaskCreation: () -> Unit,
+    taskRepository: TaskRepository
+) {
     val viewModel: DashboardViewModel = viewModel {
         DashboardViewModel(taskRepository = taskRepository)
     }
     val uiState = viewModel.uiState.collectAsState()
-    DashboardScreen(state = uiState.value, onAction = {})
+    DashboardScreen(
+        onNavigateToTasks = { onNavigateToTasks() },
+        onNavigateToPatterns = { onNavigateToPatterns() },
+        onNavigateToSettings = { onNavigateToSettings() },
+        onNavigateToTaskCreation = { onNavigateToTaskCreation() },
+        onAction = { action -> viewModel.onAction(action) },
+        state = uiState.value
+    )
 }

@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -59,6 +61,7 @@ import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import spooncheck.shared.generated.resources.Res
 import spooncheck.shared.generated.resources.dashboard_fab_icon
+import spooncheck.shared.generated.resources.logo
 import spooncheck.shared.generated.resources.pine_tree_background
 
 private const val DashboardRoute = "dashboard"
@@ -105,12 +108,16 @@ private val DashboardBottomNavItems =
 // ---------------------------------------------------------------------------
 // Screen
 // ---------------------------------------------------------------------------
+@Suppress("LongMethod")
 @Composable
 fun DashboardScreen(
-    state: DashboardUIState,
+    onNavigateToTasks: () -> Unit,
+    onNavigateToPatterns: () -> Unit,
+    onNavigateToSettings: () -> Unit,
+    onNavigateToTaskCreation: () -> Unit,
     onAction: (DashboardActions) -> Unit,
-    modifier: Modifier = Modifier,
-    selectedRoute: String = DashboardRoute,
+    state: DashboardUIState,
+    modifier: Modifier = Modifier
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -121,19 +128,44 @@ fun DashboardScreen(
         Scaffold(
             containerColor = Color.Transparent,
             snackbarHost = { SnackbarHost(snackbarHostState) },
-            topBar = { DashboardTopBar(userName = state.userName) },
-            bottomBar = {
-                DashboardBottomBar(
-                    selectedRoute = selectedRoute,
-                    onDestinationSelect = { route ->
-                        onAction(DashboardActions.OnDestinationSelect(route))
+            topBar = {
+                CenterAlignedTopAppBar(
+                    title = { Text("Dashboard") },
+                    actions = {
+                        IconButton(onClick = { onNavigateToSettings() }) {
+                            Image(
+                                painter = painterResource(Res.drawable.logo), // todo figure out why
+                                // todo it does not render
+                                contentDescription = "Logo"
+                            )
+                        }
                     },
                 )
             },
-            floatingActionButtonPosition = FabPosition.Center,
-            floatingActionButton = {
-                DashboardFab(onClick = { onAction(DashboardActions.OnFabClick) })
+            bottomBar = {
+                NavigationBar { // todo extract state of selected
+                    NavigationBarItem(
+                        selected = true,
+                        onClick = { /*NO-OP*/},
+                        icon = {},
+                        label = { Text("Dashboard") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { onNavigateToTasks() },
+                        icon = {},
+                        label = { Text("Tasks") }
+                    )
+                    NavigationBarItem(
+                        selected = false,
+                        onClick = { onNavigateToPatterns() },
+                        icon = {},
+                        label = { Text("Patterns") }
+                    )
+                }
             },
+            floatingActionButtonPosition = FabPosition.Center,
+            floatingActionButton = { DashboardFab(onClick = { onNavigateToTaskCreation() }) },
         ) { paddingValues ->
             DashboardContent(
                 state = state,
@@ -149,6 +181,7 @@ fun DashboardScreen(
                     )
                 },
                 onTaskClick = { task -> onAction(DashboardActions.OnTaskClick(task.id)) },
+                onPlusRestDay = { onAction(DashboardActions.OnAddRestDay) }
             )
         }
     }
@@ -173,6 +206,7 @@ private fun DashboardContent(
     onViewTasks: () -> Unit,
     onImportantTaskComplete: (Task) -> Unit,
     onTaskClick: (Task) -> Unit,
+    onPlusRestDay: () -> Unit
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(contentPadding),
@@ -200,6 +234,7 @@ private fun DashboardContent(
                 checkedInDays = state.numCheckins,
                 restDays = state.numRestDays,
                 totalDays = CareRoutineWeekLength,
+                onPlusRestDay = { onPlusRestDay() }
             )
         }
     }
@@ -275,6 +310,7 @@ private fun DashboardTopBar(userName: String) {
 }
 
 @Composable
+@Deprecated("Replaced by")
 private fun DashboardBottomBar(
     selectedRoute: String,
     onDestinationSelect: (String) -> Unit = {},
@@ -326,5 +362,12 @@ private fun DashboardScreenPreview() {
     // backed by a real ViewModel so swiping and undo work in Interactive Mode
     val viewModel = remember { DashboardViewModel(InMemoryTaskRepository(SampleTasks)) }
     val state by viewModel.uiState.collectAsStateWithLifecycle()
-    DashboardScreen(state = state, onAction = viewModel::onAction)
+    DashboardScreen(
+        onNavigateToTasks = {},
+        onNavigateToPatterns = {},
+        onNavigateToSettings = {},
+        onNavigateToTaskCreation = {},
+        onAction = viewModel::onAction,
+        state = state
+    )
 }
