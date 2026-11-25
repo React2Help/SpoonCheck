@@ -37,6 +37,8 @@ sealed interface DashboardActions {
     data object OnFabClick : DashboardActions
 
     data class OnDestinationSelect(val route: String) : DashboardActions
+
+    data object OnAddRestDay : DashboardActions
 }
 
 data class TaskListUIState( // what the screen displays

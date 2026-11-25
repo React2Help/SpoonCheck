@@ -52,7 +52,15 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
             entryDecorators = listOf(rememberViewModelStoreNavEntryDecorator()),
             entryProvider =
                 entryProvider {
-                    entry<Dashboard> { DashboardRoute(taskRepository = taskRepository) }
+                    entry<Dashboard> {
+                        DashboardRoute(
+                            taskRepository = taskRepository,
+                            onNavigateToTasks = { backstack.add(TaskList) },
+                            onNavigateToPatterns = { backstack.add(Patterns) },
+                            onNavigateToSettings = { backstack.add(Settings) },
+                            onNavigateToTaskCreation = { backstack.add(CreateTaskDateEnabled) }
+                        )
+                    }
 
                     entry<TaskList> {
                         TaskListRoute(
