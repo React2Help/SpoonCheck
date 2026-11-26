@@ -192,7 +192,7 @@ private fun PreviewScreen() {
                 priority = Priority.entries[i % Priority.entries.size],
                 category = Category.entries[i % Category.entries.size],
                 dueDate =
-                    if (i % 2 == 0) generateRandomFutureDate()!!
+                    if (i % 2 == 0) generateRandomFutureDate()
                     else Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
                 dueTime =
                     Clock.System.now()
