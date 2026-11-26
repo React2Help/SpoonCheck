@@ -31,23 +31,19 @@ class ViewTaskViewModel(
             try {
                 val task = taskRepository.getTaskById(taskId)
                 _uiState.value =
-                    if (task == null) {
-                        ViewTaskUIState.NotFound(themeRepository.theme.value)
-                    } else {
-                        ViewTaskUIState.Content(
-                            isLoading = false,
-                            title = task.title,
-                            description = task.description,
-                            priority = task.priority,
-                            category = task.category,
-                            dueDate = task.dueDate,
-                            dueTime = task.dueTime,
-                            isRecurring =
-                                false, // todo migrate database to include these two fields
-                            notificationsOn = false,
-                            theme = themeRepository.theme.value
-                        )
-                    }
+                    ViewTaskUIState.Content(
+                        isLoading = false,
+                        title = task.title,
+                        description = task.description,
+                        priority = task.priority,
+                        category = task.category,
+                        dueDate = task.dueDate,
+                        dueTime = task.dueTime,
+                        isRecurring =
+                            false, // todo migrate database to include these two fields
+                        notificationsOn = false,
+                        theme = themeRepository.theme.value
+                    )
             } catch (e: Exception) {
                 _uiState.value =
                     ViewTaskUIState.Error("Unable to load task", themeRepository.theme.value)
