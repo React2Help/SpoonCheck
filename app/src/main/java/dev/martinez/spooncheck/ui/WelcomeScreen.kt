@@ -33,13 +33,13 @@ fun WelcomeScreen() {
             painter = painterResource(R.drawable.welcome_screen_background),
             contentDescription = "Background Image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().border(4.dp, Color.Black)
+            modifier = Modifier.fillMaxSize().border(4.dp, Color.Black),
         )
 
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxSize().padding(24.dp)
+            modifier = Modifier.fillMaxSize().padding(24.dp),
         ) {
             Text(text = "Welcome To SpoonCheck", fontStyle = FontStyle.Italic)
 
@@ -47,17 +47,17 @@ fun WelcomeScreen() {
                 painter = painterResource(R.drawable.logo),
                 contentDescription = "Logo",
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(183.dp).clip(CircleShape)
+                modifier = Modifier.size(183.dp).clip(CircleShape),
             )
 
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Button(
                     onClick = { println("Provider Clicked") },
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.size(109.dp, 56.dp)
+                    modifier = Modifier.size(109.dp, 56.dp),
                 ) {
                     Text("Provider")
                 }
@@ -65,7 +65,7 @@ fun WelcomeScreen() {
                 Button(
                     onClick = { println("Patient Clicked!") },
                     shape = RoundedCornerShape(12.dp),
-                    modifier = Modifier.size(109.dp, 56.dp)
+                    modifier = Modifier.size(109.dp, 56.dp),
                 ) {
                     Text("Patient")
                 }

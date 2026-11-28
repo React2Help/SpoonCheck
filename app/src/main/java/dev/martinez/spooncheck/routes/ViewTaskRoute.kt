@@ -14,7 +14,7 @@ fun ViewTaskRoute(
     onNavigateBack: () -> Unit,
     taskId: Long,
     taskRepository: TaskRepository,
-    themeRepository: ThemeRepository
+    themeRepository: ThemeRepository,
 ) {
     val viewmodel: ViewTaskViewModel =
         viewModel(
@@ -22,8 +22,8 @@ fun ViewTaskRoute(
                 ViewTaskViewModel.provideFactory(
                     taskId,
                     taskRepository = taskRepository,
-                    themeRepository
-                )
+                    themeRepository,
+                ),
         )
     val uiState = viewmodel.uiState.collectAsState()
     ViewTaskScreen({ onNavigateBack() }, uiState.value)

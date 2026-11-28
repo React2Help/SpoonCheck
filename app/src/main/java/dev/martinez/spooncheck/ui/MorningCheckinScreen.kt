@@ -42,7 +42,7 @@ fun MorningCheckinScreen(
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Button(onClick = saveAndExit, shape = RoundedCornerShape(8.dp)) {
                         Text("Save and Exit Check-in")
@@ -53,7 +53,7 @@ fun MorningCheckinScreen(
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
             Image(
@@ -61,12 +61,12 @@ fun MorningCheckinScreen(
                 contentDescription = "Background Image",
                 alpha = 0.5f,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.clip(RectangleShape)
+                modifier = Modifier.clip(RectangleShape),
             )
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp).fillMaxSize()
+                modifier = Modifier.padding(8.dp).fillMaxSize(),
             ) {
                 Text("How Much Sleep Did You Get?")
                 TextField(numHoursSlept)

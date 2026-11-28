@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.stateIn
 
 class PatternsViewModel(
     private val taskRepository: TaskRepository,
-    private val eventRepository: EventRepository
+    private val eventRepository: EventRepository,
 ) : ViewModel() {
     private val screenState = MutableStateFlow(PatternsScreenUIState())
     private val selectedCompletionChartRange = MutableStateFlow(DayRange.TWO_WEEKS)
@@ -23,20 +23,20 @@ class PatternsViewModel(
                 taskRepository.tasks,
                 eventRepository.tasks,
                 selectedCompletionChartRange,
-                screenState
+                screenState,
             ) { tasks, events, selectedCompletionChartRange, currentScreenState ->
                 val completedEvents = events.count { event -> event.isDone }
                 val completedTasks = tasks.count { task -> task.isDone }
                 currentScreenState.copy(
                     completedEvents = completedEvents,
                     completedTasks = completedTasks,
-                    completionsRange = selectedCompletionChartRange
+                    completionsRange = selectedCompletionChartRange,
                 )
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = PatternsScreenUIState()
+                initialValue = PatternsScreenUIState(),
             )
 
     // TODO: Determine and implement relevant user actions

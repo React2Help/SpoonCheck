@@ -32,7 +32,7 @@ private val LightColorScheme =
         inverseSurface = Ink,
         inverseOnSurface = CardWhite,
         inversePrimary = DarkPrimary,
-        scrim = Color.Black
+        scrim = Color.Black,
     )
 
 private val DarkColorScheme =
@@ -56,7 +56,7 @@ private val DarkColorScheme =
         surfaceVariant = DarkSurfaceVariant,
         onSurfaceVariant = Color(0xFFC3CBC8),
         outline = DarkOutline,
-        outlineVariant = Color(0xFF414947)
+        outlineVariant = Color(0xFF414947),
     )
 
 @Composable

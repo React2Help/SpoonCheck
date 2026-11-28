@@ -16,10 +16,10 @@ class InMemoryTaskRepository(initialTasks: List<Task> = emptyList()) : TaskRepos
     override val tasks: StateFlow<List<Task>> = _tasks.asStateFlow()
 
     @Suppress(
-        "ReturnCount"
+        "ReturnCount",
     ) // rule: Function save has 3 return statements which exceeds the limit of 2. [ReturnCount]
     override suspend fun save(
-        task: Task
+        task: Task,
     ): Result<Unit> { // todo modify this function to surface errors in that
         // lambda and return them to the caller. Define an enum of errors.
         if (task.title.isBlank()) {

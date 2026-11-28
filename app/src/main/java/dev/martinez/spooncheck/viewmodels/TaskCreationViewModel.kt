@@ -23,7 +23,7 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 class TaskCreationViewModel(
-    @Suppress("UnusedPrivateProperty") private val repository: TaskRepository
+    @Suppress("UnusedPrivateProperty") private val repository: TaskRepository,
 ) : ViewModel() {
     /*
     KNOWN BUGS
@@ -48,11 +48,12 @@ class TaskCreationViewModel(
                             Clock.System.now()
                                 .toLocalDateTime(TimeZone.currentSystemDefault())
                                 .minute,
-                        is24Hour = false
-                    )
-            )
+                        is24Hour = false,
+                    ),
+            ),
         )
     val uiState: StateFlow<TaskCreationUIState> = _uiState.asStateFlow()
+
     // again, all these functions should perform validation as needed but right now we just assume
     // the new value is "valid" and slap it in
 
@@ -74,7 +75,7 @@ class TaskCreationViewModel(
                     action.category,
                     action.dueDate,
                     action.dueTime,
-                    action.spoons
+                    action.spoons,
                 )
             is TaskCreationActions.Cancel -> cancelTask()
             is TaskCreationActions.OnCategoryChanged -> {
@@ -149,7 +150,7 @@ class TaskCreationViewModel(
         category: Category,
         dueDate: LocalDate,
         dueTime: LocalTime,
-        spoons: Int
+        spoons: Int,
     ) {
         /*
         TODO:
@@ -165,7 +166,7 @@ class TaskCreationViewModel(
                     category = category,
                     dueDate = dueDate,
                     dueTime = dueTime,
-                    spoons = spoons
+                    spoons = spoons,
                 )
             val saveStatus = repository.save(task)
 

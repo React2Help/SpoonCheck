@@ -17,5 +17,5 @@ data class Event(
     val category: Category,
     val onDate: LocalDate,
     val atTime: LocalTime,
-    val isDone: Boolean = false
+    val isDone: Boolean = false,
 ) : SuperOfAllEntities

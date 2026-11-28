@@ -35,6 +35,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.database.Task
 import dev.martinez.spooncheck.modelsandstate.Priority
 import dev.martinez.spooncheck.theme.DashboardTextTeal
@@ -47,7 +48,6 @@ import kotlinx.datetime.LocalTime
 import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
-import dev.martinez.spooncheck.R
 
 private val CardCornerRadius = 12.dp
 private val CardElevation = 4.dp
@@ -124,7 +124,7 @@ fun DashboardImportantTasksCard(
                 }
                 if (index < tasks.lastIndex) {
                     HorizontalDivider(
-                        modifier = Modifier.padding(vertical = DividerVerticalPadding)
+                        modifier = Modifier.padding(vertical = DividerVerticalPadding),
                     )
                 }
             }
@@ -236,7 +236,7 @@ private fun formatTime(time: LocalTime): String =
             minute()
             char(' ')
             amPmMarker("AM", "PM")
-        }
+        },
     )
 
 private fun formatDate(date: LocalDate): String =
@@ -245,7 +245,7 @@ private fun formatDate(date: LocalDate): String =
             monthNumber()
             char('/')
             day()
-        }
+        },
     )
 
 @Composable
@@ -256,7 +256,7 @@ private fun DashboardTaskMetaPanel(task: Task) {
                     RoundedCornerShape(
                         topEnd = PanelEndRadius,
                         bottomEnd = PanelEndRadius,
-                    )
+                    ),
                 )
                 .background(priorityPanelColor(task.priority))
                 .padding(
@@ -296,7 +296,7 @@ private fun DashboardTaskMetaPanel(task: Task) {
 
 @Composable
 private fun TaskMetaRow(
-    @DrawableRes iconRes:Int,
+    @DrawableRes iconRes: Int,
     iconDescription: String,
     label: String,
 ) {

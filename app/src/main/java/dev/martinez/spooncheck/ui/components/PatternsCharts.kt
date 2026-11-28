@@ -68,7 +68,7 @@ fun CompletedLastSevenDaysChart(
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Text(
                     text = "Completed in the Last 7 Days",
@@ -78,7 +78,7 @@ fun CompletedLastSevenDaysChart(
             }
             Text(
                 "Complete tasks to view insights into how you typically complete work.",
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
             )
         }
     } else {
@@ -143,10 +143,10 @@ fun CompletedLastSevenDaysChart(
                             HorizontalAxis.rememberBottom(
                                 valueFormatter = dayFormatter,
                                 itemPlacer = remember { HorizontalAxis.ItemPlacer.segmented() },
-                                guideline = null
+                                guideline = null,
                             ),
                     ),
-                scrollState = rememberVicoScrollState(scrollEnabled = true)
+                scrollState = rememberVicoScrollState(scrollEnabled = true),
             )
         }
     }
@@ -162,11 +162,11 @@ fun BaselineSpoonEconomyChart(
             Text(
                 "Baseline Spoon Economy",
                 color = ChartDarkBlue,
-                style = MaterialTheme.typography.labelMedium
+                style = MaterialTheme.typography.labelMedium,
             )
             Text(
                 "Complete tasks to see insights into your performance.",
-                fontStyle = FontStyle.Italic
+                fontStyle = FontStyle.Italic,
             )
         }
     } else {
@@ -217,10 +217,10 @@ fun BaselineSpoonEconomyChart(
                             HorizontalAxis.rememberBottom(
                                 valueFormatter = dayFormatter,
                                 itemPlacer = remember { HorizontalAxis.ItemPlacer.aligned() },
-                                guideline = null
+                                guideline = null,
                             ),
                     ),
-                scrollState = rememberVicoScrollState(scrollEnabled = false)
+                scrollState = rememberVicoScrollState(scrollEnabled = false),
             )
         }
     }
@@ -236,7 +236,7 @@ private fun ChartCard(
         shape = RoundedCornerShape(10.dp),
         colors =
             CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest
+                containerColor = MaterialTheme.colorScheme.surfaceContainerHighest,
             ),
         elevation = CardDefaults.cardElevation(defaultElevation = 3.dp),
     ) {
@@ -264,7 +264,7 @@ private fun PatternChartsPreview() {
         listOf(10, 14, 19, 16, 22, 25, 17, 15, 13, 11, 20, 28, 21, 16).mapIndexed { index, value ->
             SpoonEconomyPoint(
                 listOf("M", "Tu", "We", "Th", "F", "S", "Su")[index % 7],
-                value.toDouble()
+                value.toDouble(),
             )
         }
 

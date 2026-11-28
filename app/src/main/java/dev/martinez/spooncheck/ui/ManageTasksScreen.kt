@@ -52,7 +52,7 @@ import kotlinx.datetime.toLocalDateTime
 fun ManageTasksScreen(
     futureTasksAsConst: List<Task>,
     todayTasksAsConst: List<Task>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     /*
     When the time comes, Refactor callbacks and list declarations to a viewmodel
@@ -68,7 +68,7 @@ fun ManageTasksScreen(
         destination: List<Task>,
         newDueDate: LocalDate,
         updateSource: (List<Task>) -> Unit,
-        updateDestination: (List<Task>) -> Unit
+        updateDestination: (List<Task>) -> Unit,
     ) {
         val task = source.firstOrNull { it.id == taskId } ?: return
         updateSource(source.filterNot { it.id == task.id })
@@ -104,24 +104,24 @@ fun ManageTasksScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceEvenly
+                    horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    Button(onClick = { /*TODO*/}) { Text("Skip") }
-                    Button(onClick = { /* TODO */}) { Text("Save") }
+                    Button(onClick = { /*TODO*/ }) { Text("Skip") }
+                    Button(onClick = { /* TODO */ }) { Text("Save") }
                 }
             }
         },
-        modifier = modifier
+        modifier = modifier,
     ) { paddingValues ->
         Column(
             verticalArrangement = Arrangement.SpaceEvenly,
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.padding(paddingValues),
         ) {
             Card {
                 Column(
                     verticalArrangement = Arrangement.SpaceAround,
-                    modifier = Modifier.fillMaxHeight().padding(horizontal = 2.dp, vertical = 0.dp)
+                    modifier = Modifier.fillMaxHeight().padding(horizontal = 2.dp, vertical = 0.dp),
                 ) {
                     Text(
                         "Drag tasks you would prefer to schedule" +
@@ -129,13 +129,13 @@ fun ManageTasksScreen(
                             "Likewise, drag tasks you would prefer to postpone for a later date" +
                             " from the right to the left.",
                         style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.Center
+                        textAlign = TextAlign.Center,
                     )
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Future Tasks", style = MaterialTheme.typography.titleMedium)
                         Text("Today's To-do list", style = MaterialTheme.typography.titleMedium)
@@ -147,7 +147,7 @@ fun ManageTasksScreen(
                                     task,
                                     true,
                                     false,
-                                    onFutureTaskTransferred
+                                    onFutureTaskTransferred,
                                 )
                             }
                         }
@@ -158,7 +158,7 @@ fun ManageTasksScreen(
                                     task,
                                     true,
                                     false,
-                                    onTodayTaskTransferred
+                                    onTodayTaskTransferred,
                                 )
                             }
                         }
@@ -202,15 +202,13 @@ private fun PreviewScreen() {
             )
         }
 
-    val rightList =
-        tasks.filter { task ->
-            task.dueDate == Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-        }
-    val leftList =
-        tasks.filter { task -> // todo change logic. Make this function take future
-            // todo not future + past
-            task.dueDate != Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
-        }
+    val rightList = tasks.filter { task ->
+        task.dueDate == Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    }
+    val leftList = tasks.filter { task -> // todo change logic. Make this function take future
+        // todo not future + past
+        task.dueDate != Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
+    }
 
     ManageTasksScreen(leftList, rightList)
 }

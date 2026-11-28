@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 class ViewTaskViewModel(
     val taskId: Long,
     val taskRepository: TaskRepository,
-    val themeRepository: ThemeRepository
+    val themeRepository: ThemeRepository,
 ) : ViewModel() {
     private val _uiState =
         MutableStateFlow<ViewTaskUIState>(ViewTaskUIState.Loading(themeRepository.theme.value))
@@ -39,10 +39,9 @@ class ViewTaskViewModel(
                         category = task.category,
                         dueDate = task.dueDate,
                         dueTime = task.dueTime,
-                        isRecurring =
-                            false, // todo migrate database to include these two fields
+                        isRecurring = false, // todo migrate database to include these two fields
                         notificationsOn = false,
-                        theme = themeRepository.theme.value
+                        theme = themeRepository.theme.value,
                     )
             } catch (e: Exception) {
                 _uiState.value =
@@ -55,7 +54,7 @@ class ViewTaskViewModel(
         fun provideFactory(
             taskId: Long,
             taskRepository: TaskRepository,
-            themeRepository: ThemeRepository
+            themeRepository: ThemeRepository,
         ) = viewModelFactory {
             initializer { ViewTaskViewModel(taskId, taskRepository, themeRepository) }
         }

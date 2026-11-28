@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class DaoSeedCallback(
     private val databaseProvider: () -> AppDatabase,
-    private val scope: CoroutineScope
+    private val scope: CoroutineScope,
 ) : RoomDatabase.Callback() {
     override suspend fun onCreate(connection: SQLiteConnection) {
         super.onCreate(connection)
@@ -36,7 +36,7 @@ private fun seed1(numRows: Int): List<Task> =
             priority = generateRandomPriority(),
             category = generateRandomCategoru(),
             dueDate = generateRandomFutureDate(),
-            dueTime = generateRandomFutureTime()
+            dueTime = generateRandomFutureTime(),
         )
     }
 
@@ -67,7 +67,7 @@ private fun generateRandomTitle(): String {
             "Proposal",
             "Sprint",
             "Backlog",
-            "Follow-up"
+            "Follow-up",
         )
     return when (Random.nextInt(3)) {
         0 -> "The ${words.random()}"
@@ -103,7 +103,7 @@ private fun generateRandomDescription(length: Int): String {
             "workflow",
             "approval",
             "system",
-            "milestone"
+            "milestone",
         )
     return List(length) { words.random() }.joinToString(" ")
 }

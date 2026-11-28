@@ -29,7 +29,7 @@ class SettingsViewModel(private val themeRepository: ThemeRepository) : ViewMode
                     it.copy(
                         selectedTheme = themeRepository.theme.value,
                         wasCancelled = true,
-                        hasUnsavedChanges = false
+                        hasUnsavedChanges = false,
                     )
                 }
             is SettingsActions.OnNotificationsChanged ->

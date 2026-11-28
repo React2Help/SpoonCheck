@@ -16,8 +16,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import dev.martinez.spooncheck.modelsandstate.AppTheme
 import dev.martinez.spooncheck.R
+import dev.martinez.spooncheck.modelsandstate.AppTheme
 
 /*
  * How the theme colors map onto MaterialTheme.colorScheme. Use these roles in screens instead of
@@ -101,14 +101,14 @@ fun ThemedBackground(modifier: Modifier = Modifier) {
                 painter = painterResource(R.drawable.pine_tree_background),
                 contentDescription = "Background Image of a grove of pine trees.",
                 contentScale = ContentScale.Crop,
-                modifier = modifier.fillMaxSize()
+                modifier = modifier.fillMaxSize(),
             )
         AppTheme.BEACH ->
             Image(
                 painter = painterResource(R.drawable.ocean_view),
                 contentDescription = "Background Image of an ocean view.",
                 contentScale = ContentScale.Crop,
-                modifier = modifier.fillMaxSize()
+                modifier = modifier.fillMaxSize(),
             )
         AppTheme.DARK -> Box(modifier = modifier.fillMaxSize().background(DarkThemeBackground))
     }

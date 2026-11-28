@@ -17,7 +17,7 @@ fun PatternsRoute(
     onNavigateToSettings: () -> Unit,
     onNavigateToTaskList: () -> Unit,
     eventRepository: EventRepository,
-    taskRepository: TaskRepository
+    taskRepository: TaskRepository,
 ) {
     val viewModel: PatternsViewModel = viewModel {
         PatternsViewModel(taskRepository, eventRepository)
@@ -29,6 +29,6 @@ fun PatternsRoute(
         onNavigateToDashboard = { onNavigateToDashboard() },
         onNavigateToSettings = { onNavigateToSettings() },
         onNavigateToTaskList = { onNavigateToTaskList() },
-        uiState = uiState.value
+        uiState = uiState.value,
     )
 }

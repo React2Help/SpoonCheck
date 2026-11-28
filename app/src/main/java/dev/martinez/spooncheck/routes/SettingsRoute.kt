@@ -13,7 +13,7 @@ fun SettingsRoute(
     onNavigateToTaskCreationDateEnable: () -> Unit,
     onNavigateToTaskCreationDateDisable: () -> Unit,
     onNavigateBack: () -> Unit,
-    viewModel: SettingsViewModel = viewModel { SettingsViewModel(themeRepository) }
+    viewModel: SettingsViewModel = viewModel { SettingsViewModel(themeRepository) },
 ) {
     val uiState = viewModel.uiState.collectAsState()
     SettingsScreenGen(
@@ -21,6 +21,6 @@ fun SettingsRoute(
         state = uiState.value,
         { onNavigateToTaskCreationDateEnable },
         { onNavigateToTaskCreationDateDisable },
-        onNavigateBack = { onNavigateBack() }
+        onNavigateBack = { onNavigateBack() },
     )
 }

@@ -68,6 +68,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.database.Task
 import dev.martinez.spooncheck.modelsandstate.AppTheme
 import dev.martinez.spooncheck.modelsandstate.Category
@@ -90,8 +91,6 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.Padding
 import kotlinx.datetime.format.char
 
-import dev.martinez.spooncheck.R
-
 @SuppressLint("UnusedBoxWithConstraintsScope")
 @Composable
 fun TaskListScreen(
@@ -100,7 +99,7 @@ fun TaskListScreen(
     onNavigateToPatterns: () -> Unit,
     onNavigateToDashboard: () -> Unit,
     onNavigateToSettings: () -> Unit,
-    onNavigateToTaskDetails: (Long) -> Unit
+    onNavigateToTaskDetails: (Long) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsState()
     var selected by remember { mutableStateOf(false) }
@@ -117,17 +116,17 @@ fun TaskListScreen(
                             // Pressed Action passed in
                         },
                         shape = CircleShape,
-                        label = { Text("${uiState.spoonBudget} spoons") }
+                        label = { Text("${uiState.spoonBudget} spoons") },
                     )
                     IconButton( // account button
-                        onClick = { onNavigateToSettings() }
+                        onClick = { onNavigateToSettings() },
                     ) {
                         Image(
                             painter = painterResource(R.drawable.logo),
-                            contentDescription = "Logo"
+                            contentDescription = "Logo",
                         )
                     }
-                }
+                },
             )
         },
         bottomBar = {
@@ -136,19 +135,19 @@ fun TaskListScreen(
                     selected = false,
                     onClick = { onNavigateToDashboard() },
                     icon = {},
-                    label = { Text("Dashboard") }
+                    label = { Text("Dashboard") },
                 )
                 NavigationBarItem(
                     selected = true,
-                    onClick = { /*NO-OP*/},
+                    onClick = { /*NO-OP*/ },
                     icon = {},
-                    label = { Text("Tasks") }
+                    label = { Text("Tasks") },
                 )
                 NavigationBarItem(
                     selected = false,
                     onClick = { onNavigateToPatterns() },
                     icon = {},
-                    label = { Text("Patterns") }
+                    label = { Text("Patterns") },
                 )
             }
         },
@@ -157,24 +156,24 @@ fun TaskListScreen(
             FloatingActionButton(
                 onClick = { onNavigateToTaskCreationDateEnable() },
                 modifier = Modifier.size(64.dp),
-                shape = CircleShape
+                shape = CircleShape,
             ) {
                 Image(painterResource(R.drawable.logo), contentDescription = "FAB")
             }
-        }
+        },
     ) { paddingValues ->
         BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
             ThemedBackground() // pine trees / ocean / solid dark, depending on the theme
             if (uiState.tasks.isNotEmpty()) {
                 Column(
                     modifier = Modifier.fillMaxSize().padding(paddingValues),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     TaskStatusFilter(
                         uiState.listFilterOption,
                         { selectedOption: TaskListFilterOptions ->
                             viewModel.OnAction(TaskListActions.onFilterOptionChange(selectedOption))
-                        }
+                        },
                     ) // todo expose fields to view model and set OnAction
                     Spacer(modifier = Modifier.size(8.dp))
                     val sectionDatii =
@@ -184,7 +183,7 @@ fun TaskListScreen(
                                 tasks =
                                     uiState.tasks.filter { task ->
                                         task.category == Category.entries[i]
-                                    }
+                                    },
                             )
                         }
                     ExpandableList(
@@ -195,7 +194,7 @@ fun TaskListScreen(
                         onSwipeRight = { taskId ->
                             viewModel.OnAction(TaskListActions.CompletionChanged(taskId, true))
                         },
-                        { taskId -> onNavigateToTaskDetails(taskId) }
+                        { taskId -> onNavigateToTaskDetails(taskId) },
                     )
                 }
             } else {
@@ -203,13 +202,13 @@ fun TaskListScreen(
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Top,
-                    modifier = Modifier.padding(paddingValues).fillMaxSize()
+                    modifier = Modifier.padding(paddingValues).fillMaxSize(),
                 ) {
                     TaskStatusFilter(
                         uiState.listFilterOption,
                         { selectedOption: TaskListFilterOptions ->
                             viewModel.OnAction(TaskListActions.onFilterOptionChange(selectedOption))
-                        }
+                        },
                     )
                     EmptyTaskListComponent(paddingValues)
                 }
@@ -225,7 +224,7 @@ fun TaskListScreen(
 @Composable // todo write preview function
 fun TaskStatusFilter(
     selectedFilter: TaskListFilterOptions,
-    onFilterOptionChange: (TaskListFilterOptions) -> Unit
+    onFilterOptionChange: (TaskListFilterOptions) -> Unit,
 ) {
     SingleChoiceSegmentedButtonRow {
         TaskListFilterOptions.entries.forEachIndexed { index, option ->
@@ -233,7 +232,7 @@ fun TaskStatusFilter(
                 shape =
                     SegmentedButtonDefaults.itemShape(
                         index = index,
-                        count = TaskListFilterOptions.entries.size
+                        count = TaskListFilterOptions.entries.size,
                     ),
                 onClick = { onFilterOptionChange(TaskListFilterOptions.entries[index]) },
                 selected = index == selectedFilter.ordinal,
@@ -252,7 +251,7 @@ fun TaskStatusFilter(
                         disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
-                    )
+                    ),
             )
         }
     }
@@ -270,7 +269,7 @@ fun ExpandableList(
     sections: List<SectionData>,
     onSwipeLeft: (Long) -> Unit,
     onSwipeRight: (Long) -> Unit,
-    onCardClick: (Long) -> Unit
+    onCardClick: (Long) -> Unit,
 ) {
     val expandedMapSaver =
         listSaver<SnapshotStateMap<Int, Boolean>, Boolean>(
@@ -279,7 +278,7 @@ fun ExpandableList(
                 savedValues
                     .mapIndexed { index, isExpanded -> index to isExpanded }
                     .toMutableStateMap()
-            }
+            },
         )
 
     val isExpandedMap =
@@ -295,7 +294,7 @@ fun ExpandableList(
                 onHeaderClick = { isExpandedMap[index] = !(isExpandedMap[index] ?: true) },
                 onCardClick = onCardClick,
                 onSwipeLeft = onSwipeLeft,
-                onSwipeRight = onSwipeRight
+                onSwipeRight = onSwipeRight,
             )
         }
     }
@@ -305,7 +304,7 @@ fun ExpandableList(
 fun SectionHeader(
     text: String = "Important",
     isExpanded: Boolean = false,
-    onHeaderClick: () -> Unit
+    onHeaderClick: () -> Unit,
 ) {
     // A Component. A Horizontal element with a "dropdown" chevron, a label, and a plus icon
 
@@ -316,26 +315,26 @@ fun SectionHeader(
                 containerColor = MaterialTheme.colorScheme.tertiaryContainer,
                 contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledContentColor = MaterialTheme.colorScheme.onSurface
-            )
+                disabledContentColor = MaterialTheme.colorScheme.onSurface,
+            ),
     ) {
         Icon(
             painter =
                 if (isExpanded)
                     painterResource(
-                        R.drawable.arrow_drop_down_24dp
+                        R.drawable.arrow_drop_down_24dp,
                     )
                 else
                     painterResource(
-                        R.drawable.arrow_drop_up_24dp
+                        R.drawable.arrow_drop_up_24dp,
                     ),
             contentDescription = if (isExpanded) "drop down icon" else "drop up icon",
-            modifier = Modifier.size(24.dp)
+            modifier = Modifier.size(24.dp),
         )
         Text(
             text = text,
             color = MaterialTheme.colorScheme.onSecondaryFixedVariant,
-            style = MaterialTheme.typography.labelMedium
+            style = MaterialTheme.typography.labelMedium,
         )
     }
 }
@@ -363,7 +362,7 @@ fun SectionItem(
                         if (f > dragThreshold) onSwipeRight(task.id)
                         if (f < -dragThreshold) onSwipeLeft(task.id)
                         offsetX = 0f
-                    }
+                    },
                 ),
     ) {
         Row(
@@ -380,13 +379,13 @@ fun SectionItem(
             Column( // RHS
                 modifier =
                     categoryModifier.fillMaxHeight().fillMaxWidth().padding(5.dp).weight(1.25f),
-                horizontalAlignment = Alignment.Start
+                horizontalAlignment = Alignment.Start,
             ) {
                 Row {
                     Icon(
                         painter = painterResource(R.drawable.spoon),
                         contentDescription = "Spoon icon",
-                        Modifier.size(18.dp, 18.dp)
+                        Modifier.size(18.dp, 18.dp),
                     )
                     Text("${task.spoons}")
                 }
@@ -395,9 +394,9 @@ fun SectionItem(
                         contentDescription = "low priority symbol",
                         painter =
                             painterResource(
-                                R.drawable.stat_2_24dp
+                                R.drawable.stat_2_24dp,
                             ),
-                        modifier = Modifier.size(18.dp, 18.dp)
+                        modifier = Modifier.size(18.dp, 18.dp),
                     )
                     Text("${task.priority}")
                 }
@@ -407,17 +406,16 @@ fun SectionItem(
                         contentDescription = "Clock Symbol",
                         painter =
                             painterResource(
-                                R.drawable.schedule_24dp
-                            )
+                                R.drawable.schedule_24dp,
+                            ),
                     )
-                    val twelveHourFormat =
-                        LocalTime.Format {
-                            amPmHour(padding = Padding.ZERO)
-                            char(':')
-                            minute()
-                            char(' ')
-                            amPmMarker("AM", "PM")
-                        }
+                    val twelveHourFormat = LocalTime.Format {
+                        amPmHour(padding = Padding.ZERO)
+                        char(':')
+                        minute()
+                        char(' ')
+                        amPmMarker("AM", "PM")
+                    }
                     Text(task.dueTime.format(twelveHourFormat))
                 }
                 Row {
@@ -426,17 +424,16 @@ fun SectionItem(
                         contentDescription = "Calendar Symbol",
                         painter =
                             painterResource(
-                                R.drawable.calendar_month_24dp
-                            )
+                                R.drawable.calendar_month_24dp,
+                            ),
                     )
-                    val dateFormat =
-                        LocalDate.Format {
-                            monthNumber()
-                            char('/')
-                            day()
-                            char('/')
-                            year()
-                        }
+                    val dateFormat = LocalDate.Format {
+                        monthNumber()
+                        char('/')
+                        day()
+                        char('/')
+                        year()
+                    }
                     Text(task.dueDate.format(dateFormat))
                 }
             }
@@ -450,14 +447,14 @@ fun LazyListScope.Section(
     onHeaderClick: () -> Unit,
     onSwipeLeft: (Long) -> Unit,
     onSwipeRight: (Long) -> Unit,
-    onCardClick: (Long) -> Unit
+    onCardClick: (Long) -> Unit,
 ) {
 
     item {
         SectionHeader(
             text = sectionData.header,
             isExpanded = isExpanded,
-            onHeaderClick = onHeaderClick
+            onHeaderClick = onHeaderClick,
         )
     }
     if (isExpanded) {
@@ -466,12 +463,13 @@ fun LazyListScope.Section(
                 task = task,
                 onCardClick = onCardClick,
                 onSwipeLeft = onSwipeLeft,
-                onSwipeRight = onSwipeRight
+                onSwipeRight = onSwipeRight,
             )
             Spacer(Modifier.size(4.dp))
         }
     }
 }
+
 // Priority colors on the task cards. They mean the same thing in every theme, so Forest and Beach
 // share them; Dark gets darker versions so the light text on top stays readable.
 @Composable
@@ -499,9 +497,9 @@ private class PreviewTaskRepository : TaskRepository {
                     priority = Priority.entries[i % Priority.entries.size],
                     category = Category.entries[i % Category.entries.size],
                     dueDate = LocalDate(2026, 11, 6),
-                    dueTime = LocalTime(12, 30)
+                    dueTime = LocalTime(12, 30),
                 )
-            }
+            },
         )
 
     override suspend fun save(task: Task) = Result.success(Unit)

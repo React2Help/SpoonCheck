@@ -20,8 +20,7 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner =
-            "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
@@ -40,26 +39,14 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
 
-    buildFeatures {
-        compose = true
-    }
+    buildFeatures { compose = true }
 
-    testOptions {
-        unitTests {
-            isIncludeAndroidResources = true
-        }
-    }
+    testOptions { unitTests { isIncludeAndroidResources = true } }
 }
 
-kotlin {
-    compilerOptions {
-        jvmTarget = JvmTarget.JVM_17
-    }
-}
+kotlin { compilerOptions { jvmTarget = JvmTarget.JVM_17 } }
 
-room3 {
-    schemaDirectory("$projectDir/schemas")
-}
+room3 { schemaDirectory("$projectDir/schemas") }
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))

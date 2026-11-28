@@ -26,6 +26,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialShapes
@@ -40,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import dev.martinez.spooncheck.DateFormatStyle
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.generateRandomFutureDate
 import dev.martinez.spooncheck.modelsandstate.AppTheme
 import dev.martinez.spooncheck.modelsandstate.Category
@@ -50,11 +53,6 @@ import dev.martinez.spooncheck.toLocalizedString
 import kotlin.time.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import dev.martinez.spooncheck.R
-import androidx.compose.foundation.Image
-import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
-import androidx.compose.ui.res.painterResource
-import dev.martinez.spooncheck.DateFormatStyle
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Suppress("ModifierMissing")
@@ -74,7 +72,7 @@ fun ViewTaskScreen(onNavigateBack: () -> Unit, uiState: ViewTaskUIState) {
                 dueTime = uiState.dueTime.toLocalizedString(),
                 dueDate = uiState.dueDate.toLocalizedString(style = DateFormatStyle.MEDIUM),
                 category = uiState.category,
-                priority = uiState.priority
+                priority = uiState.priority,
             )
         }
         is ViewTaskUIState.NotFound -> {
@@ -96,7 +94,7 @@ private fun RealContent(
     dueTime: String,
     dueDate: String,
     category: Category,
-    priority: Priority
+    priority: Priority,
 ) {
     SpoonCheckTheme(theme) {
         BottomSheetScaffold(
@@ -107,15 +105,15 @@ private fun RealContent(
                         IconButton(onClick = onNavigateBack) {
                             Icon(
                                 painterResource(
-                                    R.drawable.arrow_back_24dp
+                                    R.drawable.arrow_back_24dp,
                                 ),
-                                contentDescription = "Navigate Back"
+                                contentDescription = "Navigate Back",
                             )
                         }
-                    }
+                    },
                 )
             },
-            sheetContent = {}
+            sheetContent = {},
         ) { paddingValues ->
             Column(
                 modifier =
@@ -124,13 +122,13 @@ private fun RealContent(
                         .consumeWindowInsets(paddingValues)
                         .verticalScroll(rememberScrollState())
                         .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 Text(title, style = MaterialTheme.typography.titleLarge)
                 PriorityCategoryDueDate(priority, category, dueTime, dueDate)
                 Text(description, style = MaterialTheme.typography.bodyMedium)
                 Text(
-                    "This task is set to recur on *placeholder* at *placeholder* until *placeholder"
+                    "This task is set to recur on *placeholder* at *placeholder* until *placeholder",
                 )
             }
         }
@@ -142,23 +140,22 @@ private fun PriorityCategoryDueDate(
     priority: Priority,
     category: Category,
     dueTime: String,
-    dueDate: String
+    dueDate: String,
 ) {
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
-        modifier = Modifier.fillMaxWidth()
+        modifier = Modifier.fillMaxWidth(),
     ) {
         PillWithInformation {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(
                     modifier = Modifier.size(32.dp),
-                    painter =
-                        painterResource(R.drawable.stat_1_24dp),
-                    contentDescription = "Medium Priority Icon"
+                    painter = painterResource(R.drawable.stat_1_24dp),
+                    contentDescription = "Medium Priority Icon",
                 )
                 Text(priority.name, style = MaterialTheme.typography.labelLarge)
             }
@@ -166,15 +163,15 @@ private fun PriorityCategoryDueDate(
         PillWithInformation {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(
                     modifier = Modifier.size(32.dp),
                     painter =
                         painterResource(
-                            R.drawable.category_24dp
+                            R.drawable.category_24dp,
                         ),
-                    contentDescription = "Category Icon"
+                    contentDescription = "Category Icon",
                 )
                 Text(category.name, style = MaterialTheme.typography.labelLarge)
             }
@@ -182,15 +179,15 @@ private fun PriorityCategoryDueDate(
         PillWithInformation {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(6.dp)
+                horizontalArrangement = Arrangement.spacedBy(6.dp),
             ) {
                 Icon(
                     modifier = Modifier.size(32.dp),
                     painter =
                         painterResource(
-                            R.drawable.calendar_clock_24dp
+                            R.drawable.calendar_clock_24dp,
                         ),
-                    contentDescription = "Calendar and Clock Icon"
+                    contentDescription = "Calendar and Clock Icon",
                 )
                 Column {
                     Text(dueDate, style = MaterialTheme.typography.labelLarge)
@@ -205,7 +202,7 @@ private fun PriorityCategoryDueDate(
 private fun PillWithInformation(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
     Card(modifier = modifier, shape = RoundedCornerShape(20.dp)) {
         Box(modifier = Modifier.padding(contentPadding)) { content() }
@@ -234,7 +231,7 @@ private fun PreviewRealContent() {
         dueTime = "10:26 AM",
         dueDate = "12/26/26",
         category = Category.Hygiene,
-        priority = Priority.Medium
+        priority = Priority.Medium,
     )
 }
 
@@ -253,7 +250,7 @@ private fun Error(onNavigateBack: () -> Unit, theme: AppTheme, message: String) 
                     colors =
                         TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            titleContentColor = MaterialTheme.colorScheme.primary
+                            titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                     title = { Text("View a Task") },
                     navigationIcon = {
@@ -261,16 +258,15 @@ private fun Error(onNavigateBack: () -> Unit, theme: AppTheme, message: String) 
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable
-                                            .arrow_back_24dp
+                                        R.drawable.arrow_back_24dp,
                                     ),
                                 contentDescription = "Navigate Backwards",
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(32.dp),
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -279,14 +275,14 @@ private fun Error(onNavigateBack: () -> Unit, theme: AppTheme, message: String) 
                     Modifier.padding(paddingValues)
                         .fillMaxSize()
                         .background(
-                            Color(0xFFf6f7f7)
-                        ) // background color of the resource not found graphic
+                            Color(0xFFf6f7f7),
+                        ), // background color of the resource not found graphic
             ) {
                 Image(
                     painterResource(R.drawable.resource_not_found),
                     contentDescription =
                         "Image of a box with confetti around it. The words \"not found\" are underneath the box",
-                    modifier = Modifier.size(256.dp)
+                    modifier = Modifier.size(256.dp),
                 )
                 Text("Whoops! ${message}.", style = MaterialTheme.typography.labelLarge)
                 Button(onClick = { onNavigateBack() }) { Text("Go Back") }
@@ -304,7 +300,7 @@ private fun NotFound(onNavigateBack: () -> Unit, theme: AppTheme) {
                     colors =
                         TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            titleContentColor = MaterialTheme.colorScheme.primary
+                            titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                     title = { Text("View a Task") },
                     navigationIcon = {
@@ -312,16 +308,15 @@ private fun NotFound(onNavigateBack: () -> Unit, theme: AppTheme) {
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable
-                                            .arrow_back_24dp
+                                        R.drawable.arrow_back_24dp,
                                     ),
                                 contentDescription = "Navigate Backwards",
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(32.dp),
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -330,14 +325,14 @@ private fun NotFound(onNavigateBack: () -> Unit, theme: AppTheme) {
                     Modifier.padding(paddingValues)
                         .fillMaxSize()
                         .background(
-                            Color(0xFFf6f7f7)
-                        ) // background color of the resource not found graphic
+                            Color(0xFFf6f7f7),
+                        ), // background color of the resource not found graphic
             ) {
                 Image(
                     painterResource(R.drawable.resource_not_found),
                     contentDescription =
                         "Image of a box with confetti around it. The words \"not found\" are underneath the box",
-                    modifier = Modifier.size(256.dp)
+                    modifier = Modifier.size(256.dp),
                 )
             }
         }
@@ -353,7 +348,7 @@ private fun Loading(onNavigateBack: () -> Unit, theme: AppTheme) {
                     colors =
                         TopAppBarDefaults.topAppBarColors(
                             containerColor = MaterialTheme.colorScheme.primaryContainer,
-                            titleContentColor = MaterialTheme.colorScheme.primary
+                            titleContentColor = MaterialTheme.colorScheme.primary,
                         ),
                     title = { Text("View a Task") },
                     navigationIcon = {
@@ -361,26 +356,25 @@ private fun Loading(onNavigateBack: () -> Unit, theme: AppTheme) {
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable
-                                            .arrow_back_24dp
+                                        R.drawable.arrow_back_24dp,
                                     ),
                                 contentDescription = "Navigate Backwards",
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(32.dp),
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(paddingValues).fillMaxSize()
+                modifier = Modifier.padding(paddingValues).fillMaxSize(),
             ) {
                 CircularProgressIndicator(
                     modifier = Modifier.padding(paddingValues).size(64.dp),
                     color = MaterialTheme.colorScheme.secondary,
-                    trackColor = MaterialTheme.colorScheme.surfaceVariant
+                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
                 )
             }
         }
@@ -410,8 +404,8 @@ private fun PreviewContentScreen() {
             dueTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).time,
             isRecurring = true,
             notificationsOn = true,
-            theme = AppTheme.FOREST
-        )
+            theme = AppTheme.FOREST,
+        ),
     )
 }
 

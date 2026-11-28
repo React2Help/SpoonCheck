@@ -80,6 +80,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.TextToDate
 import dev.martinez.spooncheck.modelsandstate.AppTheme
 import dev.martinez.spooncheck.modelsandstate.Category
@@ -94,7 +95,6 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
-import dev.martinez.spooncheck.R
 
 // true if 4 digit entry is a valid HH:MM time
 fun isValidTime(raw: String): Boolean {
@@ -129,7 +129,7 @@ fun TaskCreationScreenGen(
             TopAppBar(
                 title = { Text("Create Task", fontWeight = FontWeight.Bold) },
                 subtitle = { Text("") },
-                titleHorizontalAlignment = Alignment.CenterHorizontally
+                titleHorizontalAlignment = Alignment.CenterHorizontally,
             )
         },
         bottomBar = {
@@ -137,10 +137,9 @@ fun TaskCreationScreenGen(
                 actions = {
                     IconButton(onClick = { onNavigateToTaskList() }) {
                         Icon(
-                            painter =
-                                painterResource(R.drawable.delete_24dp),
+                            painter = painterResource(R.drawable.delete_24dp),
                             contentDescription = "Delete Icon",
-                            modifier = Modifier.size(32.dp)
+                            modifier = Modifier.size(32.dp),
                         )
                     }
                 },
@@ -156,7 +155,7 @@ fun TaskCreationScreenGen(
                             onAction(TaskCreationActions.SetTitleError(!isTitleOk))
 
                             onAction(
-                                TaskCreationActions.SetDateError(isDateFieldEnabled && !isDateOk)
+                                TaskCreationActions.SetDateError(isDateFieldEnabled && !isDateOk),
                             )
 
                             if (
@@ -172,29 +171,29 @@ fun TaskCreationScreenGen(
                                         TextToDate(uiState.dateFieldState.text.toString()),
                                         LocalTime(
                                             hour = uiState.timePickerState.hour,
-                                            minute = uiState.timePickerState.minute
+                                            minute = uiState.timePickerState.minute,
                                         ),
-                                        uiState.spoons
-                                    )
+                                        uiState.spoons,
+                                    ),
                                 )
                                 onNavigateToTaskList()
                             }
                         },
                         containerColor = MaterialTheme.colorScheme.secondary,
-                        contentColor = MaterialTheme.colorScheme.onSecondary
+                        contentColor = MaterialTheme.colorScheme.onSecondary,
                     ) {
                         Icon(
                             painter =
                                 painterResource(
-                                    R.drawable.check_24dp
+                                    R.drawable.check_24dp,
                                 ),
                             contentDescription = "Save Task",
-                            modifier = Modifier.size(16.dp)
+                            modifier = Modifier.size(16.dp),
                         )
                     }
-                }
+                },
             )
-        }
+        },
     ) { paddingValues ->
         Box {
             ThemedBackground()
@@ -203,7 +202,7 @@ fun TaskCreationScreenGen(
                 modifier =
                     Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
-                        .padding(paddingValues)
+                        .padding(paddingValues),
             ) {
                 // Your TextFields and other composables go here
                 TextField(
@@ -216,7 +215,7 @@ fun TaskCreationScreenGen(
                                 "Title cannot be empty",
                                 modifier =
                                     Modifier.background(MaterialTheme.colorScheme.surface)
-                                        .padding(horizontal = 4.dp, vertical = 2.dp)
+                                        .padding(horizontal = 4.dp, vertical = 2.dp),
                             )
                         }
                     },
@@ -224,14 +223,14 @@ fun TaskCreationScreenGen(
                         Icon(
                             painter =
                                 painterResource(
-                                    R.drawable.cancel_24dp
+                                    R.drawable.cancel_24dp,
                                 ),
                             contentDescription = "Clear Title",
                             modifier =
                                 Modifier.size(18.dp).clickable {
                                     uiState.titleFieldState.clearText()
                                     onAction(TaskCreationActions.SetTitleError(false))
-                                }
+                                },
                         )
                     },
                     modifier =
@@ -243,8 +242,8 @@ fun TaskCreationScreenGen(
                             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        )
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                        ),
                 )
                 TextField(
                     uiState.descriptionFieldState,
@@ -253,13 +252,13 @@ fun TaskCreationScreenGen(
                         Icon(
                             painter =
                                 painterResource(
-                                    R.drawable.cancel_24dp
+                                    R.drawable.cancel_24dp,
                                 ),
                             contentDescription = "Clear Description",
                             modifier =
                                 Modifier.size(18.dp).clickable {
                                     uiState.titleFieldState.clearText()
-                                }
+                                },
                         )
                     },
                     modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
@@ -268,8 +267,8 @@ fun TaskCreationScreenGen(
                             focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
-                        )
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                        ),
                 )
                 DueDateAndNotifications(
                     onNotificationsToggle = { value ->
@@ -287,13 +286,13 @@ fun TaskCreationScreenGen(
                     dateFieldState = uiState.dateFieldState,
                     onClearDateError = { onAction(TaskCreationActions.ClearDateError) },
                     dateError = uiState.dateError,
-                    isDateFieldEnabled = isDateFieldEnabled
+                    isDateFieldEnabled = isDateFieldEnabled,
                 )
                 SpoonSelectionCard(
                     selectedSpoon = uiState.spoons,
                     onSpoonChange = { newSpoons ->
                         onAction(TaskCreationActions.OnSpoonSelectedChanged(newSpoons))
-                    }
+                    },
                 )
                 CategoryAndPriorityCard(
                     onCategoryChange = { newCategory ->
@@ -303,7 +302,7 @@ fun TaskCreationScreenGen(
                     priority = uiState.priority,
                     onPriorityChange = { newPriority ->
                         onAction(TaskCreationActions.OnPriorityChanged(newPriority))
-                    }
+                    },
                 )
             }
         }
@@ -343,11 +342,11 @@ fun DueDateAndNotifications(
         Column(modifier = modifier.padding(10.dp)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text("Notify Me")
                     Switch(
@@ -357,12 +356,12 @@ fun DueDateAndNotifications(
                             SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                                 checkedTrackColor = MaterialTheme.colorScheme.primary,
-                            )
+                            ),
                     )
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text("Recurring")
                     Switch(
@@ -374,18 +373,18 @@ fun DueDateAndNotifications(
                             SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                                 checkedTrackColor = MaterialTheme.colorScheme.primary,
-                            )
+                            ),
                     )
                 }
             }
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 // time field, digits only, max 4 chars: 10:30. No AM/PM
                 Wrapper(
                     onConfirm = { timePickerState -> onConfirmTime(timePickerState) },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
                 // date field, chars only, 6 digits max
                 OutlinedTextField(
@@ -398,14 +397,14 @@ fun DueDateAndNotifications(
                         Icon(
                             painter =
                                 painterResource(
-                                    R.drawable.cancel_24dp
+                                    R.drawable.cancel_24dp,
                                 ),
                             contentDescription = "Clear date",
                             modifier =
                                 modifier.size(18.dp).clickable {
                                     dateFieldState.clearText()
                                     onClearDateError()
-                                }
+                                },
                         )
                     },
                     inputTransformation =
@@ -425,10 +424,10 @@ fun DueDateAndNotifications(
                             focusedLabelColor = MaterialTheme.colorScheme.primary,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                     modifier =
-                        modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearDateError() }
+                        modifier.weight(1f).onFocusChanged { if (it.isFocused) onClearDateError() },
                 )
             }
         }
@@ -438,7 +437,7 @@ fun DueDateAndNotifications(
 @Preview
 @Composable
 fun PreviewDueDateAndNotifications(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) { // TODO rewrite to use the actual component
     var notifySwitchIsChecked by remember { mutableStateOf(true) }
     var recurringSwitchChecked by remember { mutableStateOf(true) }
@@ -450,7 +449,7 @@ fun PreviewDueDateAndNotifications(
          * input fields.These groups are stacked in a column.
          */
         Column( // column to stack the two groups
-            modifier = modifier.padding(10.dp)
+            modifier = modifier.padding(10.dp),
         ) {
             /*
              * The switches can be thought of as a row of rows:
@@ -458,14 +457,14 @@ fun PreviewDueDateAndNotifications(
              */
             Row( // Wrapping Row
                 horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Row(
                     // place children next to each other inline
                     verticalAlignment = Alignment.CenterVertically,
                     // , with a little space between each
                     // other
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text("Notify Me")
 
@@ -481,13 +480,13 @@ fun PreviewDueDateAndNotifications(
                                 // uncheckedThumbColor = Color(0xFF27567D),
                                 // uncheckedTrackColor = Color(0xFFD0D7DB),
                                 // uncheckedBorderColor = Color(0xFF27567D),
-                            )
+                            ),
                     )
                 }
 
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     Text("Recurring")
 
@@ -500,7 +499,7 @@ fun PreviewDueDateAndNotifications(
                             SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                                 checkedTrackColor = MaterialTheme.colorScheme.primary,
-                            )
+                            ),
                     )
                 }
             }
@@ -516,7 +515,7 @@ fun PreviewDueDateAndNotifications(
                         Icon(
                             painter =
                                 painterResource(
-                                    R.drawable.cancel_24dp
+                                    R.drawable.cancel_24dp,
                                 ),
                             contentDescription = "Cancel Icon",
                             modifier =
@@ -533,7 +532,7 @@ fun PreviewDueDateAndNotifications(
                             focusedLabelColor = MaterialTheme.colorScheme.primary,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                     placeholder = { Text("HH:MM") },
                     // input requirements, must be a digit and must be of correct length
@@ -551,7 +550,7 @@ fun PreviewDueDateAndNotifications(
                         modifier
                             // weight() is used so each TextField attempts to occupy
                             // equal space
-                            .weight(1f)
+                            .weight(1f),
                 )
                 OutlinedTextField(
                     state = dateFieldState,
@@ -560,13 +559,13 @@ fun PreviewDueDateAndNotifications(
                         Icon(
                             painter =
                                 painterResource(
-                                    R.drawable.cancel_24dp
+                                    R.drawable.cancel_24dp,
                                 ),
                             contentDescription = "Spoon icon",
                             modifier =
                                 modifier.size(18.dp).clickable { // lambda AKA anonymous function
                                     dateFieldState.clearText()
-                                }
+                                },
                         )
                     },
                     placeholder = { Text("mm/dd/yy") },
@@ -593,7 +592,7 @@ fun PreviewDueDateAndNotifications(
                             focusedLabelColor = MaterialTheme.colorScheme.primary,
                             focusedTextColor = MaterialTheme.colorScheme.onSurface,
                             unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                            cursorColor = MaterialTheme.colorScheme.primary
+                            cursorColor = MaterialTheme.colorScheme.primary,
                         ),
                 )
             }
@@ -606,7 +605,7 @@ fun PreviewDueDateAndNotifications(
                             shape =
                                 SegmentedButtonDefaults.itemShape(
                                     index = index,
-                                    count = options.size
+                                    count = options.size,
                                 ),
                             onClick = { selectedIndex = index },
                             selected = index == selectedIndex,
@@ -644,7 +643,7 @@ fun PreviewDueDateAndNotifications(
 fun SpoonSelectionCard(
     selectedSpoon: Int,
     onSpoonChange: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     /*
     Potential Issues
@@ -660,7 +659,7 @@ fun SpoonSelectionCard(
                 // order of operations matters with modifiers!!!
                 modifier = modifier.fillMaxWidth(), // give the element the max available width
                 horizontalArrangement = Arrangement.Center, // center it along the horizontal axis
-                verticalAlignment = Alignment.CenterVertically // center it along the vertical axis
+                verticalAlignment = Alignment.CenterVertically, // center it along the vertical axis
             ) {
                 for (i in 1..MaxSpoons) { // a for loop creates icons programmatically instead
                     // of specifying 5 Icons
@@ -668,13 +667,13 @@ fun SpoonSelectionCard(
                         Icon(
                             painter = painterResource(R.drawable.spoon_filled),
                             contentDescription = "Unfilled Spoon Icon",
-                            modifier = modifier.size(64.dp).clickable { onSpoonChange(i) }
+                            modifier = modifier.size(64.dp).clickable { onSpoonChange(i) },
                         )
                     } else {
                         Icon(
                             painter = painterResource(R.drawable.spoon_unfilled),
                             contentDescription = "Filled Spoon Icon",
-                            modifier = modifier.size(64.dp).clickable { onSpoonChange(i) }
+                            modifier = modifier.size(64.dp).clickable { onSpoonChange(i) },
                         )
                     }
                 }
@@ -682,6 +681,7 @@ fun SpoonSelectionCard(
         }
     }
 }
+
 /*
 @Preview
 @Composable
@@ -699,7 +699,7 @@ fun CategoryAndPriorityCard(
     onCategoryChange: (Category) -> Unit,
     selectedCategory: Category,
     priority: Priority,
-    onPriorityChange: (Priority) -> Unit
+    onPriorityChange: (Priority) -> Unit,
 ) {
     // change to reference category enum
 
@@ -711,7 +711,7 @@ fun CategoryAndPriorityCard(
                 ExposedDropdownMenuBox(
                     expanded = expanded, // don't extract
                     onExpandedChange = { expanded = it }, // don't extract
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     OutlinedTextField( // Category Selection Box
                         value =
@@ -729,15 +729,15 @@ fun CategoryAndPriorityCard(
                                 focusedLabelColor = MaterialTheme.colorScheme.primary,
                                 focusedTextColor = MaterialTheme.colorScheme.onSurface,
                                 unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                                cursorColor = MaterialTheme.colorScheme.primary
+                                cursorColor = MaterialTheme.colorScheme.primary,
                             ),
                         modifier =
                             Modifier.menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
-                                .fillMaxWidth()
+                                .fillMaxWidth(),
                     )
                     ExposedDropdownMenu(
                         expanded = expanded,
-                        onDismissRequest = { expanded = false }
+                        onDismissRequest = { expanded = false },
                     ) {
                         Category.entries.forEach { category ->
                             DropdownMenuItem(
@@ -745,7 +745,7 @@ fun CategoryAndPriorityCard(
                                 onClick = {
                                     onCategoryChange(category)
                                     expanded = false
-                                }
+                                },
                             )
                         }
                     }
@@ -798,8 +798,8 @@ fun PrioritySelectButton(priority: Priority, onPriorityChange: (Priority) -> Uni
                         disabledActiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
-                        disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim
-                    )
+                        disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
+                    ),
             )
         }
     }
@@ -810,12 +810,12 @@ fun PrioritySelectButton(priority: Priority, onPriorityChange: (Priority) -> Uni
 fun TimePickerDialog(
     onConfirm: () -> Unit,
     onDismiss: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
 ) {
 
     Dialog(
         onDismissRequest = { onDismiss() },
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = DialogProperties(usePlatformDefaultWidth = false),
     ) {
         Surface(
             shape = MaterialTheme.shapes.extraLarge,
@@ -825,12 +825,12 @@ fun TimePickerDialog(
                     .height(IntrinsicSize.Min)
                     .background(
                         shape = MaterialTheme.shapes.extraLarge,
-                        color = MaterialTheme.colorScheme.surface
-                    )
+                        color = MaterialTheme.colorScheme.surface,
+                    ),
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 content()
                 Row(modifier = Modifier.height(40.dp).fillMaxWidth()) {
@@ -857,21 +857,21 @@ fun Wrapper(onConfirm: (TimePickerState) -> Unit, modifier: Modifier = Modifier)
         rememberTimePickerState(
             initialHour = currentTime.hour,
             initialMinute = currentTime.minute,
-            is24Hour = false
+            is24Hour = false,
         )
     var showDialog by remember { mutableStateOf(false) }
     Box(modifier) {
         ElevatedButton(onClick = { showDialog = true }) {
             Text(
                 "${timePickerState.hour}:${timePickerState.minute} ${if (timePickerState.isPm) "PM" else "AM"}",
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.bodyLarge,
             )
         }
         if (showDialog) {
             TimePickerDialog(
                 onConfirm = { onConfirm(timePickerState) },
                 onDismiss = { showDialog = false },
-                content = { TimePicker(state = timePickerState) }
+                content = { TimePicker(state = timePickerState) },
             )
         }
     }
@@ -895,7 +895,7 @@ private fun rememberPreviewTaskCreationState(): TaskCreationUIState =
         timePickerState = rememberTimePickerState(),
         titleError = false,
         dateError = false,
-        category = Category.Hygiene
+        category = Category.Hygiene,
     )
 
 @Preview
@@ -906,7 +906,7 @@ private fun TaskCreationScreenForestPreview() {
             uiState = rememberPreviewTaskCreationState(),
             onAction = {},
             isDateFieldEnabled = true,
-            onNavigateToTaskList = {}
+            onNavigateToTaskList = {},
         )
     }
 }
@@ -919,7 +919,7 @@ private fun TaskCreationScreenBeachPreview() {
             uiState = rememberPreviewTaskCreationState(),
             onAction = {},
             isDateFieldEnabled = true,
-            onNavigateToTaskList = {}
+            onNavigateToTaskList = {},
         )
     }
 }
@@ -932,7 +932,7 @@ private fun TaskCreationScreenDarkPreview() {
             uiState = rememberPreviewTaskCreationState(),
             onAction = {},
             isDateFieldEnabled = true,
-            onNavigateToTaskList = {}
+            onNavigateToTaskList = {},
         )
     }
 }

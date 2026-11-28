@@ -14,7 +14,7 @@ fun DashboardRoute(
     onNavigateToPatterns: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToTaskCreation: () -> Unit,
-    taskRepository: TaskRepository
+    taskRepository: TaskRepository,
 ) {
     val viewModel: DashboardViewModel = viewModel {
         DashboardViewModel(taskRepository = taskRepository)
@@ -26,6 +26,6 @@ fun DashboardRoute(
         onNavigateToSettings = { onNavigateToSettings() },
         onNavigateToTaskCreation = { onNavigateToTaskCreation() },
         onAction = { action -> viewModel.onAction(action) },
-        state = uiState.value
+        state = uiState.value,
     )
 }
