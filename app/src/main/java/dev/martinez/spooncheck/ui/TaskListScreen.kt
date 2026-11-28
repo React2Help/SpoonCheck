@@ -81,6 +81,7 @@ import dev.martinez.spooncheck.theme.SpoonCheckTheme
 import dev.martinez.spooncheck.theme.ThemedBackground
 import dev.martinez.spooncheck.theme.fourth
 import dev.martinez.spooncheck.ui.components.EmptyTaskListComponent
+import dev.martinez.spooncheck.ui.components.SwipeToDismissCard
 import dev.martinez.spooncheck.viewmodels.TaskListViewModel
 import kotlin.math.roundToInt
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -286,7 +287,9 @@ fun ExpandableList(
             sections.indices.map { index -> index to true }.toMutableStateMap()
         }
 
-    LazyColumn(modifier = Modifier.padding(8.dp).background(Color.Transparent)) {
+    LazyColumn(
+        modifier = Modifier.padding(8.dp).background(Color.Transparent),
+    ) {
         sections.forEachIndexed { index, sectionData ->
             Section(
                 sectionData = sectionData,
@@ -370,7 +373,9 @@ fun SectionItem(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween,
         ) {
-            Column(Modifier.weight(3f).padding(5.dp)) { // LHS
+            Column(
+                Modifier.weight(3f).padding(5.dp),
+            ) { // LHS
                 Text(task.title, fontWeight = FontWeight.W900)
                 Text(task.description)
             }
@@ -458,12 +463,12 @@ fun LazyListScope.Section(
         )
     }
     if (isExpanded) {
-        items(sectionData.tasks) { task ->
-            SectionItem(
+        items(items = sectionData.tasks, key = { task -> task.id }) { task ->
+            SwipeToDismissCard(
+                onClick = { onCardClick(task.id) },
+                onSwipeLeft = { onSwipeLeft(task.id) },
+                onSwipeRight = { onSwipeRight(task.id) },
                 task = task,
-                onCardClick = onCardClick,
-                onSwipeLeft = onSwipeLeft,
-                onSwipeRight = onSwipeRight,
             )
             Spacer(Modifier.size(4.dp))
         }
