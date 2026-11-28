@@ -21,8 +21,8 @@ fun EmptyTaskListComponent(padding: PaddingValues, modifier: Modifier = Modifier
                 containerColor = MaterialTheme.colorScheme.surfaceContainer,
                 contentColor = MaterialTheme.colorScheme.onSurface,
                 disabledContainerColor = MaterialTheme.colorScheme.surfaceDim,
-                disabledContentColor = MaterialTheme.colorScheme.onSurface
-            )
+                disabledContentColor = MaterialTheme.colorScheme.onSurface,
+            ),
     ) {
         Text("You have no tasks.")
     }

@@ -2,7 +2,6 @@ package dev.martinez.spooncheck.database
 
 import androidx.room3.Entity
 import androidx.room3.PrimaryKey
-import dev.martinez.spooncheck.database.SuperOfAllEntities
 import dev.martinez.spooncheck.modelsandstate.Category
 import dev.martinez.spooncheck.modelsandstate.Priority
 import kotlinx.datetime.LocalDate
@@ -18,5 +17,5 @@ data class Task(
     val category: Category,
     val dueDate: LocalDate,
     val dueTime: LocalTime,
-    val isDone: Boolean = false
+    val isDone: Boolean = false,
 ) : SuperOfAllEntities

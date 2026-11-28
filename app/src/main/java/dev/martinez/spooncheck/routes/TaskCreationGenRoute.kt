@@ -13,7 +13,7 @@ import dev.martinez.spooncheck.viewmodels.TaskCreationViewModel
 fun TaskCreationRoute(
     taskRepository: TaskRepository,
     isDateFieldEnabled: Boolean,
-    onNavigateToTaskList: () -> Unit
+    onNavigateToTaskList: () -> Unit,
 ) {
     val viewModel: TaskCreationViewModel = viewModel { TaskCreationViewModel(taskRepository) }
     val uiState by viewModel.uiState.collectAsState()
@@ -21,6 +21,6 @@ fun TaskCreationRoute(
         uiState = uiState,
         onAction = { action -> viewModel.onAction(action) },
         isDateFieldEnabled = isDateFieldEnabled,
-        onNavigateToTaskList = { onNavigateToTaskList() }
+        onNavigateToTaskList = { onNavigateToTaskList() },
     )
 }

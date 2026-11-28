@@ -29,7 +29,7 @@ import kotlinx.serialization.Serializable
 @Composable
 fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
 
-    val backstack = rememberNavBackStack( TaskList)
+    val backstack = rememberNavBackStack(TaskList)
 
     // one shared theme repository for the whole app. Loads the saved theme from the device
 
@@ -49,7 +49,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                             onNavigateToTasks = { backstack.add(TaskList) },
                             onNavigateToPatterns = { backstack.add(Patterns) },
                             onNavigateToSettings = { backstack.add(Settings) },
-                            onNavigateToTaskCreation = { backstack.add(CreateTaskDateEnabled) }
+                            onNavigateToTaskCreation = { backstack.add(CreateTaskDateEnabled) },
                         )
                     }
 
@@ -67,7 +67,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                             onNavigateToSettings = { backstack.add(Settings) },
                             onNavigateToTaskDetails = { taskId ->
                                 backstack.add(ViewTask(taskId))
-                            } // figure out how to feed the lambda through
+                            }, // figure out how to feed the lambda through
                         )
                     }
                     entry<Patterns> {
@@ -83,7 +83,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                             onNavigateToSettings = { backstack.add(Settings) },
                             onNavigateToTaskList = { backstack.add(TaskList) },
                             eventRepository = eventRepository,
-                            taskRepository = taskRepository
+                            taskRepository = taskRepository,
                         )
                     }
 
@@ -91,7 +91,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                         TaskCreationRoute(
                             taskRepository = taskRepository,
                             isDateFieldEnabled = true,
-                            onNavigateToTaskList = { backstack.add(TaskList) }
+                            onNavigateToTaskList = { backstack.add(TaskList) },
                         )
                     }
                     entry<Settings> {
@@ -106,7 +106,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                             onNavigateToTaskCreationDateDisable = {
                                 backstack.add(CreateTaskDateDisabled)
                             },
-                            onNavigateBack = { backstack.removeLastOrNull() }
+                            onNavigateBack = { backstack.removeLastOrNull() },
                         )
                     }
                     entry<ViewTask> { destination ->
@@ -116,7 +116,7 @@ fun App(taskRepository: TaskRepository, eventRepository: EventRepository) {
                                 .taskId, // TODO always zero? Or ViewModel's UI state is never
                             // updated?
                             taskRepository,
-                            themeRepository
+                            themeRepository,
                         )
                     }
                 },

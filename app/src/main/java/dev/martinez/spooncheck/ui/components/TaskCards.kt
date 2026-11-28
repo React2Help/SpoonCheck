@@ -45,7 +45,7 @@ fun SwipeableTruncatedTaskCard(
     swipeRightAllowed: Boolean,
     swipeLeftAllowedd: Boolean,
     onTransfer: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     /*
        This card can be swiped to add / remove it from a list
@@ -87,27 +87,27 @@ fun SwipeableTruncatedTaskCard(
                         }
 
                         offsetX = 0f
-                    }
-                )
+                    },
+                ),
     ) {
         Row( // sides go next to each other
             modifier =
                 Modifier.background(
-                        if (offsetX != 0f) Color.LightGray.copy(alpha = 0.3f) else color
+                        if (offsetX != 0f) Color.LightGray.copy(alpha = 0.3f) else color,
                     )
-                    .padding(10.dp)
+                    .padding(10.dp),
         ) {
             Column( // LHS
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text(
                     task.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 ) // todo apply styling?
                 Text(task.description, style = MaterialTheme.typography.bodyMedium)
             }
             Column( // RHS
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text("${task.spoons} Spoons", style = MaterialTheme.typography.bodySmall)
             }
@@ -135,19 +135,19 @@ fun TruncatedTaskCard(task: Task, modifier: Modifier = Modifier) {
 
     Card(modifier = modifier) {
         Row( // sides go next to each other
-            modifier = Modifier.background(color = color).padding(10.dp)
+            modifier = Modifier.background(color = color).padding(10.dp),
         ) {
             Column( // LHS
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text(
                     task.title,
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
                 ) // todo apply styling?
                 Text(task.description, style = MaterialTheme.typography.bodyMedium)
             }
             Column( // RHS
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             ) {
                 Text("${task.spoons} Spoons", style = MaterialTheme.typography.bodySmall)
             }
@@ -173,7 +173,7 @@ private fun PreviewAll() {
         category = Category.Hygiene,
         dueDate = dueDate,
         dueTime = dueTime,
-        isDone = false
+        isDone = false,
     )
     var leftList: List<Task> =
         List(10) { i ->
@@ -186,7 +186,7 @@ private fun PreviewAll() {
                 category = Category.entries[i % Category.entries.size],
                 dueDate = dueDate,
                 dueTime = dueTime,
-                isDone = i % 2 == 0
+                isDone = i % 2 == 0,
             )
         }
     val rightList =
@@ -200,11 +200,13 @@ private fun PreviewAll() {
                 category = Category.entries[i % Category.entries.size],
                 dueDate = dueDate,
                 dueTime = dueTime,
-                isDone = i % 2 == 0
+                isDone = i % 2 == 0,
             )
         }
     Scaffold(
-        topBar = { CenterAlignedTopAppBar(title = { Text("Preview of All Task Card Components") }) }
+        topBar = {
+            CenterAlignedTopAppBar(title = { Text("Preview of All Task Card Components") })
+        },
     ) { paddingValues ->
         Row {
             LazyColumn(modifier = Modifier.weight(1f).padding(paddingValues)) {
@@ -213,7 +215,7 @@ private fun PreviewAll() {
                         it,
                         true,
                         false,
-                        { id -> leftList = leftList.filter { task -> task.id != id } }
+                        { id -> leftList = leftList.filter { task -> task.id != id } },
                     )
                 }
             }

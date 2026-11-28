@@ -45,12 +45,12 @@ import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLine
 import com.patrykandpatrick.vico.compose.cartesian.layer.rememberLineCartesianLayer
 import com.patrykandpatrick.vico.compose.cartesian.rememberCartesianChart
 import com.patrykandpatrick.vico.compose.common.component.ShapeComponent
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.modelsandstate.DefaultInsightsText
 import dev.martinez.spooncheck.modelsandstate.PatternsScreenUIState
 import dev.martinez.spooncheck.theme.PatternsTheme
 import dev.martinez.spooncheck.ui.components.BaselineSpoonEconomyChart
 import dev.martinez.spooncheck.ui.components.CompletedLastSevenDaysChart
-import dev.martinez.spooncheck.R
 
 @Suppress("ModifierMissing")
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -61,7 +61,7 @@ fun PatternsScreen(
     onNavigateToDashboard: () -> Unit,
     onNavigateToSettings: () -> Unit,
     onNavigateToTaskList: () -> Unit,
-    uiState: PatternsScreenUIState
+    uiState: PatternsScreenUIState,
 ) {
     val scrollState = rememberScrollState()
 
@@ -78,11 +78,11 @@ fun PatternsScreen(
                             content = {
                                 Image(
                                     painter = painterResource(R.drawable.spoon),
-                                    contentDescription = "Account Button"
+                                    contentDescription = "Account Button",
                                 )
-                            }
+                            },
                         )
-                    }
+                    },
                 )
             },
             bottomBar = {
@@ -91,19 +91,19 @@ fun PatternsScreen(
                         selected = false,
                         onClick = { onNavigateToDashboard() },
                         icon = {},
-                        label = { Text("Dashboard", style = MaterialTheme.typography.labelMedium) }
+                        label = { Text("Dashboard", style = MaterialTheme.typography.labelMedium) },
                     )
                     NavigationBarItem(
                         selected = false,
                         onClick = { onNavigateToTaskList() },
                         icon = {},
-                        label = { Text("Tasks", style = MaterialTheme.typography.labelMedium) }
+                        label = { Text("Tasks", style = MaterialTheme.typography.labelMedium) },
                     )
                     NavigationBarItem(
                         selected = true,
                         onClick = { onNavigateToPatterns() },
                         icon = {},
-                        label = { Text("Patterns", style = MaterialTheme.typography.labelMedium) }
+                        label = { Text("Patterns", style = MaterialTheme.typography.labelMedium) },
                     )
                 }
             },
@@ -111,14 +111,14 @@ fun PatternsScreen(
                 FloatingActionButton(
                     onClick = { onNavigateToTaskCreationDateEnable() },
                     modifier = Modifier.size(64.dp),
-                    shape = CircleShape
+                    shape = CircleShape,
                 ) {
                     Image( // todo figure out why the logo is not rendering
                         painterResource(R.drawable.logo),
-                        contentDescription = "FAB"
+                        contentDescription = "FAB",
                     )
                 }
-            }
+            },
         ) { paddingValues ->
             Column(
                 modifier =
@@ -144,6 +144,7 @@ fun PatternsScreen(
         }
     }
 }
+
 /*
 @Composable
 fun InsightsCard(content: String, modifier: Modifier = Modifier){
@@ -167,7 +168,7 @@ private val ChartDarkBlue = Color(0xFF315E69)
 @Composable
 fun InsightsCard(
     content: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) { // copy and paste the code, and wire in the UI state
     Card(modifier = modifier, elevation = CardDefaults.cardElevation(defaultElevation = 3.dp)) {
         Column(modifier = Modifier.padding(15.dp)) {
@@ -209,7 +210,7 @@ fun SimpleLineChart(
             component =
                 ShapeComponent(
                     shape = CircleShape,
-                )
+                ),
         )
     val line =
         LineCartesianLayer.rememberLine(

@@ -20,7 +20,7 @@ What needs to be done:
 
  */
 class TaskListViewModel(
-    private val taskRepository: TaskRepository // Dependency Inversion
+    private val taskRepository: TaskRepository, // Dependency Inversion
 ) : ViewModel() {
     private val selectedFilter = MutableStateFlow(TaskListFilterOptions.Todo)
     private val screenState = MutableStateFlow(TaskListUIState())
@@ -29,20 +29,19 @@ class TaskListViewModel(
                 tasks,
                 filter,
                 currentScreenState ->
-                val filteredTasks =
-                    tasks.filter { task ->
-                        when (filter) {
-                            TaskListFilterOptions.All_Tasks -> true
-                            TaskListFilterOptions.Todo -> !task.isDone
-                            TaskListFilterOptions.Done -> task.isDone
-                        }
+                val filteredTasks = tasks.filter { task ->
+                    when (filter) {
+                        TaskListFilterOptions.All_Tasks -> true
+                        TaskListFilterOptions.Todo -> !task.isDone
+                        TaskListFilterOptions.Done -> task.isDone
                     }
+                }
                 currentScreenState.copy(tasks = filteredTasks, listFilterOption = filter)
             }
             .stateIn(
                 scope = viewModelScope,
                 started = SharingStarted.WhileSubscribed(5_000),
-                initialValue = TaskListUIState()
+                initialValue = TaskListUIState(),
             )
 
     fun OnAction(action: TaskListActions) {

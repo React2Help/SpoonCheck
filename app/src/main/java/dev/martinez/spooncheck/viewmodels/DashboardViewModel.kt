@@ -60,7 +60,7 @@ class DashboardViewModel(private val taskRepository: TaskRepository) : ViewModel
             .sortedWith(
                 compareByDescending<Task> { it.priority }
                     .thenBy(nullsLast()) { it.dueDate }
-                    .thenBy(nullsLast()) { it.dueTime }
+                    .thenBy(nullsLast()) { it.dueTime },
             )
             .take(MaxImportantTasks)
 }

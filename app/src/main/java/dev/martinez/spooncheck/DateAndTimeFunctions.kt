@@ -16,27 +16,25 @@ import kotlinx.datetime.YearMonth
 import kotlinx.datetime.format.*
 import kotlinx.datetime.toLocalDateTime
 
-
 enum class DateFormatStyle {
     SHORT,
     MEDIUM,
-    LONG
+    LONG,
 }
 
 // Fallback format if needed for specific non-localized patterns
-private val customFallbackDate =
-    LocalDate.Format {
-        monthName(MonthNames.ENGLISH_ABBREVIATED)
-        char(' ')
-        day(padding = Padding.NONE)
-        chars(", ")
-        year()
-    }
+private val customFallbackDate = LocalDate.Format {
+    monthName(MonthNames.ENGLISH_ABBREVIATED)
+    char(' ')
+    day(padding = Padding.NONE)
+    chars(", ")
+    year()
+}
 
 @RequiresApi(Build.VERSION_CODES.O)
 fun LocalDateTime.formatSmart(
     now: LocalDateTime = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()),
-    useCustomFallback: Boolean = false
+    useCustomFallback: Boolean = false,
 ): String {
     val today = now.date
     val targetDate = this.date
@@ -76,7 +74,7 @@ fun LocalTime.plusHoursSimple(hours: Int): LocalTime {
         hour = newHour,
         minute = this.minute,
         second = this.second,
-        nanosecond = this.nanosecond
+        nanosecond = this.nanosecond,
     )
 }
 
@@ -109,7 +107,7 @@ fun generateRandomFutureDate(): LocalDate {
     val year =
         Random.nextInt(
             Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year,
-            2099
+            2099,
         )
     val month = Random.nextInt(1, 12)
     val yearMonth = YearMonth(year, month)

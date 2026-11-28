@@ -47,13 +47,13 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.modelsandstate.AppTheme
 import dev.martinez.spooncheck.modelsandstate.DailyReflectionActions
 import dev.martinez.spooncheck.modelsandstate.DailyReflectionUIState
 import dev.martinez.spooncheck.modelsandstate.DailyReflectionVariant
 import dev.martinez.spooncheck.theme.SpoonCheckTheme
 import dev.martinez.spooncheck.theme.ThemedBackground
-import dev.martinez.spooncheck.R
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
@@ -63,7 +63,7 @@ fun DailyReflectionScreen(variant: DailyReflectionVariant) {
             TopAppBar(
                 title = { Text("Evening Check-in", fontWeight = FontWeight.Bold) },
                 subtitle = { Text("") },
-                titleHorizontalAlignment = Alignment.CenterHorizontally
+                titleHorizontalAlignment = Alignment.CenterHorizontally,
             )
         },
         bottomBar = { // define the two buttons at the bottom of the screen
@@ -71,31 +71,31 @@ fun DailyReflectionScreen(variant: DailyReflectionVariant) {
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = androidx.compose.ui.Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = { Text("Skip") },
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                         shape = RoundedCornerShape(8.dp),
                     )
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = { Text("Submit") },
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                         shape = RoundedCornerShape(8.dp),
                     )
                 }
             }
-        }
+        },
     ) { paddingValues ->
         Box() {
             ThemedBackground()
@@ -104,7 +104,7 @@ fun DailyReflectionScreen(variant: DailyReflectionVariant) {
                     Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(paddingValues),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 CheckInCard(variant = variant)
             }
@@ -155,7 +155,7 @@ private fun DailyReflectionScreenDarkPreview() {
 @Composable
 fun CheckInCard(
     modifier: Modifier = Modifier,
-    variant: DailyReflectionVariant = DailyReflectionVariant.Success
+    variant: DailyReflectionVariant = DailyReflectionVariant.Success,
 ) {
 
     val inquiryState = rememberTextFieldState()
@@ -165,7 +165,7 @@ fun CheckInCard(
                 variant.message,
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 23.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             TextField(
                 state = inquiryState,
@@ -174,10 +174,10 @@ fun CheckInCard(
                     Icon(
                         painter =
                             painterResource(
-                                R.drawable.cancel_24dp
+                                R.drawable.cancel_24dp,
                             ),
                         contentDescription = "Clear description",
-                        modifier = Modifier.size(14.dp).clickable { inquiryState.clearText() }
+                        modifier = Modifier.size(14.dp).clickable { inquiryState.clearText() },
                     )
                 },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
@@ -186,7 +186,7 @@ fun CheckInCard(
                         focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
                         unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        cursorColor = MaterialTheme.colorScheme.primary
+                        cursorColor = MaterialTheme.colorScheme.primary,
                     ),
             )
         }
@@ -199,14 +199,14 @@ fun CheckInCard(
 fun DailyReflectionScreenGen(
     onAction: (DailyReflectionActions) -> Unit,
     state: DailyReflectionUIState,
-    variant: DailyReflectionVariant
+    variant: DailyReflectionVariant,
 ) {
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Evening Check-in", fontWeight = FontWeight.Bold) },
                 subtitle = { Text("") },
-                titleHorizontalAlignment = Alignment.CenterHorizontally
+                titleHorizontalAlignment = Alignment.CenterHorizontally,
             )
         },
         bottomBar = {
@@ -214,7 +214,7 @@ fun DailyReflectionScreenGen(
                 Row(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
                 ) {
                     Button(
                         onClick = { onAction(DailyReflectionActions.OnSkip) },
@@ -222,7 +222,7 @@ fun DailyReflectionScreenGen(
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                         shape = RoundedCornerShape(8.dp),
                     )
@@ -232,13 +232,13 @@ fun DailyReflectionScreenGen(
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                         shape = RoundedCornerShape(8.dp),
                     )
                 }
             }
-        }
+        },
     ) { paddingValues ->
         Box {
             ThemedBackground()
@@ -247,12 +247,12 @@ fun DailyReflectionScreenGen(
                     Modifier.fillMaxSize()
                         .verticalScroll(rememberScrollState())
                         .padding(paddingValues),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
             ) {
                 CheckInCard(
                     reflectionText = state.reflectionText,
                     variant = variant,
-                    onAction = onAction
+                    onAction = onAction,
                 )
             }
         }
@@ -264,7 +264,7 @@ fun CheckInCard(
     reflectionText: String,
     variant: DailyReflectionVariant,
     onAction: (DailyReflectionActions) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(12.dp).fillMaxWidth()) {
@@ -272,7 +272,7 @@ fun CheckInCard(
                 variant.message,
                 color = MaterialTheme.colorScheme.primary,
                 fontSize = 23.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
             )
             // The text lives in the view model: every keystroke is sent up as an action, and the
             // field shows whatever state.reflectionText currently is.
@@ -284,13 +284,13 @@ fun CheckInCard(
                     Icon(
                         painter =
                             painterResource(
-                                R.drawable.cancel_24dp
+                                R.drawable.cancel_24dp,
                             ),
                         contentDescription = "Clear description",
                         modifier =
                             Modifier.size(14.dp).clickable {
                                 onAction(DailyReflectionActions.OnReflectionChanged(""))
-                            }
+                            },
                     )
                 },
                 modifier = Modifier.fillMaxWidth().heightIn(min = 120.dp),
@@ -299,7 +299,7 @@ fun CheckInCard(
                         focusedIndicatorColor = MaterialTheme.colorScheme.primary,
                         focusedTextColor = MaterialTheme.colorScheme.onSurface,
                         unfocusedTextColor = MaterialTheme.colorScheme.onSurface,
-                        cursorColor = MaterialTheme.colorScheme.primary
+                        cursorColor = MaterialTheme.colorScheme.primary,
                     ),
             )
         }
@@ -313,7 +313,7 @@ private fun DailyReflectionScreenGenRoughDayPreview() {
         DailyReflectionScreenGen(
             onAction = {},
             state = DailyReflectionUIState(),
-            variant = DailyReflectionVariant.RoughDay
+            variant = DailyReflectionVariant.RoughDay,
         )
     }
 }

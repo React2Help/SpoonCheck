@@ -21,13 +21,13 @@ private const val SECOND_VERSION = 2
 @Database(
     entities = [Task::class, Event::class],
     version = SECOND_VERSION,
-    autoMigrations = [AutoMigration(from = FIRST_VERSION, to = SECOND_VERSION)]
+    autoMigrations = [AutoMigration(from = FIRST_VERSION, to = SECOND_VERSION)],
 )
 @ColumnTypeConverters(
     LocalDateConverter::class,
     LocalTimeConverter::class,
     PriorityConverter::class,
-    CategoryConverter::class
+    CategoryConverter::class,
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun getTaskDao(): TaskDao
@@ -40,28 +40,26 @@ val MIGRATION_1_2 =
         override suspend fun migrate(connection: SQLiteConnection) {
             connection.execSQL(
                 """
-            CREATE TABLE IF NOT EXISTS `events` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                `title` TEXT NOT NULL,
-                `description` TEXT NOT NULL,
-                `spoons` INTEGER NOT NULL,
-                `priority` TEXT NOT NULL,
-                `category` TEXT NOT NULL,
-                `onDate` TEXT NOT NULL,
-                `atTime` TEXT NOT NULL,
-                `isDone` INTEGER NOT NULL
-            )
-            """
-                    .trimIndent()
+                CREATE TABLE IF NOT EXISTS `events` (
+                    `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                    `title` TEXT NOT NULL,
+                    `description` TEXT NOT NULL,
+                    `spoons` INTEGER NOT NULL,
+                    `priority` TEXT NOT NULL,
+                    `category` TEXT NOT NULL,
+                    `onDate` TEXT NOT NULL,
+                    `atTime` TEXT NOT NULL,
+                    `isDone` INTEGER NOT NULL
+                )
+                """
+                    .trimIndent(),
             )
         }
     }
 
-
-
 fun getRoomDatabase(
     builder: RoomDatabase.Builder<AppDatabase>,
-    scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
+    scope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.IO),
 ): AppDatabase {
     lateinit var db: AppDatabase
     db =

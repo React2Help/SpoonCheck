@@ -29,7 +29,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import dev.martinez.spooncheck.R
 
-
 private val CardCornerRadius = 16.dp
 private val CardHeight = 180.dp
 private val ContentHorizontalPadding = 24.dp

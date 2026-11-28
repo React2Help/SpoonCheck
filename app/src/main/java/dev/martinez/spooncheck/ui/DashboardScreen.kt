@@ -45,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.database.Task
 import dev.martinez.spooncheck.modelsandstate.DashboardActions
 import dev.martinez.spooncheck.modelsandstate.DashboardUIState
@@ -56,10 +57,9 @@ import dev.martinez.spooncheck.ui.components.DashboardCareRoutineCard
 import dev.martinez.spooncheck.ui.components.DashboardImportantTasksCard
 import dev.martinez.spooncheck.ui.components.DashboardSpoonGoalCard
 import dev.martinez.spooncheck.viewmodels.DashboardViewModel
+import dev.react2help.spooncheck.repositories.SampleTasks
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import dev.martinez.spooncheck.R
-import dev.react2help.spooncheck.repositories.SampleTasks
 
 private const val DashboardRoute = "dashboard"
 private const val TasksRoute = "tasks"
@@ -114,7 +114,7 @@ fun DashboardScreen(
     onNavigateToTaskCreation: () -> Unit,
     onAction: (DashboardActions) -> Unit,
     state: DashboardUIState,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
@@ -133,7 +133,7 @@ fun DashboardScreen(
                             Image(
                                 painter = painterResource(R.drawable.logo), // todo figure out why
                                 // todo it does not render
-                                contentDescription = "Logo"
+                                contentDescription = "Logo",
                             )
                         }
                     },
@@ -143,21 +143,21 @@ fun DashboardScreen(
                 NavigationBar { // todo extract state of selected
                     NavigationBarItem(
                         selected = true,
-                        onClick = { /*NO-OP*/},
+                        onClick = { /*NO-OP*/ },
                         icon = {},
-                        label = { Text("Dashboard") }
+                        label = { Text("Dashboard") },
                     )
                     NavigationBarItem(
                         selected = false,
                         onClick = { onNavigateToTasks() },
                         icon = {},
-                        label = { Text("Tasks") }
+                        label = { Text("Tasks") },
                     )
                     NavigationBarItem(
                         selected = false,
                         onClick = { onNavigateToPatterns() },
                         icon = {},
-                        label = { Text("Patterns") }
+                        label = { Text("Patterns") },
                     )
                 }
             },
@@ -178,7 +178,7 @@ fun DashboardScreen(
                     )
                 },
                 onTaskClick = { task -> onAction(DashboardActions.OnTaskClick(task.id)) },
-                onPlusRestDay = { onAction(DashboardActions.OnAddRestDay) }
+                onPlusRestDay = { onAction(DashboardActions.OnAddRestDay) },
             )
         }
     }
@@ -203,7 +203,7 @@ private fun DashboardContent(
     onViewTasks: () -> Unit,
     onImportantTaskComplete: (Task) -> Unit,
     onTaskClick: (Task) -> Unit,
-    onPlusRestDay: () -> Unit
+    onPlusRestDay: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize().padding(contentPadding),
@@ -231,7 +231,7 @@ private fun DashboardContent(
                 checkedInDays = state.numCheckins,
                 restDays = state.numRestDays,
                 totalDays = CareRoutineWeekLength,
-                onPlusRestDay = { onPlusRestDay() }
+                onPlusRestDay = { onPlusRestDay() },
             )
         }
     }
@@ -365,6 +365,6 @@ private fun DashboardScreenPreview() {
         onNavigateToSettings = {},
         onNavigateToTaskCreation = {},
         onAction = viewModel::onAction,
-        state = state
+        state = state,
     )
 }

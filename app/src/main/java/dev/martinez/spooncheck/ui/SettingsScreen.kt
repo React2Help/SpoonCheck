@@ -5,7 +5,7 @@
     "ModifierNotUsedAtRoot",
     "ModifierReused",
     "PreviewPublic",
-    "UnusedParameter"
+    "UnusedParameter",
 )
 
 package dev.martinez.spooncheck.ui
@@ -65,12 +65,12 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import dev.martinez.spooncheck.R
 import dev.martinez.spooncheck.modelsandstate.AppTheme
 import dev.martinez.spooncheck.modelsandstate.SettingsActions
 import dev.martinez.spooncheck.modelsandstate.SettingsUIState
 import dev.martinez.spooncheck.theme.SpoonCheckTheme
 import dev.martinez.spooncheck.theme.ThemedBackground
-import dev.martinez.spooncheck.R
 
 // main screen dev version
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
@@ -83,7 +83,7 @@ fun SettingsScreen() {
                 TopAppBar(
                     title = { Text("Settings", fontWeight = FontWeight.Bold) },
                     subtitle = { Text("") },
-                    titleHorizontalAlignment = Alignment.CenterHorizontally
+                    titleHorizontalAlignment = Alignment.CenterHorizontally,
                 )
             },
             bottomBar = { // define the two buttons on the bottom of the screen
@@ -93,10 +93,10 @@ fun SettingsScreen() {
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable.cancel_24dp
+                                        R.drawable.cancel_24dp,
                                     ),
                                 contentDescription = "Cancel Icon",
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(32.dp),
                             )
                         }
                     },
@@ -109,15 +109,15 @@ fun SettingsScreen() {
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable.check_24dp
+                                        R.drawable.check_24dp,
                                     ),
                                 contentDescription = "Check Button",
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             Box( // use a box so the fields are stacked on top of the image
             ) {
@@ -126,7 +126,7 @@ fun SettingsScreen() {
                     contentDescription = "Background Image of a grove of pine trees.",
                     contentScale = ContentScale.Crop, // scale the image so it fills the screen and
                     // the parts that overflow off the screen are clipped
-                    modifier = Modifier.fillMaxHeight()
+                    modifier = Modifier.fillMaxHeight(),
                 )
                 Column( // arrange all the fields in a column
                     verticalArrangement =
@@ -136,11 +136,11 @@ fun SettingsScreen() {
                     modifier =
                         Modifier.fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(paddingValues)
+                            .padding(paddingValues),
                 ) {
                     Spacer(modifier = Modifier.size(10.dp))
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = {
                             Image(
                                 painter = painterResource(R.drawable.qr_code_scanner),
@@ -153,10 +153,10 @@ fun SettingsScreen() {
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = Color.Black,
-                                containerColor = Color.White
+                                containerColor = Color.White,
                             ),
                         modifier = Modifier.width(255.dp).height(85.dp),
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape(15.dp),
                     )
                     Spacer(modifier = Modifier.size(0.dp))
                     GeneralCard()
@@ -182,7 +182,7 @@ fun GeneralCard(modifier: Modifier = Modifier) {
                 // notifications preferences section
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text("Enable Notifications")
                     Switch(
@@ -192,18 +192,18 @@ fun GeneralCard(modifier: Modifier = Modifier) {
                             SwitchDefaults.colors(
                                 checkedThumbColor = Color(0xFFFFFFFF),
                                 checkedTrackColor = Color(0xFF2E4F57),
-                            )
+                            ),
                     )
                 }
 
                 // replay tutorial button
                 Button(
-                    onClick = { /* Handle click */},
+                    onClick = { /* Handle click */ },
                     content = { Text("Replay Tutorial") },
                     colors =
                         ButtonDefaults.buttonColors(
                             contentColor = Color(0xFF254A50),
-                            containerColor = Color(0xFFD4E2E3)
+                            containerColor = Color(0xFFD4E2E3),
                         ),
                 )
             }
@@ -258,7 +258,7 @@ fun ThemeSelectButton(modifier: Modifier = Modifier) {
                         disabledInactiveContainerColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveContentColor = MaterialTheme.colorScheme.surfaceDim,
                         disabledInactiveBorderColor = MaterialTheme.colorScheme.surfaceDim,
-                    )
+                    ),
             )
         }
     }
@@ -277,15 +277,15 @@ fun AccountSettingsCard(modifier: Modifier = Modifier) {
                 // name section
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = { Text("Change Userame") },
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = Color(0xFF254A50),
-                                containerColor = Color(0xFFD4E2E3)
+                                containerColor = Color(0xFFD4E2E3),
                             ),
                     )
                     Text("John Smith", fontWeight = FontWeight.Bold)
@@ -293,15 +293,15 @@ fun AccountSettingsCard(modifier: Modifier = Modifier) {
                 // email section
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = { Text("   Change Email   ") },
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = Color(0xFF254A50),
-                                containerColor = Color(0xFFD4E2E3)
+                                containerColor = Color(0xFFD4E2E3),
                             ),
                     )
                     Text("johnJsmith27.@gmail.com", fontWeight = FontWeight.Bold)
@@ -310,15 +310,15 @@ fun AccountSettingsCard(modifier: Modifier = Modifier) {
                 // password reset section
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = { Text(" Password Reset ") },
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = Color(0xFF254A50),
-                                containerColor = Color(0xFFD4E2E3)
+                                containerColor = Color(0xFFD4E2E3),
                             ),
                     )
                     Text("*********", fontWeight = FontWeight.Bold)
@@ -327,12 +327,12 @@ fun AccountSettingsCard(modifier: Modifier = Modifier) {
 
                 // log out button
                 Button(
-                    onClick = { /* Handle click */},
+                    onClick = { /* Handle click */ },
                     content = { Text("         Log Out         ") },
                     colors =
                         ButtonDefaults.buttonColors(
                             contentColor = Color.White,
-                            containerColor = Color(0xFFF57878)
+                            containerColor = Color(0xFFF57878),
                         ),
                 )
             }
@@ -350,7 +350,7 @@ fun UnsavedChangesCard(modifier: Modifier = Modifier) {
                 Text(
                     "Careful, you have unsaved changes",
                     color = Color(0xFFF57878),
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
             }
         }
@@ -365,7 +365,7 @@ fun SettingsScreenGen(
     state: SettingsUIState,
     onNavigateToTaskCreationDateEnable: () -> () -> Unit,
     onNavigateToTaskCreationDateDisable: () -> () -> Unit,
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
 ) {
     // selectedTheme here used for demonstration, use savedTheme on all other pages
     SpoonCheckTheme(appTheme = state.selectedTheme) {
@@ -380,14 +380,13 @@ fun SettingsScreenGen(
                                 modifier = Modifier.size(32.dp),
                                 painter =
                                     painterResource(
-                                        R.drawable
-                                            .arrow_back_24dp
+                                        R.drawable.arrow_back_24dp,
                                     ),
-                                contentDescription = "Navigate Backwards"
+                                contentDescription = "Navigate Backwards",
                             )
                         }
                     },
-                    titleHorizontalAlignment = Alignment.CenterHorizontally
+                    titleHorizontalAlignment = Alignment.CenterHorizontally,
                 )
             },
             bottomBar = {
@@ -397,15 +396,15 @@ fun SettingsScreenGen(
                             onClick = {
                                 onAction(SettingsActions.OnCancel) // reverts to the saved theme
                                 onNavigateToTaskCreationDateEnable()
-                            }
+                            },
                         ) {
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable.cancel_24dp
+                                        R.drawable.cancel_24dp,
                                     ),
                                 contentDescription = "Discard changes",
-                                modifier = Modifier.size(32.dp)
+                                modifier = Modifier.size(32.dp),
                             )
                         }
                     },
@@ -421,15 +420,15 @@ fun SettingsScreenGen(
                             Icon(
                                 painter =
                                     painterResource(
-                                        R.drawable.check_24dp
+                                        R.drawable.check_24dp,
                                     ),
                                 contentDescription = "Save settings",
-                                modifier = Modifier.size(16.dp)
+                                modifier = Modifier.size(16.dp),
                             )
                         }
-                    }
+                    },
                 )
-            }
+            },
         ) { paddingValues ->
             Box {
                 ThemedBackground()
@@ -439,14 +438,14 @@ fun SettingsScreenGen(
                     modifier =
                         Modifier.fillMaxSize()
                             .verticalScroll(rememberScrollState())
-                            .padding(paddingValues)
+                            .padding(paddingValues),
                 ) {
                     Spacer(modifier = Modifier.size(10.dp))
                     if (state.hasUnsavedChanges) {
                         UnsavedChangesCard()
                     }
                     Button(
-                        onClick = { /* Handle click */},
+                        onClick = { /* Handle click */ },
                         content = {
                             Image(
                                 painter = painterResource(R.drawable.qr_code_scanner),
@@ -457,27 +456,27 @@ fun SettingsScreenGen(
                             Text(
                                 "Link Account",
                                 color = MaterialTheme.colorScheme.primary,
-                                fontSize = 20.sp
+                                fontSize = 20.sp,
                             )
                         },
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onSurface,
-                                containerColor = MaterialTheme.colorScheme.surface
+                                containerColor = MaterialTheme.colorScheme.surface,
                             ),
                         modifier = Modifier.width(255.dp).height(85.dp),
-                        shape = RoundedCornerShape(15.dp)
+                        shape = RoundedCornerShape(15.dp),
                     )
                     GeneralCard(
                         onAction = onAction,
-                        notificationsEnabled = state.notificationsEnabled
+                        notificationsEnabled = state.notificationsEnabled,
                     )
                     ThemeCard(onAction = onAction, selectedTheme = state.selectedTheme)
                     AccountSettingsCard(
                         onAction = onAction,
                         userName = state.userName,
                         userEmail = state.userEmail,
-                        password = state.password
+                        password = state.password,
                     )
                 }
             }
@@ -489,7 +488,7 @@ fun SettingsScreenGen(
 fun GeneralCard(
     onAction: (SettingsActions) -> Unit,
     notificationsEnabled: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
@@ -497,11 +496,11 @@ fun GeneralCard(
                 Text(
                     "General",
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Text("Enable Notifications")
                     Switch(
@@ -511,7 +510,7 @@ fun GeneralCard(
                             SwitchDefaults.colors(
                                 checkedThumbColor = MaterialTheme.colorScheme.onPrimary,
                                 checkedTrackColor = MaterialTheme.colorScheme.primary,
-                            )
+                            ),
                     )
                 }
                 Button(
@@ -520,7 +519,7 @@ fun GeneralCard(
                     colors =
                         ButtonDefaults.buttonColors(
                             contentColor = MaterialTheme.colorScheme.onTertiary,
-                            containerColor = MaterialTheme.colorScheme.tertiary
+                            containerColor = MaterialTheme.colorScheme.tertiary,
                         ),
                 )
             }
@@ -532,7 +531,7 @@ fun GeneralCard(
 fun ThemeCard(
     onAction: (SettingsActions) -> Unit,
     selectedTheme: AppTheme,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     Card(modifier = modifier.fillMaxWidth()) {
         Column(verticalArrangement = Arrangement.SpaceAround) {
@@ -540,14 +539,14 @@ fun ThemeCard(
                 Text(
                     "Theme",
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.size(10.dp))
                 val options =
                     listOf(
                         AppTheme.FOREST to "Forest",
                         AppTheme.BEACH to "Beach",
-                        AppTheme.DARK to "Dark"
+                        AppTheme.DARK to "Dark",
                     )
                 Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
                     SingleChoiceSegmentedButtonRow {
@@ -556,7 +555,7 @@ fun ThemeCard(
                                 shape =
                                     SegmentedButtonDefaults.itemShape(
                                         index = index,
-                                        count = options.size
+                                        count = options.size,
                                     ),
                                 onClick = { onAction(SettingsActions.OnThemeChanged(theme)) },
                                 selected = selectedTheme == theme,
@@ -583,7 +582,7 @@ fun ThemeCard(
                                             MaterialTheme.colorScheme.surfaceDim,
                                         disabledInactiveBorderColor =
                                             MaterialTheme.colorScheme.surfaceDim,
-                                    )
+                                    ),
                             )
                         }
                     }
@@ -600,7 +599,7 @@ fun AccountSettingsCard(
     userName: String,
     userEmail: String,
     password: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var isEditingName by remember { mutableStateOf(false) }
     var isEditingEmail by remember { mutableStateOf(false) }
@@ -616,14 +615,14 @@ fun AccountSettingsCard(
                 Text(
                     "Account Settings",
                     color = MaterialTheme.colorScheme.primary,
-                    fontWeight = FontWeight.Bold
+                    fontWeight = FontWeight.Bold,
                 )
                 Spacer(modifier = Modifier.size(10.dp))
 
                 // Username row
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Button(
                         onClick = { isEditingName = !isEditingName },
@@ -631,7 +630,7 @@ fun AccountSettingsCard(
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                     )
                     if (isEditingName) {
@@ -645,9 +644,9 @@ fun AccountSettingsCard(
                                     onDone = {
                                         onAction(SettingsActions.OnNameChanged(nameDraft))
                                         isEditingName = false
-                                    }
+                                    },
                                 ),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         )
                     } else {
                         Text(userName.ifBlank { "—" }, fontWeight = FontWeight.Bold)
@@ -657,7 +656,7 @@ fun AccountSettingsCard(
                 // Email row
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(14.dp)
+                    horizontalArrangement = Arrangement.spacedBy(14.dp),
                 ) {
                     Button(
                         onClick = { isEditingEmail = !isEditingEmail },
@@ -665,7 +664,7 @@ fun AccountSettingsCard(
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                     )
                     if (isEditingEmail) {
@@ -676,16 +675,16 @@ fun AccountSettingsCard(
                             keyboardOptions =
                                 KeyboardOptions(
                                     keyboardType = KeyboardType.Email,
-                                    imeAction = ImeAction.Done
+                                    imeAction = ImeAction.Done,
                                 ),
                             keyboardActions =
                                 KeyboardActions(
                                     onDone = {
                                         onAction(SettingsActions.OnEmailChanged(emailDraft))
                                         isEditingEmail = false
-                                    }
+                                    },
                                 ),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         )
                     } else {
                         Text(userEmail.ifBlank { "—" }, fontWeight = FontWeight.Bold)
@@ -695,7 +694,7 @@ fun AccountSettingsCard(
                 // Password row
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
                     Button(
                         onClick = { isEditingPassword = !isEditingPassword },
@@ -703,7 +702,7 @@ fun AccountSettingsCard(
                         colors =
                             ButtonDefaults.buttonColors(
                                 contentColor = MaterialTheme.colorScheme.onTertiary,
-                                containerColor = MaterialTheme.colorScheme.tertiary
+                                containerColor = MaterialTheme.colorScheme.tertiary,
                             ),
                     )
                     if (isEditingPassword) {
@@ -715,7 +714,7 @@ fun AccountSettingsCard(
                             keyboardOptions =
                                 KeyboardOptions(
                                     keyboardType = KeyboardType.Password,
-                                    imeAction = ImeAction.Done
+                                    imeAction = ImeAction.Done,
                                 ),
                             keyboardActions =
                                 KeyboardActions(
@@ -723,14 +722,14 @@ fun AccountSettingsCard(
                                         onAction(SettingsActions.OnPasswordChanged(passwordDraft))
                                         passwordDraft = ""
                                         isEditingPassword = false
-                                    }
+                                    },
                                 ),
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
                         )
                     } else {
                         Text(
                             if (password.isBlank()) "*********" else "*".repeat(password.length),
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
@@ -742,7 +741,7 @@ fun AccountSettingsCard(
                     colors =
                         ButtonDefaults.buttonColors(
                             contentColor = Color.White,
-                            containerColor = Color(0xFFF57878)
+                            containerColor = Color(0xFFF57878),
                         ),
                 )
             }
@@ -758,7 +757,7 @@ private fun SettingsScreenForestPreview() {
         state = SettingsUIState(selectedTheme = AppTheme.FOREST),
         onNavigateToTaskCreationDateEnable = { {} },
         onNavigateToTaskCreationDateDisable = { {} },
-        {}
+        {},
     )
 }
 
@@ -770,7 +769,7 @@ private fun SettingsScreenBeachPreview() {
         state = SettingsUIState(selectedTheme = AppTheme.BEACH),
         onNavigateToTaskCreationDateEnable = { {} },
         onNavigateToTaskCreationDateDisable = { {} },
-        {}
+        {},
     )
 }
 
@@ -782,6 +781,6 @@ private fun SettingsScreenDarkPreview() {
         state = SettingsUIState(selectedTheme = AppTheme.DARK),
         onNavigateToTaskCreationDateEnable = { {} },
         onNavigateToTaskCreationDateDisable = { {} },
-        {}
+        {},
     )
 }

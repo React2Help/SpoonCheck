@@ -21,7 +21,7 @@ data class DashboardUIState(
     val numCheckins: Int = 0,
     val numRestDays: Int = 0,
     val numNotifications: Int =
-        0 // meant for the badge on the top right Profile icon on the Dashboard screen
+        0, // meant for the badge on the top right Profile icon on the Dashboard screen
 ) {
     val spoonProgress: Float
         get() =
@@ -53,7 +53,7 @@ data class TaskListUIState( // what the screen displays
     val shouldNavigateToAccount: Boolean = false,
 
     // todo add a field for the Icon of the Account button. Pending learning how to do this.
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
 )
 
 sealed interface TaskListActions {
@@ -81,6 +81,7 @@ sealed interface TaskListActions {
         val taskId: Long,
         val isDone: Boolean,
     ) : TaskListActions
+
     // don't think I need to hoist the state for the list.
     // Until we implement more complex functionality.
     data class OnDelete(val taskId: Long) : TaskListActions
@@ -89,12 +90,14 @@ sealed interface TaskListActions {
 enum class TaskListFilterOptions {
     All_Tasks,
     Todo,
-    Done
+    Done,
 }
 
 const val DefaultAdditionToDueTimeField = 8
 
-data class TaskCreationUIState @OptIn(ExperimentalMaterial3Api::class) constructor(
+data class TaskCreationUIState
+@OptIn(ExperimentalMaterial3Api::class)
+constructor(
     val isLoading: Boolean = false, // tracks if this UI is loading or not
     val isListening: Boolean = false, // boolean for tracking UI state for if the microphone is
     // listening for Voice input. Pressing the microphone button fires off a "listening for audio"
@@ -122,12 +125,13 @@ data class TaskCreationUIState @OptIn(ExperimentalMaterial3Api::class) construct
 
     // fields to support components in the form
     val selectedCategory: Int = Category.Hygiene.ordinal, // supports the CategoryAndPriority card
-    val selectedSpoons: Int = 1
+    val selectedSpoons: Int = 1,
 )
 
 sealed interface TaskCreationActions { // defining types for our actions, so the callback functions
     // must satisfy this contract
     data object Cancel : TaskCreationActions // since these actions don't need arguments, they are
+
     // specified as objects
     data class Save(
         val title: String,
@@ -136,7 +140,7 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
         val category: Category,
         val dueDate: LocalDate,
         val dueTime: LocalTime,
-        val spoons: Int
+        val spoons: Int,
     ) : TaskCreationActions
 
     data object ClearDateError : TaskCreationActions
@@ -163,13 +167,15 @@ sealed interface TaskCreationActions { // defining types for our actions, so the
 
     data class OnSelectedSpoonsChanged(val newSpoonCount: Int) : TaskCreationActions
 
-    data class OnTimeChange @OptIn(ExperimentalMaterial3Api::class) constructor(val newTime: TimePickerState) : TaskCreationActions
+    data class OnTimeChange
+    @OptIn(ExperimentalMaterial3Api::class)
+    constructor(val newTime: TimePickerState) : TaskCreationActions
 }
 
 enum class Category {
     Hygiene,
     Work,
-    School
+    School,
 }
 
 enum class Priority {
@@ -177,13 +183,13 @@ enum class Priority {
     Low,
     Medium,
     High,
-    Critical
+    Critical,
 }
 
 enum class AppTheme {
     FOREST,
     BEACH,
-    DARK
+    DARK,
 }
 
 data class SettingsUIState(
@@ -194,7 +200,7 @@ data class SettingsUIState(
     val password: String = "",
     val hasUnsavedChanges: Boolean = false,
     val wasSaved: Boolean = false,
-    val wasCancelled: Boolean = false
+    val wasCancelled: Boolean = false,
 )
 
 sealed interface SettingsActions {
@@ -227,13 +233,13 @@ sealed interface SettingsActions {
 enum class DailyReflectionVariant(val message: String) {
     Success("Congratulations!\nYou Completed All Your Tasks!"),
     SuccessPartial("Congratulations!\nYou Completed Most Of Your Tasks!"),
-    RoughDay("Today might’ve been a hard day.\nThat’s Ok, take some time to reflect.")
+    RoughDay("Today might’ve been a hard day.\nThat’s Ok, take some time to reflect."),
 }
 
 data class DailyReflectionUIState(
     val reflectionText: String = "",
     val wasSkipped: Boolean = false,
-    val wasSubmitted: Boolean = false
+    val wasSubmitted: Boolean = false,
 )
 
 sealed interface DailyReflectionActions {
@@ -253,14 +259,14 @@ data class PatternsScreenUIState(
     val spoonEconomy: List<SpoonEconomyPoint> = emptyList(),
     val completionsRange: DayRange = DayRange.SEVEN_DAYS,
     val spoonEconomyRange: DayRange = DayRange.TWO_WEEKS,
-    val insightsText: String = DefaultInsightsText
+    val insightsText: String = DefaultInsightsText,
 )
 
 @Suppress("MagicNumber")
 enum class DayRange(val span: Int) {
     SEVEN_DAYS(7),
     TWO_WEEKS(14),
-    THIRTY_DAYS(30)
+    THIRTY_DAYS(30),
 }
 
 const val DefaultInsightsText =
@@ -279,7 +285,7 @@ sealed interface ViewTaskUIState {
         val dueTime: LocalTime,
         val isRecurring: Boolean,
         val notificationsOn: Boolean,
-        val theme: AppTheme
+        val theme: AppTheme,
     ) : ViewTaskUIState
 
     data class NotFound(val theme: AppTheme) : ViewTaskUIState
